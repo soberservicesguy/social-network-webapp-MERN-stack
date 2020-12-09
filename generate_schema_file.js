@@ -130,9 +130,9 @@ const parents_children_pairs = [
 			},
 		], 
 		schemafields:{
+			// author_name:'String', // not needed since User will be linked
+			// author_image:'String',
 			type_of_post:'String', // image / video / text
-			author_name:'String',
-			author_image:'String',
 			post_text:`String`,
 			image_for_post:`String`,
 			video_for_post:`String`,
@@ -154,7 +154,7 @@ const parents_children_pairs = [
 		},
 		linked_object_and_live_object_in_redux: 'User',
 		index:'endpoint',
-		summarized_version_length:10,
+		summarized_version_length:9,
 		special_lists_in_frontend:[], // dont create it in parent
 		attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
 		object_filtering_keys:[
@@ -164,6 +164,97 @@ const parents_children_pairs = [
 			// {set_collection_name:'Products For Men', product_category:'men'},
 		],
 	},
+
+	{
+		// parent children pair is below
+		Advertisement:[ 
+		], 
+		schemafields:{
+			ad_name:'String',
+			ad_image:'String',
+			ad_description:'String',
+			endpoint:'String', // there should be always endpoint in parent, and in summarized version
+			// type_of_post:'String', // image / video / text
+			// author_name:'String',
+			// author_image:'String',
+			// post_text:`String`,
+			// image_for_post:`String`,
+			// video_for_post:`String`,
+			// video_thumbnail_image:'String', 
+			// total_likes:'String',
+			// total_shares:'String',
+			// date_of_publishing:`String`,
+			// first_para:'String',
+			// above attributes will populate cards together with below ones they will populate entire object
+			// initial_tags:'String',
+			// second_para:'String',
+			// qouted_para:'String',
+			// source_of_qoutation:'String',
+			// third_para:'String',
+			// fourth_para:'String',
+			// all_tags:'String',
+			// author_details:'String',
+		},
+		linked_object_and_live_object_in_redux: '',
+		index:'endpoint',
+		summarized_version_length:4,
+		special_lists_in_frontend:[], // dont create it in parent
+		attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
+		object_filtering_keys:[
+		// other model link
+		// user:
+			// {set_collection_name:'Latest Products', date_of_publishing:'after 10/Jun/2020'}, 
+			// {set_collection_name:'Low Price Products', price:'>10 and <20'}, 
+			// {set_collection_name:'High Ratings Products', rating:'>10'}, 
+			// {set_collection_name:'Products For Men', product_category:'men'},
+		],
+	},
+
+	{
+		// parent children pair is below
+		Page:[ 
+		], 
+		schemafields:{
+			page_name:'String',
+			page_image:'String',
+			page_description:'String',
+			endpoint:'String', // there should be always endpoint in parent, and in summarized version
+			// type_of_post:'String', // image / video / text
+			// author_name:'String',
+			// author_image:'String',
+			// post_text:`String`,
+			// image_for_post:`String`,
+			// video_for_post:`String`,
+			// video_thumbnail_image:'String', 
+			// total_likes:'String',
+			// total_shares:'String',
+			// date_of_publishing:`String`,
+			// first_para:'String',
+			// above attributes will populate cards together with below ones they will populate entire object
+			// initial_tags:'String',
+			// second_para:'String',
+			// qouted_para:'String',
+			// source_of_qoutation:'String',
+			// third_para:'String',
+			// fourth_para:'String',
+			// all_tags:'String',
+			// author_details:'String',
+		},
+		linked_object_and_live_object_in_redux: '',
+		index:'endpoint',
+		summarized_version_length:4,
+		special_lists_in_frontend:[], // dont create it in parent
+		attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
+		object_filtering_keys:[
+		// other model link
+		// user:
+			// {set_collection_name:'Latest Products', date_of_publishing:'after 10/Jun/2020'}, 
+			// {set_collection_name:'Low Price Products', price:'>10 and <20'}, 
+			// {set_collection_name:'High Ratings Products', rating:'>10'}, 
+			// {set_collection_name:'Products For Men', product_category:'men'},
+		],
+	},
+
 
 	{
 		// parent children pair is below
@@ -197,7 +288,7 @@ const parents_children_pairs = [
 		},
 		linked_object_and_live_object_in_redux: '',
 		index:'endpoint',
-		summarized_version_length:10,
+		summarized_version_length:4,
 		special_lists_in_frontend:[], // dont create it in parent
 		attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
 		object_filtering_keys:[
@@ -244,7 +335,7 @@ const parents_children_pairs = [
 		},
 		linked_object_and_live_object_in_redux: '',
 		index:'endpoint',
-		summarized_version_length:10,
+		summarized_version_length:4,
 		special_lists_in_frontend:[], // dont create it in parent
 		attributes_which_can_be_modified_in_frontend:[],// KKEP IT SINGLE TOJENNED
 		object_filtering_keys:[

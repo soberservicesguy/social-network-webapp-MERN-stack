@@ -1,6 +1,6 @@
 
 const utils = {
-    baseUrl:'https://6f6593ec33b9.ngrok.io',
+    baseUrl:'https://f3a03e512bd5.ngrok.io',
     productsEndpoint:'',
 }
 

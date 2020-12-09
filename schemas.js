@@ -12,15 +12,13 @@ const all_schemas = [
 			react_class_name_for_card:'Social_Post_Card',
 
 			class_name:'SocialPost', // first letter should be capitalized of each token and singular
-			summarized_version_length:10,
+			summarized_version_length:9,
 			index:'endpoint',
 
 			children_classes:['Comment','Like','Share','User',],
 			schemafields:
 					{
 						type_of_post: 'String',
-						author_name: 'String',
-						author_image: 'String',
 						post_text: 'String',
 						image_for_post: 'String',
 						video_for_post: 'String',
@@ -155,12 +153,84 @@ const all_schemas = [
 
 	{
 		parent:{
+			react_class_name_for_component:'Individual_Advertisement', // used for pushing reducers and endpoints, and state to components. ALSO always use underscores, they will be removed where needed
+			react_class_name_for_container:'Advertisement', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
+			react_class_name_for_card:'Advertisement_Card',
+
+			class_name:'Advertisement', // first letter should be capitalized of each token and singular
+			summarized_version_length:4,
+			index:'endpoint',
+
+			children_classes:[],
+			schemafields:
+					{
+						ad_name: 'String',
+						ad_image: 'String',
+						ad_description: 'String',
+						endpoint: 'String',
+					},
+
+			
+			special_lists_in_frontend: [],
+			attributes_which_can_be_modified_in_frontend: [],
+			object_filtering_keys: [],
+
+			linked_object_and_live_object_in_redux: '',
+
+			other_model_links:[
+	
+				]
+			},
+
+		children:[
+	
+		]
+	},
+
+	{
+		parent:{
+			react_class_name_for_component:'Individual_Page', // used for pushing reducers and endpoints, and state to components. ALSO always use underscores, they will be removed where needed
+			react_class_name_for_container:'Page', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
+			react_class_name_for_card:'Page_Card',
+
+			class_name:'Page', // first letter should be capitalized of each token and singular
+			summarized_version_length:4,
+			index:'endpoint',
+
+			children_classes:[],
+			schemafields:
+					{
+						page_name: 'String',
+						page_image: 'String',
+						page_description: 'String',
+						endpoint: 'String',
+					},
+
+			
+			special_lists_in_frontend: [],
+			attributes_which_can_be_modified_in_frontend: [],
+			object_filtering_keys: [],
+
+			linked_object_and_live_object_in_redux: '',
+
+			other_model_links:[
+	
+				]
+			},
+
+		children:[
+	
+		]
+	},
+
+	{
+		parent:{
 			react_class_name_for_component:'Individual_Book', // used for pushing reducers and endpoints, and state to components. ALSO always use underscores, they will be removed where needed
 			react_class_name_for_container:'Book', // used for pushing reducers and endpoints, and state to containers. ALSO fill container names WITHOUT CONTAINER suffix but with underscores
 			react_class_name_for_card:'Book_Card',
 
 			class_name:'Book', // first letter should be capitalized of each token and singular
-			summarized_version_length:10,
+			summarized_version_length:4,
 			index:'endpoint',
 
 			children_classes:[],
@@ -196,7 +266,7 @@ const all_schemas = [
 			react_class_name_for_card:'Sport_Card',
 
 			class_name:'Sport', // first letter should be capitalized of each token and singular
-			summarized_version_length:10,
+			summarized_version_length:4,
 			index:'endpoint',
 
 			children_classes:[],

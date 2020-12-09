@@ -21,8 +21,6 @@ router.post('/create-socialpost-with-children', function(req, res, next){
 
 		_id: new mongoose.Types.ObjectId(),
 		type_of_post: req.body.parent.type_of_post,
-		author_name: req.body.parent.author_name,
-		author_image: req.body.parent.author_image,
 		post_text: req.body.parent.post_text,
 		image_for_post: req.body.parent.image_for_post,
 		video_for_post: req.body.parent.video_for_post,
@@ -36,8 +34,6 @@ router.post('/create-socialpost-with-children', function(req, res, next){
 
 	newSocialPost.save(function (err, newSocialPost) {
 		if (err) return console.log(err);
-
-
 
 		const newComment = new Comment({
 
@@ -111,7 +107,6 @@ router.get('/find-socialpost', function(req, res, next){
 	SocialPost.findOne({ endpoint: req.body.endpoint })
 	.then((socialpost) => {
 
-		socialpost[ author_image ] = base64_encode( socialpost[ 'author_image' ] )
 		socialpost[ image_for_post ] = base64_encode( socialpost[ 'image_for_post' ] )
 		socialpost[ video_thumbnail_image ] = base64_encode( socialpost[ 'video_thumbnail_image' ] )
 
@@ -139,23 +134,24 @@ router.get('/find-socialpost', function(req, res, next){
 router.get('/find-comment', function(req, res, next){
 
 	Comment.findOne({ comment_order: req.body.comment_order })
-		.then((comment) => {
-			if (!comment) {
+	.then((comment) => {
+		if (!comment) {
 
-				res.status(401).json({ success: false, msg: "could not find comment" });
+			res.status(401).json({ success: false, msg: "could not find comment" });
 
-			} else {
+		} else {
 
-				res.status(200).json(comment);
+			res.status(200).json(comment);
 
-			}
+		}
 
-		})
-		.catch((err) => {
+	})
+	.catch((err) => {
 
-			next(err);
+		next(err);
 
-		});
+	});
+
 });
 
 // find like
@@ -163,23 +159,24 @@ router.get('/find-comment', function(req, res, next){
 router.get('/find-like', function(req, res, next){
 
 	Like.findOne({ comment_order: req.body.comment_order })
-		.then((like) => {
-			if (!like) {
+	.then((like) => {
+		if (!like) {
 
-				res.status(401).json({ success: false, msg: "could not find like" });
+			res.status(401).json({ success: false, msg: "could not find like" });
 
-			} else {
+		} else {
 
-				res.status(200).json(like);
+			res.status(200).json(like);
 
-			}
+		}
 
-		})
-		.catch((err) => {
+	})
+	.catch((err) => {
 
-			next(err);
+		next(err);
 
-		});
+	});
+
 });
 
 // find share
@@ -187,23 +184,24 @@ router.get('/find-like', function(req, res, next){
 router.get('/find-share', function(req, res, next){
 
 	Share.findOne({ comment_order: req.body.comment_order })
-		.then((share) => {
-			if (!share) {
+	.then((share) => {
+		if (!share) {
 
-				res.status(401).json({ success: false, msg: "could not find share" });
+			res.status(401).json({ success: false, msg: "could not find share" });
 
-			} else {
+		} else {
 
-				res.status(200).json(share);
+			res.status(200).json(share);
 
-			}
+		}
 
-		})
-		.catch((err) => {
+	})
+	.catch((err) => {
 
-			next(err);
+		next(err);
 
-		});
+	});
+
 });
 
 // find user
@@ -211,40 +209,39 @@ router.get('/find-share', function(req, res, next){
 router.get('/find-user', function(req, res, next){
 
 	User.findOne({ phone_number: req.body.phone_number })
-		.then((user) => {
+	.then((user) => {
 
-			user[ user_avatar_image ] = base64_encode( user[ 'user_avatar_image' ] )
-			user[ user_cover_image ] = base64_encode( user[ 'user_cover_image' ] )
+		user[ user_avatar_image ] = base64_encode( user[ 'user_avatar_image' ] )
+		user[ user_cover_image ] = base64_encode( user[ 'user_cover_image' ] )
 
-			if (!user) {
+		if (!user) {
 
-				res.status(401).json({ success: false, msg: "could not find user" });
+			res.status(401).json({ success: false, msg: "could not find user" });
 
-			} else {
+		} else {
 
-				res.status(200).json(user);
+			res.status(200).json(user);
 
-			}
+		}
 
-		})
-		.catch((err) => {
+	})
+	.catch((err) => {
 
-			next(err);
+		next(err);
 
-		});
+	});
+
 });
 
 // get n childs of socialpost
 
 router.get('/top-n-share-of-socialpost', function(req, res, next){
-
 	SocialPost.
-	findOne({endpoint:req.body.endpoint}).	
+	findOne({endpoint:req.body.endpoint}).
 	populate('shares').
 	exec(function (err, socialpost_with_shares) {
 
 		if (err) return console.log(err);
-
 
 		var shares = socialpost_with_shares.shares
 		new_share_collection = []				
@@ -300,8 +297,8 @@ router.post('/create-socialpost-with-user', function(req, res, next){
 	newSocialPost.save(function (err, newSocialPost) {
 		if (err) return console.log(err);
 
-		User.
-		findOne({...user_object})
+			User.
+			findOne({...user_object})
 		.then((user) => {
 			
 			if( !user ){
@@ -339,7 +336,7 @@ router.post('/create-share-for-socialpost', function(req, res, next){
 	newShare.save(function (err, newShare) {
 		if (err) return console.log(err);
 
-		User.findOne({...user_object})
+			User.findOne({...user_object})
 		.then((user) => {
 			
 			if( !user ){
@@ -383,7 +380,7 @@ router.post('/create-share-for-socialpost', function(req, res, next){
 
 router.get('/socialposts-list', function(req, res, next){
 
-SocialPost.
+	SocialPost.
 	find().
 	limit(10).
 	then((socialposts)=>{
@@ -392,8 +389,6 @@ SocialPost.
 			var newSocialPost = {}
 
 			newSocialPost.type_of_post = socialpost[ 'type_of_post' ]
-			newSocialPost.author_name = socialpost[ 'author_name' ]
-			newSocialPost.author_image = base64_encode( socialpost[ 'author_image' ] )
 			newSocialPost.post_text = socialpost[ 'post_text' ]
 			newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] )
 			newSocialPost.video_for_post = socialpost[ 'video_for_post' ]
@@ -401,6 +396,7 @@ SocialPost.
 			newSocialPost.total_likes = socialpost[ 'total_likes' ]
 			newSocialPost.total_shares = socialpost[ 'total_shares' ]
 			newSocialPost.endpoint = socialpost[ 'endpoint' ]
+			newSocialPost.date_of_publishing = socialpost[ 'date_of_publishing' ]
 
 			newSocialPosts_list.push({...newSocialPost})
 			newSocialPost = {}
@@ -408,7 +404,6 @@ SocialPost.
 
 		return newSocialPosts_list
 	})
-
 	.then((newSocialPosts_list) => {
 
 		if (!newSocialPosts_list) {
@@ -432,55 +427,55 @@ SocialPost.
 // get socialposts_list_with_children
 
 router.get('/socialposts-list-with-children', function(req, res, next){
+	console.log('triggered')
 
 	SocialPost.
-		find().
-		limit(10).
-		populate('comments').
-		populate('likes').
-		populate('shares').
-		// populate('user').
-		then((socialposts)=>{
-			var newSocialPosts_list = []
-			socialposts.map((socialpost, index)=>{
-				var newSocialPost = {}
+	find().
+	limit(10).
+	populate('comments').
+	populate('likes').
+	populate('shares').
+	populate('user').
+	then((socialposts)=>{
+		var newSocialPosts_list = []
+		socialposts.map((socialpost, index)=>{
+			var newSocialPost = {}
 
-				newSocialPost.type_of_post = socialpost[ 'type_of_post' ]
-				newSocialPost.author_name = socialpost[ 'author_name' ]
-				newSocialPost.author_image = base64_encode( socialpost[ 'author_image' ] )
-				newSocialPost.post_text = socialpost[ 'post_text' ]
-				newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] )
-				newSocialPost.video_for_post = socialpost[ 'video_for_post' ]
-				newSocialPost.video_thumbnail_image = base64_encode( socialpost[ 'video_thumbnail_image' ] )
-				newSocialPost.total_likes = socialpost[ 'total_likes' ]
-				newSocialPost.total_shares = socialpost[ 'total_shares' ]
-				newSocialPost.endpoint = socialpost[ 'endpoint' ]
+			newSocialPost.type_of_post = socialpost[ 'type_of_post' ]
+			newSocialPost.post_text = socialpost[ 'post_text' ]
+			newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] )
+			newSocialPost.video_for_post = socialpost[ 'video_for_post' ]
+			newSocialPost.video_thumbnail_image = base64_encode( socialpost[ 'video_thumbnail_image' ] )
+			newSocialPost.total_likes = socialpost[ 'total_likes' ]
+			newSocialPost.total_shares = socialpost[ 'total_shares' ]
+			newSocialPost.endpoint = socialpost[ 'endpoint' ]
+			newSocialPost.date_of_publishing = socialpost[ 'date_of_publishing' ]
 
-				newSocialPosts_list.push({...newSocialPost})
-				newSocialPost = {}
-			});
-
-			return newSocialPosts_list
-		})
-
-		.then((newSocialPosts_list) => {
-
-			if (!newSocialPosts_list) {
-
-				res.status(401).json({ success: false, msg: "could not find SocialPosts_list" });
-
-			} else {
-
-				res.status(200).json(newSocialPosts_list);
-
-			}
-
-		})
-		.catch((err) => {
-
-			next(err);
-
+			newSocialPosts_list.push({...newSocialPost})
+			newSocialPost = {}
 		});
+
+		return newSocialPosts_list
+	})
+	.then((newSocialPosts_list) => {
+
+		if (!newSocialPosts_list) {
+
+			res.status(401).json({ success: false, msg: "could not find SocialPosts_list" });
+
+		} else {
+
+			res.status(200).json(newSocialPosts_list);
+
+		}
+
+	})
+	.catch((err) => {
+
+		next(err);
+
+	});
+
 });
 
 // get socialposts_list_next_10_with_children
@@ -488,54 +483,53 @@ router.get('/socialposts-list-with-children', function(req, res, next){
 router.get('/socialposts-list-next-10-with-children', function(req, res, next){
 
 	SocialPost.
-		find().
-		skip(10).
-		limit(10).
-		populate('comments').
-		populate('likes').
-		populate('shares').
-		// populate('user').
-		then((socialposts)=>{
-			var newSocialPosts_list = []
-			socialposts.map((socialpost, index)=>{
-				var newSocialPost = {}
+	find().
+	skip(10).
+	limit(10).
+	populate('comments').
+	populate('likes').
+	populate('shares').
+	populate('user').
+	then((socialposts)=>{
+		var newSocialPosts_list = []
+		socialposts.map((socialpost, index)=>{
+			var newSocialPost = {}
 
-				newSocialPost.type_of_post = socialpost[ 'type_of_post' ]
-				newSocialPost.author_name = socialpost[ 'author_name' ]
-				newSocialPost.author_image = base64_encode( socialpost[ 'author_image' ] )
-				newSocialPost.post_text = socialpost[ 'post_text' ]
-				newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] )
-				newSocialPost.video_for_post = socialpost[ 'video_for_post' ]
-				newSocialPost.video_thumbnail_image = base64_encode( socialpost[ 'video_thumbnail_image' ] )
-				newSocialPost.total_likes = socialpost[ 'total_likes' ]
-				newSocialPost.total_shares = socialpost[ 'total_shares' ]
-				newSocialPost.endpoint = socialpost[ 'endpoint' ]
+			newSocialPost.type_of_post = socialpost[ 'type_of_post' ]
+			newSocialPost.post_text = socialpost[ 'post_text' ]
+			newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] )
+			newSocialPost.video_for_post = socialpost[ 'video_for_post' ]
+			newSocialPost.video_thumbnail_image = base64_encode( socialpost[ 'video_thumbnail_image' ] )
+			newSocialPost.total_likes = socialpost[ 'total_likes' ]
+			newSocialPost.total_shares = socialpost[ 'total_shares' ]
+			newSocialPost.endpoint = socialpost[ 'endpoint' ]
+			newSocialPost.date_of_publishing = socialpost[ 'date_of_publishing' ]
 
-				newSocialPosts_list.push({...newSocialPost})
-				newSocialPost = {}
-			});
-
-			return newSocialPosts_list
-		})
-
-		.then((newSocialPosts_list) => {
-
-			if (!newSocialPosts_list) {
-
-				res.status(401).json({ success: false, msg: "could not find SocialPosts_list" });
-
-			} else {
-
-				res.status(200).json(newSocialPosts_list);
-
-			}
-
-		})
-		.catch((err) => {
-
-			next(err);
-
+			newSocialPosts_list.push({...newSocialPost})
+			newSocialPost = {}
 		});
+
+		return newSocialPosts_list
+	})
+	.then((newSocialPosts_list) => {
+
+		if (!newSocialPosts_list) {
+
+			res.status(401).json({ success: false, msg: "could not find SocialPosts_list" });
+
+		} else {
+
+			res.status(200).json(newSocialPosts_list);
+
+		}
+
+	})
+	.catch((err) => {
+
+		next(err);
+
+	});
+
 });
 
 // get socialpost with children
@@ -544,10 +538,12 @@ router.get('/socialpost-with-children', function(req, res, next){
 
 	SocialPost.
 	findOne({endpoint:req.body.endpoint}).
+
 	populate('comments').
 	populate('likes').
 	populate('shares').
-	// populate('user').
+	populate('user').
+
 	exec(function (err, socialpost_with_children) {
 		if (err) return console.log(err);
 
@@ -561,77 +557,75 @@ router.get('/socialpost-with-children', function(req, res, next){
 
 router.get('/socialpost-with-summarized-children', function(req, res, next){
 	SocialPost.
-		findOne({endpoint:req.body.endpoint}).
+	findOne({endpoint:req.body.endpoint}).
+	populate('comments').
+	populate('likes').
+	populate('shares').
+	populate('user').
+	exec(function (err, blogpost_with_children) {
 
-		populate('comments').
-		populate('likes').
-		populate('shares').
-		// populate('user').
-
-		exec(function (err, blogpost_with_children) {
-
-			if (err) return console.log(err);
+		if (err) return console.log(err);
 
 
-			var current_comments = socialpost_with_children.comments
-			new_comments = []
+		var current_comments = socialpost_with_children.comments
+		new_comments = []
 
-			var current_likes = socialpost_with_children.likes
-			new_likes = []
+		var current_likes = socialpost_with_children.likes
+		new_likes = []
 
-			var current_shares = socialpost_with_children.shares
-			new_shares = []
+		var current_shares = socialpost_with_children.shares
+		new_shares = []
 
-			var current_user = socialpost_with_children.user
-			new_user = []
+		var current_user = socialpost_with_children.user
+		new_user = []
 
-			current_comments.map((comment, index)=>{
-				var newComment = {}
+		current_comments.map((comment, index)=>{
+			var newComment = {}
 
-	
-				newComment.comment_text = comment[ 'comment_text' ]
-				newComment.date_of_publishing = comment[ 'date_of_publishing' ]
 
-				new_comments.push({...newComment})
-				newComment = {}
-			});
+			newComment.comment_text = comment[ 'comment_text' ]
+			newComment.date_of_publishing = comment[ 'date_of_publishing' ]
 
-			socialpost_with_children.comments = new_comments
+			new_comments.push({...newComment})
+			newComment = {}
+		});
 
-			current_likes.map((like, index)=>{
-				var newLike = {}
+		socialpost_with_children.comments = new_comments
 
-	
+		current_likes.map((like, index)=>{
+			var newLike = {}
 
-				new_likes.push({...newLike})
-				newLike = {}
-			});
 
-			socialpost_with_children.likes = new_likes
 
-			current_shares.map((share, index)=>{
-				var newShare = {}
+			new_likes.push({...newLike})
+			newLike = {}
+		});
 
-	
+		socialpost_with_children.likes = new_likes
 
-				new_shares.push({...newShare})
-				newShare = {}
-			});
+		current_shares.map((share, index)=>{
+			var newShare = {}
 
-			socialpost_with_children.shares = new_shares
 
-			current_users.map((user, index)=>{
-				var newUser = {}
 
-	
-				newUser.phone_number = user[ 'phone_number' ]
-				newUser.user_name = user[ 'user_name' ]
+			new_shares.push({...newShare})
+			newShare = {}
+		});
 
-				new_users.push({...newUser})
-				newUser = {}
-			});
+		socialpost_with_children.shares = new_shares
 
-			socialpost_with_children.users = new_users
+		current_users.map((user, index)=>{
+			var newUser = {}
+
+
+			newUser.phone_number = user[ 'phone_number' ]
+			newUser.user_name = user[ 'user_name' ]
+
+			new_users.push({...newUser})
+			newUser = {}
+		});
+
+		socialpost_with_children.users = new_users
 
 		res.status(200).json(socialpost_with_children);
 
@@ -643,51 +637,50 @@ router.get('/socialpost-with-summarized-children', function(req, res, next){
 router.get('/socialposts-next-10-list', function(req, res, next){
 
 	SocialPost.
-		find().
-		limit(10).
-		skip(10).
-		then( 
-			(socialposts) => {
-				var newSocialPosts_list = []
-				socialposts.map((socialpost, index) => {
-					var newSocialPost = {}
-	
-					newSocialPost.type_of_post = socialpost[ 'type_of_post' ]
-					newSocialPost.author_name = socialpost[ 'author_name' ]
-					newSocialPost.author_image = base64_encode( socialpost[ 'author_image' ] )
-					newSocialPost.post_text = socialpost[ 'post_text' ]
-					newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] )
-					newSocialPost.video_for_post = socialpost[ 'video_for_post' ]
-					newSocialPost.video_thumbnail_image = base64_encode( socialpost[ 'video_thumbnail_image' ] )
-					newSocialPost.total_likes = socialpost[ 'total_likes' ]
-					newSocialPost.total_shares = socialpost[ 'total_shares' ]
-					newSocialPost.endpoint = socialpost[ 'endpoint' ]
+	find().
+	limit(10).
+	skip(10).
+	then( 
+		(socialposts) => {
+			var newSocialPosts_list = []
+			socialposts.map((socialpost, index) => {
+				var newSocialPost = {}
 
-					newSocialPosts_list.push({...newSocialPost})
-					newSocialPost = {}
-					})
+				newSocialPost.type_of_post = socialpost[ 'type_of_post' ]
+				newSocialPost.post_text = socialpost[ 'post_text' ]
+				newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] )
+				newSocialPost.video_for_post = socialpost[ 'video_for_post' ]
+				newSocialPost.video_thumbnail_image = base64_encode( socialpost[ 'video_thumbnail_image' ] )
+				newSocialPost.total_likes = socialpost[ 'total_likes' ]
+				newSocialPost.total_shares = socialpost[ 'total_shares' ]
+				newSocialPost.endpoint = socialpost[ 'endpoint' ]
+				newSocialPost.date_of_publishing = socialpost[ 'date_of_publishing' ]
+
+				newSocialPosts_list.push({...newSocialPost})
+				newSocialPost = {}
 			})
-
-			return newSocialPosts_list
-
-		.then((newSocialPosts_list) => {
-
-			if (!newSocialPosts_list) {
-
-				res.status(401).json({ success: false, msg: "could not find SocialPosts_list" });
-
-			} else {
-
-				res.status(200).json(newSocialPosts_list);
-
-			}
-
 		})
-		.catch((err) => {
 
-			next(err);
+		return newSocialPosts_list
+	.then((newSocialPosts_list) => {
 
-		});
+		if (!newSocialPosts_list) {
+
+			res.status(401).json({ success: false, msg: "could not find SocialPosts_list" });
+
+		} else {
+
+			res.status(200).json(newSocialPosts_list);
+
+		}
+
+	})
+	.catch((err) => {
+
+		next(err);
+
+	});
+
 });
 // create a comment for some socialpost
 router.post('/remove-comment-from-socialpost', function(req, res, next){
@@ -797,61 +790,6 @@ router.post('/remove-share-from-socialpost', function(req, res, next){
 
 // create User
 
-router.post('/create-user', function(req, res, next){
-
-	User.findOne({
-		phone_number: req.body.phone_number,
-		user_name: req.body.user_name,
-		user_name_in_profile: req.body.user_name_in_profile,
-		user_avatar_image: req.body.user_avatar_image,
-		user_cover_image: req.body.user_cover_image,
-		user_brief_intro: req.body.user_brief_intro,
-		user_about_me: req.body.user_about_me,
-		user_working_zone: req.body.user_working_zone,
-		user_education: req.body.user_education,
-		user_contact_details: req.body.user_contact_details,
-	})
-	.then((user) => {
-
-		if (!user) {
-
-
-			const newUser = new User({
-				_id: new mongoose.Types.ObjectId(),
-				phone_number: req.body.phone_number,
-				user_name: req.body.user_name,
-				user_name_in_profile: req.body.user_name_in_profile,
-				user_avatar_image: req.body.user_avatar_image,
-				user_cover_image: req.body.user_cover_image,
-				user_brief_intro: req.body.user_brief_intro,
-				user_about_me: req.body.user_about_me,
-				user_working_zone: req.body.user_working_zone,
-				user_education: req.body.user_education,
-				user_contact_details: req.body.user_contact_details,
-			});
-
-			newUser.save(function (err, newUser) {
-
-				if (err) return console.log(err);
-
-				res.status(200).json({success: true})
-				
-			})
-
-		} else {
-
-			res.status(401).json({ success: false, msg: "user already registered, try another or login" })
-
-		}
-
-	})
-	.catch((err) => {
-
-		console.log(err)
-		// next(err)
-
-	});
-})
 
 
 module.exports = router;

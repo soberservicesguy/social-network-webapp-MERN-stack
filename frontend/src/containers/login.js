@@ -141,7 +141,8 @@ class LoginContainer extends Component {
 
 
 	storeDataAtBackend(){
-		axios.post(utils.baseUrl + '/socialposts/create-user', 
+		console.log(this.state)
+		axios.post(utils.baseUrl + '/users/create-user', 
 			{
 				phone_number: this.state.phone_number,
 				user_name: this.state.user_name,

@@ -22,11 +22,20 @@ const UserSchema = new mongoose.Schema({
 	comments:[{ type: Schema.Types.ObjectId, ref: 'Comment'  }],
 	likes:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],
 	shares:[{ type: Schema.Types.ObjectId, ref: 'Share'  }],
+
 	total_socialposts:0,
 	total_comments:0,
 	total_likes:0,
 	total_shares:0,
 
+	friends: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
+	total_friends:0,
+
+	friend_requests: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
+	total_friend_requests:0,
+
+	activities: [{ type: Schema.Types.ObjectId, ref: 'Activity'  }], // creating post, liking, sharing, commmenting
+	total_activities: 0,
 })
 
 mongoose.model('User', UserSchema);
@@ -36,6 +45,10 @@ UserSchema.pre('save', function(next) {
 	this.total_comments = this.comments.length
 	this.total_likes = this.likes.length
 	this.total_shares = this.shares.length
+
+	this.total_friends = this.friends.length
+	this.total_friend_requests = this.friend_requests.length
+	this.total_activities = this.activities.length
 
     next();
 

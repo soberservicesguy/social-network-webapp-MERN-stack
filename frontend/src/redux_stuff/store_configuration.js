@@ -18,6 +18,8 @@ import {
 	reducerForLike,
 	reducerForShare,
 	reducerForUser,
+	reducerForAdvertisement,
+	reducerForPage,
 	reducerForBook,
 	reducerForSport,
 } from "./reducers"
@@ -28,6 +30,8 @@ export const rootReducer = combineReducers({
 	likes: reducerForLike,
 	shares: reducerForShare,
 	users: reducerForUser,
+	advertisements: reducerForAdvertisement,
+	pages: reducerForPage,
 	books: reducerForBook,
 	sports: reducerForSport,
 });
@@ -40,6 +44,7 @@ export const mapStateToProps = state => {
 
 	userToken: state.users.userToken,
 	isSignedIn: state.users.isSignedIn,
+
 	phone_number: state.users.phone_number,
 	user_name: state.users.user_name,
 	// user_name_in_profile: state.users.user_name_in_profile,
@@ -50,6 +55,12 @@ export const mapStateToProps = state => {
 	// user_working_zone: state.users.user_working_zone,
 	// user_education: state.users.user_education,
 	// user_contact_details: state.users.user_contact_details,
+
+	total_advertisements: state.advertisements.totalAdvertisement,
+	current_advertisement: state.advertisements.currentAdvertisement,
+
+	total_pages: state.pages.totalPage,
+	current_page: state.pages.currentPage,
 
 	total_books: state.books.totalBook,
 	current_book: state.books.currentBook,
@@ -80,6 +91,7 @@ export const mapDispatchToProps = dispatch => {
 		remove_phone_number: () => dispatch( { type: "REMOVE_PHONE_NUMBER" } ),
 		set_user_name: (user_name) => dispatch( { type: "SET_USER_NAME", user_name: user_name} ),
 		remove_user_name: () => dispatch( { type: "REMOVE_USER_NAME" } ),
+
 		// set_user_name_in_profile: (user_name_in_profile) => dispatch( { type: "SET_USER_NAME_IN_PROFILE", user_name_in_profile: user_name_in_profile} ),
 		// remove_user_name_in_profile: () => dispatch( { type: "REMOVE_USER_NAME_IN_PROFILE" } ),
 		// set_user_avatar_image: (user_avatar_image) => dispatch( { type: "SET_USER_AVATAR_IMAGE", user_avatar_image: user_avatar_image} ),
@@ -96,6 +108,16 @@ export const mapDispatchToProps = dispatch => {
 		// remove_user_education: () => dispatch( { type: "REMOVE_USER_EDUCATION" } ),
 		// set_user_contact_details: (user_contact_details) => dispatch( { type: "SET_USER_CONTACT_DETAILS", user_contact_details: user_contact_details} ),
 		// remove_user_contact_details: () => dispatch( { type: "REMOVE_USER_CONTACT_DETAILS" } ),
+
+		set_current_advertisement: (current_advertisement) => dispatch( { type: "SET_CURRENT_ADVERTISEMENT", current_advertisement:current_advertisement } ),
+		set_fetched_advertisements: (advertisement_list) => dispatch( { type: "SET_FETCHED_ADVERTISEMENT", advertisement_list: advertisement_list } ),
+		set_fetched_10_more_advertisement: (advertisement_list) => dispatch( { type: "SET_FETCHED_10_MORE_ADVERTISEMENT", advertisement_list: advertisement_list } ),
+
+
+		set_current_page: (current_page) => dispatch( { type: "SET_CURRENT_PAGE", current_page:current_page } ),
+		set_fetched_pages: (page_list) => dispatch( { type: "SET_FETCHED_PAGE", page_list: page_list } ),
+		set_fetched_10_more_page: (page_list) => dispatch( { type: "SET_FETCHED_10_MORE_PAGE", page_list: page_list } ),
+
 
 		set_current_book: (current_book) => dispatch( { type: "SET_CURRENT_BOOK", current_book:current_book } ),
 		set_fetched_books: (book_list) => dispatch( { type: "SET_FETCHED_BOOK", book_list: book_list } ),
@@ -119,6 +141,10 @@ const persistConfig = {
 	blacklist: [
 		'total_socialposts',
 		'current_socialpost',
+		'total_advertisements',
+		'current_advertisement',
+		'total_pages',
+		'current_page',
 		'total_books',
 		'current_book',
 		'total_sports',

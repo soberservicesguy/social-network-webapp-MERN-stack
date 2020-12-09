@@ -21,11 +21,12 @@ require('./config/database');
 require('./models/user');
 require('./models/push_user');
 		
-require('./models/sport');
+// require('./models/sport');
 
 // Must first load the models
-require('./models/user');
-require('./models/push_user');
+
+// require('./models/user');
+// require('./models/push_user');
 		
 // Pass the global passport object into the configuration function
 require('./config/passport')(passport);
@@ -40,7 +41,7 @@ app.use(express.urlencoded({extended: true}));
 // setting up cors
 app.use(
   cors({
-    origin: "http://localhost:3001", // restrict calls to those this address
+    origin: "http://localhost:3000", // restrict calls to those this address
     methods: ['GET', 'POST'] // only allow GET, POST requests
   })
 );

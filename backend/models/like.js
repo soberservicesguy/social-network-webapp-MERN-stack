@@ -5,12 +5,11 @@ const Schema = mongoose.Schema;
 const LikeSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
-
+	user:{ type: Schema.Types.ObjectId, ref: 'User'  },
 
 // other model links
 	socialpost:{ type: Schema.Types.ObjectId, ref: 'SocialPost'  },
-	user:{ type: Schema.Types.ObjectId, ref: 'User'  },
-	// total_socialpost:0,
+	page: { type: Schema.Types.ObjectId, ref: 'Page'  },
 
 })
 

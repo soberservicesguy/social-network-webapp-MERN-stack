@@ -5,14 +5,14 @@ const initialState = {
 
 	phone_number:'dummy',
 	user_name:'dummy',
-	user_name_in_profile:'dummy',
-	user_avatar_image:'dummy',
-	user_cover_image:'dummy',
-	user_brief_intro:'dummy',
-	user_about_me:'dummy',
-	user_working_zone:'dummy',
-	user_education:'dummy',
-	user_contact_details:'dummy',
+	// user_name_in_profile:'dummy',
+	// user_avatar_image:'dummy',
+	// user_cover_image:'dummy',
+	// user_brief_intro:'dummy',
+	// user_about_me:'dummy',
+	// user_working_zone:'dummy',
+	// user_education:'dummy',
+	// user_contact_details:'dummy',
 }
 
 const reducerForUser = (state = initialState, action) => {
@@ -49,85 +49,85 @@ const reducerForUser = (state = initialState, action) => {
 			return {...state, user_name: null}
 			break;
 
-		case "SET_USER_NAME_IN_PROFILE":
+		// case "SET_USER_NAME_IN_PROFILE":
 
-			return {...state, user_name_in_profile: action.user_name_in_profile}
-			break;
+		// 	return {...state, user_name_in_profile: action.user_name_in_profile}
+		// 	break;
 
-		case "REMOVE_USER_NAME_IN_PROFILE":
+		// case "REMOVE_USER_NAME_IN_PROFILE":
 
-			return {...state, user_name_in_profile: null}
-			break;
+		// 	return {...state, user_name_in_profile: null}
+		// 	break;
 
-		case "SET_USER_AVATAR_IMAGE":
+		// case "SET_USER_AVATAR_IMAGE":
 
-			return {...state, user_avatar_image: action.user_avatar_image}
-			break;
+		// 	return {...state, user_avatar_image: action.user_avatar_image}
+		// 	break;
 
-		case "REMOVE_USER_AVATAR_IMAGE":
+		// case "REMOVE_USER_AVATAR_IMAGE":
 
-			return {...state, user_avatar_image: null}
-			break;
+		// 	return {...state, user_avatar_image: null}
+		// 	break;
 
-		case "SET_USER_COVER_IMAGE":
+		// case "SET_USER_COVER_IMAGE":
 
-			return {...state, user_cover_image: action.user_cover_image}
-			break;
+		// 	return {...state, user_cover_image: action.user_cover_image}
+		// 	break;
 
-		case "REMOVE_USER_COVER_IMAGE":
+		// case "REMOVE_USER_COVER_IMAGE":
 
-			return {...state, user_cover_image: null}
-			break;
+		// 	return {...state, user_cover_image: null}
+		// 	break;
 
-		case "SET_USER_BRIEF_INTRO":
+		// case "SET_USER_BRIEF_INTRO":
 
-			return {...state, user_brief_intro: action.user_brief_intro}
-			break;
+		// 	return {...state, user_brief_intro: action.user_brief_intro}
+		// 	break;
 
-		case "REMOVE_USER_BRIEF_INTRO":
+		// case "REMOVE_USER_BRIEF_INTRO":
 
-			return {...state, user_brief_intro: null}
-			break;
+		// 	return {...state, user_brief_intro: null}
+		// 	break;
 
-		case "SET_USER_ABOUT_ME":
+		// case "SET_USER_ABOUT_ME":
 
-			return {...state, user_about_me: action.user_about_me}
-			break;
+		// 	return {...state, user_about_me: action.user_about_me}
+		// 	break;
 
-		case "REMOVE_USER_ABOUT_ME":
+		// case "REMOVE_USER_ABOUT_ME":
 
-			return {...state, user_about_me: null}
-			break;
+		// 	return {...state, user_about_me: null}
+		// 	break;
 
-		case "SET_USER_WORKING_ZONE":
+		// case "SET_USER_WORKING_ZONE":
 
-			return {...state, user_working_zone: action.user_working_zone}
-			break;
+		// 	return {...state, user_working_zone: action.user_working_zone}
+		// 	break;
 
-		case "REMOVE_USER_WORKING_ZONE":
+		// case "REMOVE_USER_WORKING_ZONE":
 
-			return {...state, user_working_zone: null}
-			break;
+		// 	return {...state, user_working_zone: null}
+		// 	break;
 
-		case "SET_USER_EDUCATION":
+		// case "SET_USER_EDUCATION":
 
-			return {...state, user_education: action.user_education}
-			break;
+		// 	return {...state, user_education: action.user_education}
+		// 	break;
 
-		case "REMOVE_USER_EDUCATION":
+		// case "REMOVE_USER_EDUCATION":
 
-			return {...state, user_education: null}
-			break;
+		// 	return {...state, user_education: null}
+		// 	break;
 
-		case "SET_USER_CONTACT_DETAILS":
+		// case "SET_USER_CONTACT_DETAILS":
 
-			return {...state, user_contact_details: action.user_contact_details}
-			break;
+		// 	return {...state, user_contact_details: action.user_contact_details}
+		// 	break;
 
-		case "REMOVE_USER_CONTACT_DETAILS":
+		// case "REMOVE_USER_CONTACT_DETAILS":
 
-			return {...state, user_contact_details: null}
-			break;
+		// 	return {...state, user_contact_details: null}
+		// 	break;
 
 		default:
 

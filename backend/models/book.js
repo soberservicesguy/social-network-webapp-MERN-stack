@@ -13,6 +13,7 @@ const BookSchema = new mongoose.Schema({
 
 // other model links
 	interested_users: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
+
 })
 
 mongoose.model('Book', BookSchema);

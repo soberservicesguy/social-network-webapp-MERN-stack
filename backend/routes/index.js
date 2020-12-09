@@ -7,6 +7,8 @@ router.use('/paypal_payments', require('./paypal_payments'));
 router.use('/stripe_payments', require('./stripe_payments'));
 
 router.use('/socialposts', require('./socialposts'));
+router.use('/advertisements', require('./advertisements'));
+router.use('/pages', require('./pages'));
 router.use('/books', require('./books'));
 router.use('/sports', require('./sports'));
 module.exports = router;

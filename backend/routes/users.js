@@ -10,6 +10,10 @@ const User = mongoose.model('User');
 const passport = require('passport');
 const utils = require('../lib/utils');
 
+require('../models/user');
+const base64_encode = require('../lib/image_to_base64')
+
+
 router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     res.status(200).json({ success: true, msg: "You are successfully authenticated to this route!"});
 });
@@ -72,5 +76,63 @@ router.post('/register', function(req, res, next){
     }
 
 });
+
+router.post('/create-user', function(req, res, next){
+    console.log('triggered create-user')
+
+    User.findOne({
+        phone_number: req.body.phone_number,
+        user_name: req.body.user_name,
+        // user_name_in_profile: req.body.user_name_in_profile,
+        // user_avatar_image: req.body.user_avatar_image,
+        // user_cover_image: req.body.user_cover_image,
+        // user_brief_intro: req.body.user_brief_intro,
+        // user_about_me: req.body.user_about_me,
+        // user_working_zone: req.body.user_working_zone,
+        // user_education: req.body.user_education,
+        // user_contact_details: req.body.user_contact_details,
+    })
+    .then((user) => {
+
+        if (!user) {
+
+
+            const newUser = new User({
+                _id: new mongoose.Types.ObjectId(),
+                phone_number: req.body.phone_number,
+                user_name: req.body.user_name,
+                user_name_in_profile: req.body.user_name_in_profile,
+                user_avatar_image: req.body.user_avatar_image,
+                user_cover_image: req.body.user_cover_image,
+                user_brief_intro: req.body.user_brief_intro,
+                user_about_me: req.body.user_about_me,
+                user_working_zone: req.body.user_working_zone,
+                user_education: req.body.user_education,
+                user_contact_details: req.body.user_contact_details,
+            });
+
+            newUser.save(function (err, newUser) {
+
+                if (err) return console.log(err);
+
+                res.status(200).json({success: true})
+                
+            })
+
+        } else {
+
+            res.status(401).json({ success: false, msg: "user already registered, try another or login" })
+
+        }
+
+    })
+    .catch((err) => {
+
+        console.log(err)
+        // next(err)
+
+    });
+})
+
 
 module.exports = router;

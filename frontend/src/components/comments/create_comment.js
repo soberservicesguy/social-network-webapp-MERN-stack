@@ -139,14 +139,14 @@ class CreateComment extends Component {
 
 								phone_number: this.props.phone_number,
 								user_name: this.props.user_name,
-								user_name_in_profile: this.props.user_name_in_profile,
-								user_avatar_image: this.props.user_avatar_image,
-								user_cover_image: this.props.user_cover_image,
-								user_brief_intro: this.props.user_brief_intro,
-								user_about_me: this.props.user_about_me,
-								user_working_zone: this.props.user_working_zone,
-								user_education: this.props.user_education,
-								user_contact_details: this.props.user_contact_details,
+								// user_name_in_profile: this.props.user_name_in_profile,
+								// user_avatar_image: this.props.user_avatar_image,
+								// user_cover_image: this.props.user_cover_image,
+								// user_brief_intro: this.props.user_brief_intro,
+								// user_about_me: this.props.user_about_me,
+								// user_working_zone: this.props.user_working_zone,
+								// user_education: this.props.user_education,
+								// user_contact_details: this.props.user_contact_details,
 							}
 
 							// 3rd create parent object								
