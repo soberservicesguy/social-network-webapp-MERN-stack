@@ -1,11 +1,15 @@
-require('../models/socialpost');
-require('../models/comment');
-require('../models/like');
-require('../models/share');
-require('../models/user');
+require('../../models/socialpost');
+require('../../models/comment');
+require('../../models/like');
+require('../../models/share');
+require('../../models/user');
+
+const passport = require('passport');
+const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
+const { isAllowedCreatingPosts } = require('../authMiddleware/isAllowedCreatingPosts')
 
 
-const base64_encode = require('../lib/image_to_base64')
+const base64_encode = require('../../lib/image_to_base64')
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const SocialPost = mongoose.model('SocialPost');
@@ -13,6 +17,296 @@ const Comment = mongoose.model('Comment');
 const Like = mongoose.model('Like');
 const Share = mongoose.model('Share');
 const User = mongoose.model('User');
+
+
+const multer = require('multer');
+const path = require('path')
+
+
+
+
+// Set The Storage Engine
+const image_and_video_storage = multer.diskStorage({
+	destination:function(req, file, cb){
+		// let file_path = `./uploads/${type}`;
+		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
+		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
+
+		if (file.fieldname === "image_upload") {
+
+			let file_path = path.join(__dirname , '../../assets/images/uploads/social_images')
+			cb(null, file_path)	
+
+		} else {
+			
+			let file_path = path.join(__dirname , `../../assets/images/uploads/social_videos`)
+			cb(null, file_path)	
+
+		}
+
+	},
+	filename: function(req, file, cb){
+		// file name pattern fieldname-currentDate-fileformat
+		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+
+		filename_used_to_store_image_in_assets = file.originalname
+		cb(null, file.originalname);
+
+	}
+});
+
+// Check File Type
+function checkFileTypeForImageAndVideo(file, cb){
+	// Allowed ext
+	let filetypes_for_image = /jpeg|jpg|png|gif/
+	// let filetypes_for_video = /xlsx|xls/
+	let filetypes_for_video = /mp4|mov|avi|flv/;
+
+	// Check ext
+	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
+	let extname_for_video = filetypes_for_video.test( path.extname(file.originalname).toLowerCase() );
+
+	// Check mime
+	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
+	let mimetype_for_video = filetypes_for_video.test( file.mimetype );
+
+	if (file.fieldname === "image_upload") { // if uploading resume
+		
+		if (mimetype_for_image && extname_for_image) {
+			cb(null, true);
+		} else {
+			cb('Error: jpeg, jpg, png, gif Images Only!');
+		}
+
+	} else { // else uploading images
+
+		if (mimetype_for_video && extname_for_video) {
+			cb(null, true);
+		} else {
+			cb('Error: mp4, mov, avi, flv Videos Only!');
+		}
+
+	}
+
+}
+
+// Init Upload
+const upload_image_or_video_in_social_post = multer({
+	storage: image_and_video_storage,
+	limits:{fileSize: 200000000}, // 1 mb
+	fileFilter: function(req, file, cb){
+		checkFileTypeForImageAndExcelSheet(file, cb);
+	}
+}).fields([
+	{ name: 'image_upload', maxCount: 1 }, 
+	{ name: 'video_upload', maxCount: 1 }
+])  // these are the fields that will be dealt
+// .single('blogpost_image_main'); 
+// .array('photos', 12)
+
+
+
+
+// create blogpost with undefined
+// USED IN CREATING BLOGPOST
+router.post('/create-socialpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedCreatingPosts, function(req, res, next){
+	
+	// console.log('OUTER LOG')
+	// console.log(req.body)
+
+	upload_image_or_video_in_social_post(req, res, (err) => {
+		if(err){
+
+			console.log(err)
+
+		} else {
+
+			if(req.file == undefined){
+
+				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
+
+			} else {
+				// console.log('INNER LOG')
+				// console.log(req.body)
+
+			// image is uploaded , now saving image in db
+			// check whether image uploaded or video through their fields
+			
+			
+				if ( req.files['image_upload'][0] ){
+
+					if (req.body.parent.post_text ){
+
+						const newSocialPost = new SocialPost({
+
+							_id: new mongoose.Types.ObjectId(),
+							type_of_post: 'text_with_image_post',
+							post_text: req.body.parent.post_text,
+							image_for_post: `../../assets/images/uploads/social_images/${req.files['image_upload'][0].filename}`,
+							// video_for_post: req.body.parent.video_for_post,
+							// video_thumbnail_image: req.body.parent.video_thumbnail_image,
+							// endpoint: req.body.parent.endpoint,
+							// timestamp: req.body.parent.timestamp,
+
+						});
+
+					} else {
+
+						const newSocialPost = new SocialPost({
+
+							_id: new mongoose.Types.ObjectId(),
+							type_of_post: 'image_post',
+							// post_text: req.body.parent.post_text,
+							image_for_post: `../../assets/images/uploads/social_images/${req.files['image_upload'][0].filename}`,
+							// video_for_post: req.body.parent.video_for_post,
+							// video_thumbnail_image: req.body.parent.video_thumbnail_image,
+							// endpoint: req.body.parent.endpoint,
+							// timestamp: req.body.parent.timestamp,
+
+						});
+
+					}
+
+
+
+				} else if ( req.files['video_upload'][0] ){
+
+					if ( req.body.parent.post_text ){
+
+						var video_id = ''
+					// video is uploaded , NOW creating thumbnail from video using snapshot
+		 				ffmpeg(`./assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`)
+						.on('end', function() {
+							console.log('Screenshots taken');
+						})
+						.on('error', function(err) {
+							console.error(err);
+						})
+						.on('filenames', function(filenames) {
+							console.log('screenshots are ' + filenames.join(', '));
+						})
+						.screenshots({
+							count: 4,
+							filenames: [
+								`${filename_used_to_store_video_in_assets_without_format}1.png`, 
+								`${filename_used_to_store_video_in_assets_without_format}2.png`, 
+								`${filename_used_to_store_video_in_assets_without_format}3.png`, 
+								`${filename_used_to_store_video_in_assets_without_format}4.png`,
+							],
+							size: '150x100', 
+							folder: './assets/videos/uploads/upload_thumbnails/',
+						})
+
+					// saving video in DB
+						video_id = new mongoose.Types.ObjectId()
+
+						const newSocialPost = new SocialPost({
+
+							_id: new mongoose.Types.ObjectId(),
+							type_of_post: 'text_with_video_post',
+							post_text: req.body.parent.post_text,
+							// image_for_post: req.body.parent.image_for_post,
+							video_for_post: `../../assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`,
+							video_thumbnail_image: req.body.parent.video_thumbnail_image,
+						});
+
+					} else {
+
+						const newSocialPost = new SocialPost({
+
+							_id: new mongoose.Types.ObjectId(),
+							type_of_post: 'video_post',
+							// post_text: req.body.parent.post_text,
+							// image_for_post: req.body.parent.image_for_post,
+							video_for_post: `../../assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`,
+							video_thumbnail_image: req.body.parent.video_thumbnail_image,
+						});
+
+					}
+
+				} else {
+
+					const newSocialPost = new SocialPost({
+
+						_id: new mongoose.Types.ObjectId(),
+						type_of_post: 'text_post',
+						post_text: req.body.parent.post_text,
+						// image_for_post: req.body.parent.image_for_post,
+						// video_for_post: req.body.parent.video_for_post,
+						// video_thumbnail_image: req.body.parent.video_thumbnail_image,
+
+					});
+
+				}
+
+
+				newBlogPost.save(function (err, newBlogPost) {
+
+					if (err){
+						res.status(404).json({ success: false, msg: 'couldnt create blogpost database entry'})
+						return console.log(err)
+					}
+					// assign user object then save
+					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+					.then((user) => {
+						if (user){
+
+							newBlogPost.user = user
+							newBlogPost.save()
+
+
+							// in response sending new image too with base64 encoding
+							let base64_encoded_image = base64_encode(newBlogPost.image_thumbnail_filepath)
+
+							let new_blogpost = {
+								title: newBlogPost.title,
+								image_thumbnail_filepath: base64_encoded_image,
+								initial_tags: newBlogPost.initial_tags,
+								first_para: newBlogPost.first_para,
+								second_para: newBlogPost.second_para,
+								third_para: newBlogPost.third_para,
+								fourth_para: newBlogPost.fourth_para,
+								all_tags: newBlogPost.all_tags,
+							}
+
+							res.status(200).json({ success: true, msg: 'new user saved', new_blogpost: new_blogpost});	
+
+						} else {
+
+							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+
+						}
+					})
+					.catch((err) => {
+
+						next(err);
+
+					});
+
+				})
+
+				// not needed, this is used only in multer
+				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
+			}
+		}
+	})
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // create a new socialpost with children
 

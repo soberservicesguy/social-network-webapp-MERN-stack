@@ -8,10 +8,10 @@ const mongoose = require('mongoose');
 const router = require('express').Router();   
 const User = mongoose.model('User');
 const passport = require('passport');
-const utils = require('../lib/utils');
+const utils = require('../../lib/utils');
 
-require('../models/user');
-const base64_encode = require('../lib/image_to_base64')
+require('../../models/user');
+const base64_encode = require('../../lib/image_to_base64')
 
 
 router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res, next) => {

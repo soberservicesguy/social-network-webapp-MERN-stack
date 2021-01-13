@@ -1,7 +1,7 @@
-require('../models/sport');
+require('../../models/sport');
 
 
-const base64_encode = require('../lib/image_to_base64')
+const base64_encode = require('../../lib/image_to_base64')
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const Sport = mongoose.model('Sport');

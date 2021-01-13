@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+var endpoint_number = 393893
+
 const ActivitySchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
 	user: { type: Schema.Types.ObjectId, ref: 'User'},
-	activity_type: String, // created post, liked, shared, commented, sent request, accepted request, 
+	activity_type: { type:String, enum:['created_post', 'liked', 'shared', 'commented', 'sent_request', 'accepted_request'] },
 //
 	post_created: { type: Schema.Types.ObjectId, ref: 'Social_Post'},
 	post_liked: { type: Schema.Types.ObjectId, ref: 'Like'},
@@ -15,12 +17,28 @@ const ActivitySchema = new mongoose.Schema({
 	sent_friend_request: { type: Schema.Types.ObjectId, ref: 'User'},
 	accepted_friend_request: { type: Schema.Types.ObjectId, ref: 'User'},
 
+	endpoint:String,
+	timestamp:String,
+
 })
 
-mongoose.model('Activity', ActivitySchema);
+ActivitySchema.pre('save', function(next) {
+
+	endpoint_number += 1
+
+	this.endpoint = String( endpoint_number )
+	this.timestamp = String( Date.now() )
 	
-// ActivitySchema.pre('save', function(next) {
+    next();
 
-//     next();
+});
 
-// });
+ActivitySchema.post('save', function() {
+
+	// console.log('SAVED CONDITION')
+    // console.log(this)
+
+});
+
+
+mongoose.model('Activity', ActivitySchema);

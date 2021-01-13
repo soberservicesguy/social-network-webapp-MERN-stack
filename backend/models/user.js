@@ -1,10 +1,14 @@
-
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
+var endpoint_number = 393893
 
 const UserSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
+	hash:String,
+	salt:String,
+	isLoggedIn: Boolean,
 
 	phone_number:String,
 	user_name:String,
@@ -22,11 +26,14 @@ const UserSchema = new mongoose.Schema({
 	comments:[{ type: Schema.Types.ObjectId, ref: 'Comment'  }],
 	likes:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],
 	shares:[{ type: Schema.Types.ObjectId, ref: 'Share'  }],
+	
+	privileges: [{ type: Schema.Types.ObjectId, ref: 'Privilege'  }],
 
 	total_socialposts:0,
 	total_comments:0,
 	total_likes:0,
 	total_shares:0,
+	total_privileges:0,
 
 	friends: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
 	total_friends:0,
@@ -36,9 +43,13 @@ const UserSchema = new mongoose.Schema({
 
 	activities: [{ type: Schema.Types.ObjectId, ref: 'Activity'  }], // creating post, liking, sharing, commmenting
 	total_activities: 0,
+
+	endpoint:String,
+	timestamp:String,
+
+
 })
 
-mongoose.model('User', UserSchema);
 	
 UserSchema.pre('save', function(next) {
 	this.total_socialposts = this.socialposts.length
@@ -50,6 +61,22 @@ UserSchema.pre('save', function(next) {
 	this.total_friend_requests = this.friend_requests.length
 	this.total_activities = this.activities.length
 
+	this.total_privileges = this.privileges.length
+
+	endpoint_number += 1
+
+	this.endpoint = String( endpoint_number )
+	this.timestamp = String( Date.now() )
+
     next();
 
 });
+
+UserSchema.post('save', function() {
+
+	// console.log('SAVED CONDITION')
+    // console.log(this)
+
+});
+
+mongoose.model('User', UserSchema);
