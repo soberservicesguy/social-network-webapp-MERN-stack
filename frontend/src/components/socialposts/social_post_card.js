@@ -25,7 +25,7 @@ import {
 } from "../comments/"
 
 import {
-	ConnectedCreateComment,
+	ConnectedCreateCommentForSocialpost,
 } from "../../redux_stuff/connected_components"
 
 
@@ -35,7 +35,7 @@ import {
 } from "../likes/"
 
 import {
-	ConnectedCreateLike,
+	ConnectedCreateLikeForSocialpost,
 } from "../../redux_stuff/connected_components"
 
 
@@ -45,7 +45,7 @@ import {
 } from "../shares/"
 
 import {
-	ConnectedCreateShare,
+	ConnectedCreateShareForSocialpost,
 } from "../../redux_stuff/connected_components"
 
 
@@ -227,13 +227,13 @@ class SocialPostCard extends Component {
 
 				<div>
 					{/* 4th create individual child options like comment / like */}					
-					<ConnectedCreateComment
+					<ConnectedCreateCommentForSocialpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
 					/>					
-					<ConnectedCreateLike
+					<ConnectedCreateLikeForSocialpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
 					/>					
-					<ConnectedCreateShare
+					<ConnectedCreateShareForSocialpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
 					/>
 				</div>

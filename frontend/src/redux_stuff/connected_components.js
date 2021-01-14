@@ -52,15 +52,18 @@ import {
 } from "../components/sports"
 
 import {
-	CreateComment,
+	CreateCommentForSocialpost,
 } from "../components/comments"
 
 import {
-	CreateLike,
+	CreateLikeForSocialpost,
+	CreateLikeForSport,
+	CreateLikeForBook,
+	CreateLikeForPage,	
 } from "../components/likes"
 
 import {
-	CreateShare,
+	CreateShareForSocialpost,
 } from "../components/shares"
 
 export const ConnectedRootRouterContainer = connect(
@@ -89,20 +92,36 @@ export const ConnectedComponentForShowingSocialPost = connect(
 	mapDispatchToProps
 )(ComponentForShowingSocialPost);
 
-export const ConnectedCreateComment = connect(
+export const ConnectedCreateCommentForSocialpost = connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(CreateComment);
+)(CreateCommentForSocialpost);
 
-export const ConnectedCreateLike = connect(
+export const ConnectedCreateLikeForSocialpost = connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(CreateLike);
+)(CreateLikeForSocialpost);
 
-export const ConnectedCreateShare = connect(
+export const ConnectedCreateLikeForSport = connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(CreateShare);
+)(CreateLikeForSport);
+
+export const ConnectedCreateLikeForBook = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CreateLikeForBook);
+
+export const ConnectedCreateLikeForPage = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CreateLikeForPage);
+
+
+export const ConnectedCreateShareForSocialpost = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CreateShareForSocialpost);
 
 export const ConnectedCreateAdvertisement = connect(
 	mapStateToProps,

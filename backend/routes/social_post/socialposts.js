@@ -7,6 +7,7 @@ require('../../models/user');
 const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
 const { isAllowedCreatingPosts } = require('../authMiddleware/isAllowedCreatingPosts')
+const { isAllowedInteractingWithOthersPosts } = require('../authMiddleware/isAllowedInteractingWithOthersPosts')
 
 
 const base64_encode = require('../../lib/image_to_base64')
@@ -22,8 +23,11 @@ const User = mongoose.model('User');
 const multer = require('multer');
 const path = require('path')
 
+var ffmpeg = require('fluent-ffmpeg') // for setting thumbnail of video upload using snapshot
 
-
+const images_upload_path = path.join(__dirname , '../../assets/images/uploads/social_images')
+const video_upload_path = path.join(__dirname , `../../assets/videos/uploads/social_videos`)
+const video_image_thumbnail_path = path.join(__dirname , `../../assets/videos/uploads/thumbnails_for_social_videos`)
 
 // Set The Storage Engine
 const image_and_video_storage = multer.diskStorage({
@@ -34,12 +38,12 @@ const image_and_video_storage = multer.diskStorage({
 
 		if (file.fieldname === "image_upload") {
 
-			let file_path = path.join(__dirname , '../../assets/images/uploads/social_images')
+			let file_path = images_upload_path
 			cb(null, file_path)	
 
 		} else {
 			
-			let file_path = path.join(__dirname , `../../assets/images/uploads/social_videos`)
+			let file_path = video_upload_path
 			cb(null, file_path)	
 
 		}
@@ -105,7 +109,31 @@ const upload_image_or_video_in_social_post = multer({
 // .single('blogpost_image_main'); 
 // .array('photos', 12)
 
-
+function create_snapshots_from_uploaded_video(video_file, snapshot_name){
+// video is uploaded , NOW creating thumbnail from video using snapshot
+	ffmpeg(video_file)
+	.on('end', function() {
+		console.log('Screenshots taken');
+	})
+	.on('error', function(err) {
+		console.error(err);
+	})
+	.on('filenames', function(filenames) {
+		console.log('screenshots are ' + filenames.join(', '));
+	})
+	.screenshots({
+		count: 4,
+		filenames: [
+			`${snapshot_name}1.png`, 
+			`${snapshot_name}2.png`, 
+			`${snapshot_name}3.png`, 
+			`${snapshot_name}4.png`,
+		],
+		size: '150x100', 
+		// folder: './assets/videos/uploads/upload_thumbnails/',
+		folder: video_image_thumbnail_path,
+	})
+}
 
 
 // create blogpost with undefined
@@ -114,6 +142,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 	
 	// console.log('OUTER LOG')
 	// console.log(req.body)
+	const social_post_id = ''
+	const social_post_type = ''
 
 	upload_image_or_video_in_social_post(req, res, (err) => {
 		if(err){
@@ -133,118 +163,177 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 			// image is uploaded , now saving image in db
 			// check whether image uploaded or video through their fields
 			
-			
-				if ( req.files['image_upload'][0] ){
+				social_post_id = new mongoose.Types.ObjectId()
+				let image_path = ''
+				let video_path = ''
 
-					if (req.body.parent.post_text ){
+				if (req.files['image_upload'][0] && req.body.parent.post_text){
 
-						const newSocialPost = new SocialPost({
+					social_post_type = 'text_with_image_post'
+					image_path = path.join(image_upload_path, `${req.files['image_upload'][0].filename}`)
+					const newSocialPost = new SocialPost({
+						_id: social_post_id,
+						type_of_post: social_post_type,
+						post_text: req.body.parent.post_text,
+						image_for_post: image_path,
+					});
 
-							_id: new mongoose.Types.ObjectId(),
-							type_of_post: 'text_with_image_post',
-							post_text: req.body.parent.post_text,
-							image_for_post: `../../assets/images/uploads/social_images/${req.files['image_upload'][0].filename}`,
-							// video_for_post: req.body.parent.video_for_post,
-							// video_thumbnail_image: req.body.parent.video_thumbnail_image,
-							// endpoint: req.body.parent.endpoint,
-							// timestamp: req.body.parent.timestamp,
+				} else if (req.files['image_upload'][0] && !req.body.parent.post_text){
 
-						});
+					social_post_type = 'image_post'
+					image_path = path.join(image_upload_path, `${req.files['image_upload'][0].filename}`)
+					const newSocialPost = new SocialPost({
 
-					} else {
+						_id: social_post_id,
+						type_of_post: social_post_type,
+						image_for_post: image_path,
+					});
 
-						const newSocialPost = new SocialPost({
+				} else if (req.files['video_upload'][0] && req.body.parent.post_text){
 
-							_id: new mongoose.Types.ObjectId(),
-							type_of_post: 'image_post',
-							// post_text: req.body.parent.post_text,
-							image_for_post: `../../assets/images/uploads/social_images/${req.files['image_upload'][0].filename}`,
-							// video_for_post: req.body.parent.video_for_post,
-							// video_thumbnail_image: req.body.parent.video_thumbnail_image,
-							// endpoint: req.body.parent.endpoint,
-							// timestamp: req.body.parent.timestamp,
+					video_path = path.join(video_upload_path, `${req.files['video_upload'][0].filename}`)
+					create_snapshots_from_uploaded_video(video_file_path, filename_used_to_store_video_in_assets_without_format)
+					social_post_type = 'text_with_video_post'
 
-						});
+					const newSocialPost = new SocialPost({
+						_id: social_post_id,
+						type_of_post: social_post_type,
+						post_text: req.body.parent.post_text,
+						video_for_post: video_path,
+						video_thumbnail_image: filename_used_to_store_video_in_assets_without_format,
+					});
 
-					}
+				} else if (req.files['video_upload'][0] && !req.body.parent.post_text){
+					
+					video_path = path.join(video_upload_path, `${req.files['video_upload'][0].filename}`)
+					create_snapshots_from_uploaded_video(video_file_path, filename_used_to_store_video_in_assets_without_format)
+					social_post_type = 'video_post'
 
-
-
-				} else if ( req.files['video_upload'][0] ){
-
-					if ( req.body.parent.post_text ){
-
-						var video_id = ''
-					// video is uploaded , NOW creating thumbnail from video using snapshot
-		 				ffmpeg(`./assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`)
-						.on('end', function() {
-							console.log('Screenshots taken');
-						})
-						.on('error', function(err) {
-							console.error(err);
-						})
-						.on('filenames', function(filenames) {
-							console.log('screenshots are ' + filenames.join(', '));
-						})
-						.screenshots({
-							count: 4,
-							filenames: [
-								`${filename_used_to_store_video_in_assets_without_format}1.png`, 
-								`${filename_used_to_store_video_in_assets_without_format}2.png`, 
-								`${filename_used_to_store_video_in_assets_without_format}3.png`, 
-								`${filename_used_to_store_video_in_assets_without_format}4.png`,
-							],
-							size: '150x100', 
-							folder: './assets/videos/uploads/upload_thumbnails/',
-						})
-
-					// saving video in DB
-						video_id = new mongoose.Types.ObjectId()
-
-						const newSocialPost = new SocialPost({
-
-							_id: new mongoose.Types.ObjectId(),
-							type_of_post: 'text_with_video_post',
-							post_text: req.body.parent.post_text,
-							// image_for_post: req.body.parent.image_for_post,
-							video_for_post: `../../assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`,
-							video_thumbnail_image: req.body.parent.video_thumbnail_image,
-						});
-
-					} else {
-
-						const newSocialPost = new SocialPost({
-
-							_id: new mongoose.Types.ObjectId(),
-							type_of_post: 'video_post',
-							// post_text: req.body.parent.post_text,
-							// image_for_post: req.body.parent.image_for_post,
-							video_for_post: `../../assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`,
-							video_thumbnail_image: req.body.parent.video_thumbnail_image,
-						});
-
-					}
+					const newSocialPost = new SocialPost({
+						_id: social_post_id,
+						type_of_post: social_post_type,
+						video_for_post: video_path,
+						video_thumbnail_image: filename_used_to_store_video_in_assets_without_format,
+					});
 
 				} else {
 
+					social_post_type = 'text_post'
 					const newSocialPost = new SocialPost({
-
-						_id: new mongoose.Types.ObjectId(),
-						type_of_post: 'text_post',
+						_id: social_post_id,
+						type_of_post: social_post_type,
 						post_text: req.body.parent.post_text,
-						// image_for_post: req.body.parent.image_for_post,
-						// video_for_post: req.body.parent.video_for_post,
-						// video_thumbnail_image: req.body.parent.video_thumbnail_image,
-
 					});
 
 				}
 
 
-				newBlogPost.save(function (err, newBlogPost) {
+// DONE ABOVE BETTER 
+				// if ( req.files['image_upload'][0] ){
+
+				// 	let image_path = path.join(image_upload_path, `${req.files['image_upload'][0].filename}`)
+
+				// 	if (req.body.parent.post_text ){
+
+				// 		social_post_type = 'text_with_image_post'
+
+				// 		const newSocialPost = new SocialPost({
+
+				// 			_id: social_post_id,
+				// 			type_of_post: social_post_type,
+				// 			post_text: req.body.parent.post_text,
+				// 			image_for_post: image_path,
+				// 			// image_for_post: `../../assets/images/uploads/social_images/${req.files['image_upload'][0].filename}`,
+				// 			// video_for_post: req.body.parent.video_for_post,
+				// 			// video_thumbnail_image: req.body.parent.video_thumbnail_image,
+				// 			// endpoint: req.body.parent.endpoint,
+				// 			// timestamp: req.body.parent.timestamp,
+
+				// 		});
+
+				// 	} else {
+
+				// 		social_post_type = 'image_post'
+
+				// 		const newSocialPost = new SocialPost({
+
+				// 			_id: social_post_id,
+				// 			type_of_post: social_post_type,
+				// 			// post_text: req.body.parent.post_text,
+				// 			image_for_post: image_path,
+				// 			// image_for_post: `../../assets/images/uploads/social_images/${req.files['image_upload'][0].filename}`,
+				// 			// video_for_post: req.body.parent.video_for_post,
+				// 			// video_thumbnail_image: req.body.parent.video_thumbnail_image,
+				// 			// endpoint: req.body.parent.endpoint,
+				// 			// timestamp: req.body.parent.timestamp,
+
+				// 		});
+
+				// 	}
+
+
+
+				// } else if ( req.files['video_upload'][0] ){
+
+				// 	let video_path = path.join(video_upload_path, `${req.files['video_upload'][0].filename}`)
+
+				// 	create_snapshots_from_uploaded_video(video_file_path, filename_used_to_store_video_in_assets_without_format)
+
+				// 	if ( req.body.parent.post_text ){
+
+				// 		social_post_type = 'text_with_video_post'
+
+				// 		const newSocialPost = new SocialPost({
+
+				// 			_id: social_post_id,
+				// 			type_of_post: social_post_type,
+				// 			post_text: req.body.parent.post_text,
+				// 			// image_for_post: req.body.parent.image_for_post,
+				// 			video_for_post: video_path,
+				// 			// video_for_post: `../../assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`,
+				// 			video_thumbnail_image: filename_used_to_store_video_in_assets_without_format,
+				// 		});
+
+				// 	} else {
+
+				// 		social_post_type = 'video_post'
+
+				// 		const newSocialPost = new SocialPost({
+
+				// 			_id: social_post_id,
+				// 			type_of_post: social_post_type,
+				// 			// post_text: req.body.parent.post_text,
+				// 			// image_for_post: req.body.parent.image_for_post,
+				// 			video_for_post: video_path,
+				// 			// video_for_post: `../../assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`,
+				// 			video_thumbnail_image: filename_used_to_store_video_in_assets_without_format,
+						
+				// 		});
+
+				// 	}
+
+				// } else {
+
+				// 	social_post_type = 'text_post'
+
+				// 	const newSocialPost = new SocialPost({
+
+				// 		_id: social_post_id,
+				// 		type_of_post: social_post_type,
+				// 		post_text: req.body.parent.post_text,
+				// 		// image_for_post: req.body.parent.image_for_post,
+				// 		// video_for_post: req.body.parent.video_for_post,
+				// 		// video_thumbnail_image: req.body.parent.video_thumbnail_image,
+
+				// 	});
+
+				// }
+
+
+				newSocialPost.save(function (err, newSocialPost) {
 
 					if (err){
-						res.status(404).json({ success: false, msg: 'couldnt create blogpost database entry'})
+						res.status(404).json({ success: false, msg: 'couldnt create socialpost database entry'})
 						return console.log(err)
 					}
 					// assign user object then save
@@ -252,29 +341,96 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 					.then((user) => {
 						if (user){
 
-							newBlogPost.user = user
-							newBlogPost.save()
+							newSocialPost.user = user
+							newSocialPost.save()
+
+							let new_socialpost = {}
+							let socialpost_endpoint = ''
+
+							switch (social_post_type) {
+								case "text_post":
+
+									new_socialpost = {
+										type_of_post: newSocialPost.type_of_post,
+										post_text: newSocialPost.type_of_post,
+									}
+
+									res.status(200).json({ success: true, msg: 'new social post saved', new_socialpost: new_socialpost});
+									break
+
+								case "image_post":
+
+									new_socialpost = {
+										type_of_post: newSocialPost.type_of_post,
+										image_for_post: base64_encode(newSocialPost.image_for_post),
+									}
+
+									res.status(200).json({ success: true, msg: 'new social post saved', new_socialpost: new_socialpost});	
+									break
+
+								case "text_with_image_post":
+
+									new_socialpost = {
+										type_of_post: newSocialPost.type_of_post,
+										image_for_post: base64_encode(newSocialPost.image_for_post),
+										post_text: newSocialPost.type_of_post,
+									}
+
+									res.status(200).json({ success: true, msg: 'new social post saved', new_socialpost: new_socialpost});	
+									break
+
+								case "video_post":
+
+									SocialPost.findOne({ _id: social_post_id })
+									.then((saved_socialpost) => {
+										socialpost_endpoint = saved_socialpost.endpoint
+									})
+									.then(() => {
+
+										new_socialpost = {
+											type_of_post: newSocialPost.type_of_post,
+											video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
+											video_for_post: newSocialPost.video_for_post,
+										}
+
+										res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+									})
+
+									break
 
 
-							// in response sending new image too with base64 encoding
-							let base64_encoded_image = base64_encode(newBlogPost.image_thumbnail_filepath)
+								case "text_with_video_post":
 
-							let new_blogpost = {
-								title: newBlogPost.title,
-								image_thumbnail_filepath: base64_encoded_image,
-								initial_tags: newBlogPost.initial_tags,
-								first_para: newBlogPost.first_para,
-								second_para: newBlogPost.second_para,
-								third_para: newBlogPost.third_para,
-								fourth_para: newBlogPost.fourth_para,
-								all_tags: newBlogPost.all_tags,
+									SocialPost.findOne({ _id: social_post_id })
+									.then((saved_socialpost) => {
+										socialpost_endpoint = saved_socialpost.endpoint
+									})
+									.then(() => {
+
+										new_socialpost = {
+											post_text: newSocialPost.type_of_post,
+											type_of_post: newSocialPost.type_of_post,
+											video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
+											video_for_post: newSocialPost.video_for_post,
+										}
+
+										res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+									})
+									break
+
+
+								default:
+									null
+
 							}
 
-							res.status(200).json({ success: true, msg: 'new user saved', new_blogpost: new_blogpost});	
+							
 
 						} else {
 
-							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+							res.status(200).json({ success: false, msg: "couldnt save social post" });
 
 						}
 					})
@@ -292,6 +448,457 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 		}
 	})
 })
+
+
+
+
+// get socialposts_list_with_children
+// USED
+router.get('/socialposts-list-with-children', function(req, res, next){
+	console.log('triggered')
+
+	SocialPost.
+	find().
+	limit(10).
+	populate('comments').
+	populate('likes').
+	populate('shares').
+	populate('user').
+	then((socialposts) => {
+
+		var newSocialPosts_list = []
+
+		socialposts.map((socialpost, index)=>{
+
+			var newSocialPost = {}
+
+			newSocialPost.type_of_post = socialpost[ 'type_of_post' ]
+			// newSocialPost.post_text = socialpost[ 'post_text' ]
+			// newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] )
+			// newSocialPost.video_thumbnail_image = base64_encode( socialpost[ 'video_thumbnail_image' ] )
+			( socialpost[ 'post_text' ] !== null ) ? newSocialPost.post_text = socialpost[ 'post_text' ] : null
+			( socialpost[ 'image_for_post' ] !== null ) ? newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] ) : null
+			( socialpost[ 'video_for_post' ] !== null ) ? newSocialPost.video_for_post = socialpost[ 'video_for_post' ] : null
+			( socialpost[ 'video_thumbnail_image' ] !== null ) ? newSocialPost.video_thumbnail_image = base64_encode( socialpost[ 'video_thumbnail_image' ] ) : null
+
+			newSocialPost.total_likes = socialpost[ 'total_likes' ]
+			newSocialPost.total_shares = socialpost[ 'total_shares' ]
+			newSocialPost.endpoint = socialpost[ 'endpoint' ]
+			newSocialPost.timestamp = socialpost[ 'timestamp' ]
+
+			newSocialPosts_list.push({...newSocialPost})
+			newSocialPost = {}
+		});
+
+		return newSocialPosts_list
+	})
+	.then((newSocialPosts_list) => {
+
+		if (!newSocialPosts_list) {
+
+			res.status(401).json({ success: false, msg: "could not find SocialPosts_list" });
+
+		} else {
+
+			res.status(200).json(newSocialPosts_list);
+
+		}
+
+	})
+	.catch((err) => {
+
+		next(err);
+
+	});
+
+});
+
+
+// USED FOR CREATING COMMENT
+router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { session: false }), isAllowedInteractingWithOthersPosts, function(req, res, next){
+
+	var comment_text = req.body.comment_text	
+	var socialpost_endpoint = req.body.socialpost_endpoint
+
+	var newComment = new Comment({
+		_id: new mongoose.Types.ObjectId(),
+		text:comment_text,
+	})
+
+	User.findOne({ phone_number: req.user.user_object.phone_number })
+	.then((user) => {
+					
+		newComment.user = user
+
+	// finding BlogPost object
+		SocialPost.findOne({endpoint: socialpost_endpoint})
+		.then((socialpost) => {
+
+			socialpost.comments.push( newComment )
+
+			newComment.socialpost = socialpost
+			
+			newComment.save(function (err, newComment) {
+				if (err) return console.log(err);
+			})
+
+			socialpost.save((err, socialpost) => res.status(200).json(socialpost) )
+		})
+		.catch((err1) => {
+			console.log(err1)
+		})
+
+	})
+	.catch((err) => {
+		console.log(err)
+	})
+
+})
+
+
+// will be used for creating like
+// USED
+router.post('/create-like-for-socialpost', passport.authenticate('jwt', { session: false }), isAllowedInteractingWithOthersPosts, function(req, res, next){
+
+	var socialpost_endpoint = req.body.socialpost_endpoint
+
+	var newLike = new Like({
+		_id: new mongoose.Types.ObjectId(),
+	})
+
+	User.findOne({ phone_number: req.user.user_object.phone_number })
+	.then((user) => {
+					
+		newLike.user = user
+
+	// finding BlogPost object
+		SocialPost.findOne({endpoint: socialpost_endpoint})
+		.then((socialpost) => {
+
+			socialpost.likes.push( newLike )
+
+			newLike.socialpost = socialpost
+
+			newLike.save(function (err, newLike) {
+				if (err) return console.log(err);
+			})
+				
+			socialpost.save((err, socialpost) => res.status(200).json(socialpost) )
+		})
+		.catch((err1) => {
+			console.log(err1)
+		})
+
+	})
+	.catch((err) => {
+		console.log(err)
+	})
+
+})
+
+
+
+// will be used for creating share
+// USED
+router.post('/create-share-for-socialpost', passport.authenticate('jwt', { session: false }), isAllowedInteractingWithOthersPosts, function(req, res, next){
+
+	var socialpost_endpoint = req.body.socialpost_endpoint
+
+	var newShare = new Share({
+		_id: new mongoose.Types.ObjectId(),
+	})
+
+	User.findOne({ phone_number: req.user.user_object.phone_number })
+	.then((user) => {
+					
+		newShare.user = user
+
+	// finding BlogPost object
+		SocialPost.findOne({endpoint: socialpost_endpoint})
+		.then((socialpost) => {
+
+			socialpost.shares.push( newShare )
+
+			newShare.socialpost = socialpost
+
+			newShare.save(function (err, newShare) {
+				if (err) return console.log(err);
+			})
+				
+			socialpost.save((err, socialpost) => res.status(200).json(socialpost) )
+		})
+		.catch((err1) => {
+			console.log(err1)
+		})
+
+	})
+	.catch((err) => {
+		console.log(err)
+	})
+
+})
+
+
+// get n childs of blogpost
+// USED 
+router.get('/get-all-comments-of-socialpost', async function(req, res, next){
+
+	let list_of_promises = []
+
+	var socialpost_with_comments = await SocialPost.findOne({endpoint:req.query.endpoint}).
+	populate('comments').
+	then((socialpost) => {
+
+		if ( socialpost ){
+
+			return socialpost.comments
+
+		} else {
+
+			null
+		}
+	})
+	.catch((err) => console.log(err))
+
+	// console.log(socialpost_with_comments)
+
+	list_of_promises.push( socialpost_with_comments )
+
+	var users_list_who_commented = await Promise.all(socialpost_with_comments.map(async (comment_object) => {
+	// find user from each like
+		return await User.findOne({_id:comment_object.user})
+		.then(async (user_object) => {
+
+			if (user_object){
+				// console.log('USER FOUND')
+				// console.log(user_object)
+				return {
+					// ...user_object, // NEVER SPREAD IN MONGOOSE, IT INCLUDES _doc and lots of other info
+					user_name:user_object.user_name,
+					user_avatar_image: base64_encode(user_object.user_avatar_image),
+					comment_text:comment_object.comment_text
+				}
+
+			} else {
+				null
+			}
+		})
+
+	}))
+
+	// console.log('PROMISE RESULT 1')
+	// console.log(users_list_who_commented)
+
+// find image from user
+// NOT NEEDED SINCE IMAGE IS NOT SEPARATE TABLE BUT RATHER IN SOCIALPOST
+	// var final_comments_payload = await Promise.all(users_list_who_commented.map(async (user_object) => {
+	
+	// 	return await Image.findOne({_id:user_object.user_image})
+	// 	.then(async (image_object) => {
+
+	// 		if (image_object){
+
+	// 			return {
+	// 				user_name:user_object.user_name,
+	// 				user_image:base64_encode(image_object.image_filepath),
+	// 				comment_text:user_object.text,
+	// 			}
+
+	// 		} else {
+	// 			null
+	// 		}
+
+	// 	})
+
+	// }))
+
+	// console.log('PROMISE RESULT 2')
+	// console.log(final_comments_payload)
+
+	let final_comments_payload = users_list_who_commented
+
+	Promise.all(list_of_promises)
+	.then(() => {
+		// console.log('COMMENTS SENT BELOW')
+		// console.log(final_comments_payload)
+		res.status(200).json( final_comments_payload );
+
+	})
+
+})
+
+
+// USED
+router.get('/get-all-likes-of-socialpost',async function(req, res, next){
+
+	let list_of_promises = []
+
+// find blogpost
+	var socialpost_with_likes = await SocialPost.findOne({endpoint:req.query.endpoint}).
+	populate('likes').
+	then((socialpost_with_likes) => {
+
+		if ( socialpost_with_likes ){
+
+			return socialpost_with_likes.likes
+	
+		} else {
+
+			null
+
+		}
+
+	})
+
+	list_of_promises.push( socialpost_with_likes )
+
+// find likes from blogpost
+	let final_liked_payload = await Promise.all(socialpost_with_likes.map(async (like_object) => {
+
+	// find user from each like
+		return await User.findOne({_id:like_object.user})
+		.then(async (user_object) => {
+
+			if (user_object){
+
+				// return user_object
+				return {
+					user_name:user_object.user_name,
+					user_avatar_image:base64_encode(user_object.user_avatar_image),
+				}
+
+			} else {
+				null
+			}
+		})
+		
+	}))
+
+	// console.log('PROMISE RESULT 1')
+	// console.log(users_list_who_liked)
+
+// find image from user
+// NOT NEEDED SINCE WE DID NOT MAKE IMAGE AS SEPARATE ENTITY
+	// let final_liked_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
+	
+	// 	return await Image.findOne({_id:user_object.user_image})
+	// 	.then(async (image_object) => {
+
+	// 		if (image_object){
+
+	// 			return {
+	// 				user_name:user_object.user_name,
+	// 				user_image:base64_encode(image_object.image_filepath),
+	// 			}
+
+	// 		} else {
+	// 			null
+	// 		}
+
+	// 	})
+
+	// }))
+
+	// console.log('PROMISE RESULT 2')
+	// console.log(final_liked_payload)
+
+	Promise.all(list_of_promises)
+	.then(() => {
+
+		// console.log(final_liked_payload)
+		res.status(200).json( final_liked_payload );
+
+	})
+
+})
+
+
+router.get('/get-all-shares-of-socialpost',async function(req, res, next){
+
+	let list_of_promises = []
+
+// find blogpost
+	var socialpost_with_shares = await SocialPost.findOne({endpoint:req.query.endpoint}).
+	populate('shares').
+	then((socialpost_with_shares) => {
+
+		if ( socialpost_with_shares ){
+
+			return socialpost_with_shares.shares
+	
+		} else {
+
+			null
+
+		}
+
+	})
+
+	list_of_promises.push( socialpost_with_shares )
+
+// find likes from blogpost
+	let final_shares_payload = await Promise.all(socialpost_with_shares.map(async (share_object) => {
+
+	// find user from each like
+		return await User.findOne({_id:share_object.user})
+		.then(async (user_object) => {
+
+			if (user_object){
+
+				// return user_object
+				return {
+					user_name:user_object.user_name,
+					user_avatar_image:base64_encode(user_object.user_avatar_image),
+				}
+
+			} else {
+				null
+			}
+		})
+		
+	}))
+
+	// console.log('PROMISE RESULT 1')
+	// console.log(users_list_who_liked)
+
+// find image from user
+// NOT NEEDED SINCE WE DID NOT MAKE IMAGE AS SEPARATE ENTITY
+	// let final_shares_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
+	
+	// 	return await Image.findOne({_id:user_object.user_image})
+	// 	.then(async (image_object) => {
+
+	// 		if (image_object){
+
+	// 			return {
+	// 				user_name:user_object.user_name,
+	// 				user_image:base64_encode(image_object.image_filepath),
+	// 			}
+
+	// 		} else {
+	// 			null
+	// 		}
+
+	// 	})
+
+	// }))
+
+	// console.log('PROMISE RESULT 2')
+	// console.log(final_shares_payload)
+
+	Promise.all(list_of_promises)
+	.then(() => {
+
+		// console.log(final_shares_payload)
+		res.status(200).json( final_shares_payload );
+
+	})
+
+})
+
+
+
+
 
 
 
@@ -718,59 +1325,6 @@ router.get('/socialposts-list', function(req, res, next){
 	});
 });
 
-// get socialposts_list_with_children
-
-router.get('/socialposts-list-with-children', function(req, res, next){
-	console.log('triggered')
-
-	SocialPost.
-	find().
-	limit(10).
-	populate('comments').
-	populate('likes').
-	populate('shares').
-	populate('user').
-	then((socialposts)=>{
-		var newSocialPosts_list = []
-		socialposts.map((socialpost, index)=>{
-			var newSocialPost = {}
-
-			newSocialPost.type_of_post = socialpost[ 'type_of_post' ]
-			newSocialPost.post_text = socialpost[ 'post_text' ]
-			newSocialPost.image_for_post = base64_encode( socialpost[ 'image_for_post' ] )
-			newSocialPost.video_for_post = socialpost[ 'video_for_post' ]
-			newSocialPost.video_thumbnail_image = base64_encode( socialpost[ 'video_thumbnail_image' ] )
-			newSocialPost.total_likes = socialpost[ 'total_likes' ]
-			newSocialPost.total_shares = socialpost[ 'total_shares' ]
-			newSocialPost.endpoint = socialpost[ 'endpoint' ]
-			newSocialPost.date_of_publishing = socialpost[ 'date_of_publishing' ]
-
-			newSocialPosts_list.push({...newSocialPost})
-			newSocialPost = {}
-		});
-
-		return newSocialPosts_list
-	})
-	.then((newSocialPosts_list) => {
-
-		if (!newSocialPosts_list) {
-
-			res.status(401).json({ success: false, msg: "could not find SocialPosts_list" });
-
-		} else {
-
-			res.status(200).json(newSocialPosts_list);
-
-		}
-
-	})
-	.catch((err) => {
-
-		next(err);
-
-	});
-
-});
 
 // get socialposts_list_next_10_with_children
 

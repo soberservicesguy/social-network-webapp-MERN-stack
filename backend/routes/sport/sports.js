@@ -1,12 +1,151 @@
 require('../../models/sport');
+require('../../models/user');
 
 
 const base64_encode = require('../../lib/image_to_base64')
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const Sport = mongoose.model('Sport');
+const User = mongoose.model('User');
+
+const passport = require('passport');
+const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
+const { isAllowedCreatingBooks } = require('../authMiddleware/isAllowedCreatingBooks')
+const { isAllowedInteractingWithOthersPosts } = require('../authMiddleware/isAllowedInteractingWithOthersPosts')
+
+
 
 // create a new sport with children
+
+// will be used for creating interest
+// USED
+router.post('/create-interest-for-sport', passport.authenticate('jwt', { session: false }), isAllowedInteractingWithOthersPosts, function(req, res, next){
+
+	var sport_endpoint = req.body.sport_endpoint
+
+	// var newLike = new Like({
+	// 	_id: new mongoose.Types.ObjectId(),
+	// })
+
+	User.findOne({ phone_number: req.user.user_object.phone_number })
+	.then((user) => {
+					
+		// newLike.user = user
+
+	// finding BlogPost object
+		Sport.findOne({endpoint: sport_endpoint})
+		.then((sport) => {
+
+			sport.interested_users.push( user )
+
+			// newLike.sport = sport
+
+			// newLike.save(function (err, newLike) {
+			// 	if (err) return console.log(err);
+			// })
+				
+			sport.save((err, sport) => res.status(200).json(sport) )
+		})
+		.catch((err1) => {
+			console.log(err1)
+		})
+
+	})
+	.catch((err) => {
+		console.log(err)
+	})
+
+})
+
+
+// USED
+router.get('/get-all-interest-in-sport',async function(req, res, next){
+
+	let list_of_promises = []
+
+// find blogpost
+	var sport_with_interested_users = await Sport.findOne({endpoint:req.query.endpoint}).
+	populate('interested_users').
+	then((sport_with_interested_users) => {
+
+		if ( sport_with_interested_users ){
+
+			return sport_with_interested_users.interested_users
+	
+		} else {
+
+			null
+
+		}
+
+	})
+
+	list_of_promises.push( sport_with_interested_users )
+
+// find likes from blogpost
+	let final_interested_payload = await Promise.all(sport_with_interested_users.map(async (like_object) => {
+
+	// find user from each like
+		return await User.findOne({_id:like_object.user})
+		.then(async (user_object) => {
+
+			if (user_object){
+
+				// return user_object
+				return {
+					user_name:user_object.user_name,
+					user_avatar_image:base64_encode(user_object.user_avatar_image),
+				}
+
+			} else {
+				null
+			}
+		})
+		
+	}))
+
+	// console.log('PROMISE RESULT 1')
+	// console.log(users_list_who_liked)
+
+// find image from user
+// NOT NEEDED SINCE WE DID NOT MAKE IMAGE AS SEPARATE ENTITY
+	// let final_interested_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
+	
+	// 	return await Image.findOne({_id:user_object.user_image})
+	// 	.then(async (image_object) => {
+
+	// 		if (image_object){
+
+	// 			return {
+	// 				user_name:user_object.user_name,
+	// 				user_image:base64_encode(image_object.image_filepath),
+	// 			}
+
+	// 		} else {
+	// 			null
+	// 		}
+
+	// 	})
+
+	// }))
+
+	// console.log('PROMISE RESULT 2')
+	// console.log(final_interested_payload)
+
+	Promise.all(list_of_promises)
+	.then(() => {
+
+		// console.log(final_interested_payload)
+		res.status(200).json( final_interested_payload );
+
+	})
+
+})
+
+
+
+
+
 
 router.post('/create-sport-with-children', function(req, res, next){
 	const newSport = new Sport({

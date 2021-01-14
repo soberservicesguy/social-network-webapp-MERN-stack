@@ -4,7 +4,7 @@ require('../../models/user');
 const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
 const { isAllowedCreatingPages } = require('../authMiddleware/isAllowedCreatingPages')
-
+const { isAllowedInteractingWithOthersPosts } = require('../authMiddleware/isAllowedInteractingWithOthersPosts')
 
 const base64_encode = require('../../lib/image_to_base64')
 const mongoose = require('mongoose');
@@ -47,7 +47,7 @@ function checkFileTypeForImage(file, cb){
 }
 
 // Init Upload
-const upload_book_by_user = multer({
+const upload_page_by_user = multer({
 	storage: image_storage,
 	limits:{fileSize: 200000000}, // 1 mb
 	fileFilter: function(req, file, cb){
@@ -66,7 +66,7 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 	// console.log('OUTER LOG')
 	// console.log(req.body)
 
-	upload_book_by_user(req, res, (err) => {
+	upload_page_by_user(req, res, (err) => {
 		if(err){
 
 			console.log(err)
@@ -185,8 +185,131 @@ router.get('/pages-list-with-children', function(req, res, next){
 
 
 
+// will be used for creating interest
+// USED
+router.post('/create-interest-for-page', passport.authenticate('jwt', { session: false }), isAllowedInteractingWithOthersPosts, function(req, res, next){
+
+	var page_endpoint = req.body.page_endpoint
+
+	// var newLike = new Like({
+	// 	_id: new mongoose.Types.ObjectId(),
+	// })
+
+	User.findOne({ phone_number: req.user.user_object.phone_number })
+	.then((user) => {
+					
+		// newLike.user = user
+
+	// finding BlogPost object
+		Page.findOne({endpoint: page_endpoint})
+		.then((page) => {
+
+			page.interested_users.push( user )
+
+			// newLike.page = page
+
+			// newLike.save(function (err, newLike) {
+			// 	if (err) return console.log(err);
+			// })
+				
+			page.save((err, page) => res.status(200).json(page) )
+		})
+		.catch((err1) => {
+			console.log(err1)
+		})
+
+	})
+	.catch((err) => {
+		console.log(err)
+	})
+
+})
 
 
+
+// USED
+router.get('/get-all-interest-in-page',async function(req, res, next){
+
+	let list_of_promises = []
+
+// find blogpost
+	var page_with_interested_users = await Page.findOne({endpoint:req.query.endpoint}).
+	populate('interested_users').
+	then((page_with_interested_users) => {
+
+		if ( page_with_interested_users ){
+
+			return page_with_interested_users.interested_users
+	
+		} else {
+
+			null
+
+		}
+
+	})
+
+	list_of_promises.push( page_with_interested_users )
+
+// find likes from blogpost
+	let final_interested_payload = await Promise.all(page_with_interested_users.map(async (like_object) => {
+
+	// find user from each like
+		return await User.findOne({_id:like_object.user})
+		.then(async (user_object) => {
+
+			if (user_object){
+
+				// return user_object
+				return {
+					user_name:user_object.user_name,
+					user_avatar_image:base64_encode(user_object.user_avatar_image),
+				}
+
+			} else {
+				null
+			}
+		})
+		
+	}))
+
+	// console.log('PROMISE RESULT 1')
+	// console.log(users_list_who_liked)
+
+// find image from user
+// NOT NEEDED SINCE WE DID NOT MAKE IMAGE AS SEPARATE ENTITY
+	// let final_interested_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
+	
+	// 	return await Image.findOne({_id:user_object.user_image})
+	// 	.then(async (image_object) => {
+
+	// 		if (image_object){
+
+	// 			return {
+	// 				user_name:user_object.user_name,
+	// 				user_image:base64_encode(image_object.image_filepath),
+	// 			}
+
+	// 		} else {
+	// 			null
+	// 		}
+
+	// 	})
+
+	// }))
+
+	// console.log('PROMISE RESULT 2')
+	// console.log(final_interested_payload)
+
+	Promise.all(list_of_promises)
+	.then(() => {
+
+		// console.log(final_interested_payload)
+		res.status(200).json( final_interested_payload );
+
+	})
+
+})
 
 
 
