@@ -1,4 +1,4 @@
-require('../../models/image');
+// require('../../models/image');
 require('../../models/user');
 require('../../models/privilige');
 
@@ -6,7 +6,7 @@ require('../../models/privilige');
 const mongoose = require('mongoose');
 const router = require('express').Router();   
 const User = mongoose.model('User');
-const Image = mongoose.model('Image');
+// const Image = mongoose.model('Image');
 const Privilege = mongoose.model('Privilege');
 
 const passport = require('passport');

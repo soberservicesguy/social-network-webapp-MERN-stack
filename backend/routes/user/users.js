@@ -3,18 +3,28 @@
 
 // passport jwt strategy checks jwt token in each request to verify the user is valid or should be entertained or not
 // passport local strategy checks session ie user.loggedin / isauthenticated methods, once user is logged in it can do what he is allowed to do untill he logs out
-
 const mongoose = require('mongoose');
 const router = require('express').Router();   
 const User = mongoose.model('User');
 const utils = require('../../lib/utils');
 const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
-const { isAllowedUploadingVideos } = require('../authMiddleware/isAllowedUploadingVideos')
 const get_allowed_privileges_list = require("../../handy_functions/get_allowed_privileges_list")
 
+router.post('/signup-with-facebook-and-get-permission', passport.authenticate('facebook', { scope: ['user_friends', 'manage_pages'] }))
+router.post('/signup-with-facebook-and-get-permission-again', passport.authenticate('facebook', { authType: 'reauthenticate', scope: ['user_friends', 'manage_pages'] }))
+router.post('/login-with-facebook', passport.authenticate('facebook', { 
+	successRedirect: '/profile', 
+	failureRedirect: '/login' 
+}))
 
-router.get('/protected', passport.authenticate('jwt', { session: false }), isAllowedSurfing, isAllowedUploadingVideos, (req, res, next) => {
+router.post('/signup-with-google', passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' }))
+router.post('/login-with-google', passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' }, { 
+	successRedirect: '/profile', 
+	failureRedirect: '/login' 
+}))
+
+router.get('/protected', passport.authenticate(['facebook', 'google', 'jwt'], { session: false }), isAllowedSurfing, (req, res, next) => {
 	// // payload recieved from passport.authenticate jwt middleware
 	// console.log(req.user.msg)
 	// console.log(req.user.user_object)
@@ -26,8 +36,10 @@ router.get('/protected', passport.authenticate('jwt', { session: false }), isAll
 });
 
 
+
+
 // Validate an existing user and issue a JWT
-router.post('/login', function(req, res, next){
+router.post('/login-with-jwt', function(req, res, next){
 
 	User.findOneAndUpdate({ phone_number: req.body.phone_number }, { $set:{ isLoggedIn:true } }, { new: true }, (err, user) => {
 	    if (err) {
@@ -44,48 +56,6 @@ router.post('/login', function(req, res, next){
 		const isValid = utils.validPassword(req.body.password, user.hash, user.salt);
 
 		if (isValid) {
-
-		// not needed here, this is done in passport middleware
-		// 	let privileges_list = []
-		// 	user.privileges.map((privilege_object) => {
-
-		// 		if ( privilege_object.privilege_name === 'allow_surfing' ){
-			
-		// 			privileges_list.push( 'Basic' )
-
-		// 		} else if ( privilege_object.privilege_name === 'is_allowed_image_upload' ){
-
-		// 			privileges_list.push( 'Images control' )
-
-		// 		} else if ( privilege_object.privilege_name === 'is_allowed_video_upload' ){
-
-		// 			privileges_list.push( 'Videos control' )
-
-		// 		} else if ( privilege_object.privilege_name === 'is_allowed_writing_blopost' ){
-
-		// 			privileges_list.push( 'Blogposts control' )
-
-		// 		} else {
-		// 		}
-
-		// 	})
-
-		// // add revoked or privileges that are not given
-		// 	if ( !privileges_list.includes('Basic') ){
-		// 		privileges_list.push('Revoke Basic')
-		// 	} 
-
-		// 	if ( !privileges_list.includes('Images control') ){
-		// 		privileges_list.push('Revoke Images control')
-		// 	} 
-
-		// 	if ( !privileges_list.includes('Videos control') ){
-		// 		privileges_list.push('Revoke Videos control')
-		// 	} 
-
-		// 	if ( !privileges_list.includes('Blogposts control') ){
-		// 		privileges_list.push('Revoke Blogposts control')
-		// 	} 
 
 			const tokenObject = utils.issueJWT(user);
 
