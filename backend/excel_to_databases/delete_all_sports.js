@@ -9,4 +9,12 @@ const Sport = mongoose.model('Sport');
 const {resolve} = require('path')
 require('dotenv').config({path: resolve(__dirname,"../.env")})
 
-Sport.deleteMany({}, ()=>null)
+
+
+
+function bulk_delete_all_sports(){
+	Sport.deleteMany({}, ()=>null)
+}
+
+
+module.exports = bulk_delete_all_sports

@@ -23,6 +23,7 @@ import {
 
 import {
 	// withRouter,
+	Link,
 	Redirect,
 } from "react-router-dom";
 
@@ -309,7 +310,7 @@ class SignUpContainer extends Component {
 								label="Select Privileges To Use"
 								onChange={(event) => {
 									// console logging selected file from menu
-									console.log( event.target.value ) // gives first file
+									// console.log( event.target.value ) // gives first file
 									// setState method with event.target.files[0] as argument
 									this.setState(prev => ({...prev, privileges_selected: event.target.value}))
 								}}
@@ -318,16 +319,22 @@ class SignUpContainer extends Component {
 									<em>None</em>
 								</MenuItem>
 								<MenuItem value={'Basic'}>
-									Basic (commenting, liking content)
+									Basic (just watching)
 								</MenuItem>
-								<MenuItem value={'Images control'}>
-									Uploading Images
+								<MenuItem value={'Posts Interaction'}>
+									Posts Interaction
 								</MenuItem>
-								<MenuItem value={'Videos control'}>
-									Uploading Videos
+								<MenuItem value={'Posts Creation'}>
+									Posts Creation
 								</MenuItem>
-								<MenuItem value={'Blogposts control'}>
-									Uploading Blogposts
+								<MenuItem value={'Ads Creation'}>
+									Ads Creation
+								</MenuItem>
+								<MenuItem value={'Books Creation'}>
+									Books Creation
+								</MenuItem>
+								<MenuItem value={'Sports Creation'}>
+									Sports Creation
 								</MenuItem>
 								<MenuItem value={'Total control'}>
 									All Privileges
@@ -337,11 +344,13 @@ class SignUpContainer extends Component {
 					</div>
 
 
-					<button  onClick={() => {}} style={styles.buttonWithoutBG}>
-						<p style={styles.lowerText}>
-							Already have an account ?
-						</p>
-					</button>
+					<Link to="/login"> 
+						<div style={styles.buttonWithoutBG}>
+							<p style={styles.lowerText}>
+								Already have an account ?
+							</p>
+						</div>
+					</Link>
 						
 					<button style={styles.lowerButton} activeOpacity={0.2}
 						onClick={ () => this.signup_and_get_privileges() }

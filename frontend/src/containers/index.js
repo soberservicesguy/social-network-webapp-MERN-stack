@@ -10,3 +10,5 @@ export {default as PageContainer } from "./page.js";
 export {default as RootRouterContainer } from "./root_router.js";
 export {default as SocialPostContainer } from "./social_post.js";
 export {default as SportContainer } from "./sport.js";
+
+export {default as SignUpContainer } from "./sign_up.js";

@@ -2,17 +2,19 @@ require('./db_settings')
 var fs = require('fs');
 const mongoose = require('mongoose');
 
-require('../models/book');
+require('../models/sport');
 
-const Book = mongoose.model('Book');
+const User = mongoose.model('User');
 
 const {resolve} = require('path')
 require('dotenv').config({path: resolve(__dirname,"../.env")})
 
 
-function bulk_delete_all_books(){
-	Book.deleteMany({}, ()=>null)
+
+
+function delete_all_user(){
+	User.deleteMany({}, ()=>null)
 }
 
 
-module.exports = bulk_delete_all_books
+module.exports = delete_all_user

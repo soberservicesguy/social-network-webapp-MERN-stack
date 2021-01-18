@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import firebase from 'firebase';
 
-import utils from "../../utilities";
+import utils from "../utilities";
 
 import {
 	TextField,
@@ -20,7 +20,7 @@ import {
 } from "react-router-dom";
 
 import { withStyles } from '@material-ui/styles';
-import withResponsiveness from "../../responsiveness_hook";
+import withResponsiveness from "../responsiveness_hook";
 
 const styles = theme => ({
 	root: {
@@ -63,17 +63,15 @@ const styles = theme => ({
 });
 
 
-class CreateAdvertisement extends Component {
+class BulkVideoUpload extends Component {
 	constructor(props) {
 		super(props);
 // STATE	
 		this.state = {
 			expanded:false,
 			redirectToRoute: false,
-
-			ad_name: '',
-			ad_image: '',
-			ad_description: '',
+			videos_to_upload: [],
+			excel_sheet:'',
 		}
 
 	}
@@ -95,7 +93,7 @@ class CreateAdvertisement extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Advertisement" }} />
+			return <Redirect to = {{ pathname: "/videos" }} />
 
 		} else {
 
@@ -103,72 +101,73 @@ class CreateAdvertisement extends Component {
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 				<div style={styles.outerContainer}>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your ad_name" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, ad_name: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
 					<div style={styles.textinputContainer}>
 						<p style={styles.headingOverInput}>
-							IMAGE MAIN
+							UPLOAD VIDEOS HERE
 						</p>
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
+								name="videos_to_upload" // name of input field or fieldName simply
+								multiple="multiple" // for selecting multiple files
+								enctype="multipart/form-data"
+								type="file"
+								onChange={(event) => {
+									// console logging selected file from menu
+									console.log( event.target.files ) // gives all files
+									// setState method with event.target.files[0] as argument
+									this.setState(prev => ({...prev, videos_to_upload: event.target.files}))
+								}}
+							/>
+						</form>
+					</div>
+
+
+					<div style={styles.textinputContainer}>
+						<p style={styles.headingOverInput}>
+							UPLOAD VIDEOS EXCEL SHEET HERE
+						</p>
+						<form className={styles.root} noValidate autoComplete="off">
+							<input
+								name="excel_sheet_for_videos" // name of input field or fieldName simply
 								// multiple="multiple" // for selecting multiple files
-								name="ad_image" // name of input field or fieldName simply
 								enctype="multipart/form-data"
 								type="file"
 								onChange={(event) => {
 									// console logging selected file from menu
 									console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
-									this.setState(prev => ({...prev, ad_image: event.target.files[0]}))
+									this.setState(prev => ({...prev, excel_sheet: event.target.files[0]}))
 								}}
 							/>
 						</form>
 					</div>
 
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your ad_description" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, ad_description: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
 
 					<button style={styles.buttonWithoutBG}
 						onClick={ () => {
 
-							let setResponseInCurrentAdvertisement = (arg) => this.props.set_current_advertisement(arg)
-							let redirectToNewAdvertisement = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+							// let setResponseInFetchedVideos = (arg) => this.props.set_fetched_videos(arg)
+							let redirectToNewVideos = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
+							// in formData send individual variables and not a complete object
+							// formData.append('video_object', video_object) // THIS WILL NOT WORK, SENT VARS INDIVIDUALLY
 							const formData = new FormData()
-							formData.append('ad_description', this.state.ad_description)
-							formData.append('ad_name', this.state.ad_name)
-							formData.append('ad_image', this.state.ad_image, this.state.ad_image.name)
+							// attaching multiple files with formData
 
-							axios.post(utils.baseUrl + '/advertisements/create-ad-with-user', formData)
+							Array.from(this.state.videos_to_upload).forEach((file) => {
+								formData.append('videos_to_upload', file, file.name)
+							})
+							formData.append('excel_sheet_for_videos', this.state.excel_sheet, this.state.excel_sheet.name)
+
+							axios.post(utils.baseUrl + '/uploads/bulk-upload-videos', formData)
 							.then(function (response) {
-								console.log(response.data) // current advertisement screen data
+								console.log(response.data) // current blogpost screen data
 								
 								// set to current parent object
-								setResponseInCurrentAdvertisement(response.data)
+								// setResponseInFetchedVideos(response.data.new_blogpost)
 
-								// change route to current_advertisement
-								redirectToNewAdvertisement()
+								// change route to current_blogpost
+								redirectToNewVideos()
 
 							})
 							.catch(function (error) {
@@ -178,18 +177,37 @@ class CreateAdvertisement extends Component {
 						}}
 					>
 						<p style={styles.innerText}>
-							Press To Create Advertisement
+							Press To Create Bulk Videos
 						</p>
 					</button>
+
+					<div>
+						<button style={styles.buttonWithoutBG}
+							onClick={ () => {
+								axios.get(utils.baseUrl + '/uploads/bulk-delete-videos')
+								.then(function (response) {
+									console.log(response.data)
+								})
+								.catch(function (error) {
+									console.log(error)
+								});
+							}}
+						>
+							<p style={styles.innerText}>
+								Press To DELETE ALL VIDEOS
+							</p>
+						</button>
+					</div>
+
 				</div>
 			);
 		}			
 	}
 }
 	
-CreateAdvertisement.defaultProps = {
+BulkVideoUpload.defaultProps = {
 
 };
 
-// export default CreateAdvertisement // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateAdvertisement)))
+// export default BulkVideoUpload // REMOVE withResponsiveness and withStyles as much as possible
+export default withRouter(withResponsiveness(withStyles(styles)(BulkVideoUpload)))

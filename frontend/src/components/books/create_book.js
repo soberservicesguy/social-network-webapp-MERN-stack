@@ -73,7 +73,7 @@ class CreateBook extends Component {
 			book_name: '',
 			book_image: '',
 			book_description: '',
-			endpoint: '',		}
+		}
 
 	}
 
@@ -115,18 +115,25 @@ class CreateBook extends Component {
 						</form>
 				  	</div>
 
-
-				  	<div style={styles.textinputContainer}>
+					<div style={styles.textinputContainer}>
+						<p style={styles.headingOverInput}>
+							IMAGE MAIN
+						</p>
 						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your book_image" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, book_image: event.target.value})) }
+							<input
+								// multiple="multiple" // for selecting multiple files
+								name="book_image" // name of input field or fieldName simply
+								enctype="multipart/form-data"
+								type="file"
+								onChange={(event) => {
+									// console logging selected file from menu
+									console.log( event.target.files[0] ) // gives first file
+									// setState method with event.target.files[0] as argument
+									this.setState(prev => ({...prev, book_image: event.target.files[0]}))
+								}}
 							/>
 						</form>
-				  	</div>
+					</div>
 
 
 				  	<div style={styles.textinputContainer}>
@@ -142,43 +149,17 @@ class CreateBook extends Component {
 				  	</div>
 
 
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your endpoint" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, endpoint: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
 					<button style={styles.buttonWithoutBG}
 						onClick={ () => {
-
 							let setResponseInCurrentBook = (arg) => this.props.set_current_book(arg)
 							let redirectToNewBook = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							// first create parent object
-							let book_object = {
-								book_name: this.state.book_name,
-								book_image: this.state.book_image,
-								book_description: this.state.book_description,
-								endpoint: this.state.endpoint,
-							}
+							const formData = new FormData()
+							formData.append('book_name', this.state.book_name)
+							formData.append('book_description', this.state.book_description)
+							formData.append('book_image', this.state.book_image, this.state.book_image.name)
 
-							// 2nd create child object from redux (linked_object_and_live_object_in_redux in schema)
-							let _object = {
-
-							}
-
-							// 3rd send post request
-							axios.post(utils.baseUrl + '/books/create-book-with-', 
-								{
-									book_object: book_object,
-									_object: _object,
-								})
+							axios.post(utils.baseUrl + '/books/create-book-with-user', formData)
 							.then(function (response) {
 								console.log(response.data) // current book screen data
 								

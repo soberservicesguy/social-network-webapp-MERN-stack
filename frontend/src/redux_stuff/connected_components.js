@@ -17,6 +17,7 @@ import {
 	SportContainer,
 	IndividualSport,	
 	LoginContainer,
+	SignUpContainer,
 
 } from "../containers";
 
@@ -76,6 +77,10 @@ export const ConnectedLoginContainer = connect(
 	mapDispatchToProps
 )(LoginContainer);
 
+export const ConnectedSignUpContainer = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(SignUpContainer);
 
 export const ConnectedCreateSocialPost = connect(
 	mapStateToProps,

@@ -11,8 +11,10 @@ const SportSchema = new mongoose.Schema({
 	sport_image:String,
 	sport_description:String,
 
+
 // other model links
 	interested_users: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
+	sport_created_by_user:{ type: Schema.Types.ObjectId, ref: 'User'  },
 
 	endpoint:String,
 	timestamp:String,

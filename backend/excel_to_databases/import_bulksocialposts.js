@@ -20,7 +20,11 @@ const Share = mongoose.model('Share');
 
 const User = mongoose.model('User');
 
-const file_name = 'all_socialposts.xlsx';
+// const file_name = 'all_socialposts.xlsx';
+
+const file_name = excel_file || '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/excel_to_databases/all_socialposts.xlsx'
+// const file_name = '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/excel_to_databases/all_socialposts.xlsx'
+
 
 const sheet_to_class_mapper = (sheet_name, db_object) => {
 	if (sheet_name === 'all_socialposts'){
@@ -51,11 +55,14 @@ const sheet_to_class_mapper = (sheet_name, db_object) => {
 }
 
 
-const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_class_dict) =>{
+const save_parent_and_children_in_db = async (parent_children_rows_dict, sheet_to_class_dict, user_id) => {
 
 	const parent_header = parent_children_rows_dict.parent_header
 	const parent_sheet = parent_children_rows_dict.parent_sheet_name
 	const row_details_list = parent_children_rows_dict.row_details
+
+// finding the user 
+	let user_object = await User.findOne({ _id: user_id }) // using req.user from passport js middleware
 
 	for (let i = 0; i < row_details_list.length; i++) {
 
@@ -73,6 +80,9 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 		socialpost.save(function (err, socialpost) {
 
 			if (err) return handleError(err);
+
+		// assigning the user
+			socialpost.user = user_object
 
 			// accessing children
 
@@ -141,7 +151,7 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 
 
 
-const parent_children_detailed = (file_name, old_parent_child_relationship_data ,  parent_completely_detailed, sheet_to_class_dict) =>{
+const parent_children_detailed = (file_name, old_parent_child_relationship_data ,  parent_completely_detailed, sheet_to_class_dict, user_id) =>{
 
 	/**
 	 * -------------- CODE BLOCK 1 START ----------------
@@ -267,7 +277,7 @@ const parent_children_detailed = (file_name, old_parent_child_relationship_data 
 						.then( (ans_for_above) => {
 							if ( !all_results2.includes(ans_for_above) && ans_for_above !== undefined  ){
 								all_results2.push(ans_for_above);
-								save_parent_and_children_in_db(ans_for_above, sheet_to_class_dict); 
+								save_parent_and_children_in_db(ans_for_above, sheet_to_class_dict, user_id); 
 							}
 						})
 						// .then( ()=> console.log(parent_completely_detailed.row_details[0].children[0].child_rows) )
@@ -302,7 +312,7 @@ const parent_children_detailed = (file_name, old_parent_child_relationship_data 
 
 
 
-const generate_parent_completely_detailed = (file_name, parent_child_relationship_data, sheet_to_class_dict) => {
+const generate_parent_completely_detailed = (file_name, parent_child_relationship_data, sheet_to_class_dict, user_id) => {
 // NOTE : TEST THIS TO WORK FOR MULTIPLE PARENTS AND THEIR CHILDREN, OR ONLY USE IT FOR SINGLE PARENT AND ITS CHILDREN
 
 	/**
@@ -373,7 +383,7 @@ const generate_parent_completely_detailed = (file_name, parent_child_relationshi
 					  return parent_complete_details
 					}) // from .then block
 					// .then( res => console.log(res) )
-					.then( parent_detailed => parent_children_detailed(file_name, parent_child_relationship_data, parent_detailed, sheet_to_class_dict) )
+					.then( parent_detailed => parent_children_detailed(file_name, parent_child_relationship_data, parent_detailed, sheet_to_class_dict, user_id, user_id) )
 
 
 			}) // from parent_child_relationship_data.map block
@@ -392,7 +402,7 @@ const generate_parent_completely_detailed = (file_name, parent_child_relationshi
 
 
 
-const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict) => {
+const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict, user_id) => {
 	var all_collection = [];
 
 	var parent_child_details = {};
@@ -454,13 +464,13 @@ const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict) => {
 		return all_collection
 
 	})
-	.then( result => generate_parent_completely_detailed(file_name, result, sheet_to_class_dict) )
+	.then( result => generate_parent_completely_detailed(file_name, result, sheet_to_class_dict, user_id) )
 	// .catch( (err) => console.log('ERROR IS ', err) )
 }
 
 
 
-const sheet_to_class = (file_name) => {
+const sheet_to_class = (file_name, user_id) => {
 	const sheet_to_class_dict = {};
 
 	readXlsxFile( String(file_name), { sheet: String('sheets_classes') })
@@ -477,11 +487,21 @@ const sheet_to_class = (file_name) => {
 
 		})
 		// .then( (ans) => console.log(ans) )
-		.then ( (sheet_to_class_dict) => pull_parent_child_data_from_excel(file_name, sheet_to_class_dict) )
+		.then ( (sheet_to_class_dict) => pull_parent_child_data_from_excel(file_name, sheet_to_class_dict, user_id) )
 		.catch( err => console.log(err) )	
 }
 
 
 
 
-sheet_to_class(file_name)
+
+// sheet_to_class(file_name)
+
+if (excel_file){
+	null
+} else {
+	// console.log('attempted to import blogposts')
+	// sheet_to_class(file_name)
+}
+
+module.exports = sheet_to_class

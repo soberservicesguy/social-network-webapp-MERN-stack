@@ -70,15 +70,10 @@ class CreateSocialPost extends Component {
 		this.state = {
 			expanded:false,
 			redirectToRoute: false,
-			type_of_post: '',
 			post_text: '',
-			image_for_post: '',
-			video_for_post: '',
-			video_thumbnail_image: '',
-			total_likes: '',
-			total_shares: '',
-			endpoint: '',
-			date_of_publishing: '',		}
+			image_upload: '',
+			video_upload: '',
+		}
 
 	}
 
@@ -107,20 +102,6 @@ class CreateSocialPost extends Component {
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 				<div style={styles.outerContainer}>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your type_of_post" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, type_of_post: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
 				  	<div style={styles.textinputContainer}>
 						<form className={styles.root} noValidate autoComplete="off">
 							<TextField 
@@ -133,96 +114,47 @@ class CreateSocialPost extends Component {
 						</form>
 				  	</div>
 
-
-				  	<div style={styles.textinputContainer}>
+					<div style={styles.textinputContainer}>
+						<p style={styles.headingOverInput}>
+							Post Image
+						</p>
 						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your image_for_post" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, image_for_post: event.target.value})) }
+							<input
+								// multiple="multiple" // for selecting multiple files
+								name="image_upload" // name of input field or fieldName simply
+								enctype="multipart/form-data"
+								type="file"
+								onChange={(event) => {
+									// console logging selected file from menu
+									console.log( event.target.files[0] ) // gives first file
+									// setState method with event.target.files[0] as argument
+									this.setState(prev => ({...prev, image_upload: event.target.files[0]}))
+								}}
 							/>
 						</form>
-				  	</div>
+					</div>
 
 
-				  	<div style={styles.textinputContainer}>
+					<div style={styles.textinputContainer}>
+						<p style={styles.headingOverInput}>
+							Post Video
+						</p>
 						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your video_for_post" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, video_for_post: event.target.value})) }
+							<input
+								// multiple="multiple" // for selecting multiple files
+								name="video_upload" // name of input field or fieldName simply
+								enctype="multipart/form-data"
+								type="file"
+								onChange={(event) => {
+									// console logging selected file from menu
+									console.log( event.target.files[0] ) // gives first file
+									// setState method with event.target.files[0] as argument
+									this.setState(prev => ({...prev, video_upload: event.target.files[0]}))
+								}}
 							/>
 						</form>
-				  	</div>
+					</div>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your video_thumbnail_image" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, video_thumbnail_image: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your total_likes" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, total_likes: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your total_shares" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, total_shares: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your endpoint" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, endpoint: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your date_of_publishing" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, date_of_publishing: event.target.value})) }
-							/>
-						</form>
-				  	</div>
 
 					<button style={styles.buttonWithoutBG}
 						onClick={ () => {
@@ -230,40 +162,13 @@ class CreateSocialPost extends Component {
 							let setResponseInCurrentSocialPost = (arg) => this.props.set_current_socialpost(arg)
 							let redirectToNewSocialPost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 
-							// first create parent object
-							let socialpost_object = {
-								type_of_post: this.state.type_of_post,
-								post_text: this.state.post_text,
-								image_for_post: this.state.image_for_post,
-								video_for_post: this.state.video_for_post,
-								video_thumbnail_image: this.state.video_thumbnail_image,
-								total_likes: this.state.total_likes,
-								total_shares: this.state.total_shares,
-								endpoint: this.state.endpoint,
-								date_of_publishing: this.state.date_of_publishing,
-							}
+							const formData = new FormData()
 
-							// 2nd create child object from redux (linked_object_and_live_object_in_redux in schema)
-							let user_object = {
+							formData.append('post_text', this.state.post_text)
+							formData.append('image_upload', this.state.image_upload, this.state.image_upload.name)
+							formData.append('video_upload', this.state.video_upload, this.state.video_upload.name)
 
-								phone_number: this.props.phone_number,
-								user_name: this.props.user_name,
-								user_name_in_profile: this.props.user_name_in_profile,
-								user_avatar_image: this.props.user_avatar_image,
-								user_cover_image: this.props.user_cover_image,
-								user_brief_intro: this.props.user_brief_intro,
-								user_about_me: this.props.user_about_me,
-								user_working_zone: this.props.user_working_zone,
-								user_education: this.props.user_education,
-								user_contact_details: this.props.user_contact_details,
-							}
-
-							// 3rd send post request
-							axios.post(utils.baseUrl + '/socialposts/create-socialpost-with-user', 
-								{
-									socialpost_object: socialpost_object,
-									user_object: user_object,
-								})
+							axios.post(utils.baseUrl + '/socialposts/create-socialpost-with-user', formData)
 							.then(function (response) {
 								console.log(response.data) // current socialpost screen data
 								

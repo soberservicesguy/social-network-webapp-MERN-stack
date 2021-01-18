@@ -7,3 +7,5 @@ export {default as reducerForShare } from "./reducer_for_Share.js";
 export {default as reducerForSocialPost } from "./reducer_for_SocialPost.js";
 export {default as reducerForSport } from "./reducer_for_Sport.js";
 export {default as reducerForUser } from "./reducer_for_User.js";
+
+export {default as reducerForPrivileges } from "./reducer_for_privileges.js";

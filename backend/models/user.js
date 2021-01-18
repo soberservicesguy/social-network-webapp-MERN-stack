@@ -9,9 +9,16 @@ const UserSchema = new mongoose.Schema({
 	hash:String,
 	salt:String,
 	isLoggedIn: Boolean,
-
 	phone_number:String,
 	user_name:String,
+
+	facebook:{
+		id: String,
+		token: String,
+		name: String,
+		email: String,
+	},
+
 	user_name_in_profile:String,
 	user_avatar_image:String,
 	user_cover_image:String,

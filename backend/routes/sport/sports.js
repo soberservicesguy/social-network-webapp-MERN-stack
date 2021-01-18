@@ -10,12 +10,137 @@ const User = mongoose.model('User');
 
 const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
-const { isAllowedCreatingBooks } = require('../authMiddleware/isAllowedCreatingBooks')
+const { isAllowedCreatingSports } = require('../authMiddleware/isAllowedCreatingSports')
 const { isAllowedInteractingWithOthersPosts } = require('../authMiddleware/isAllowedInteractingWithOthersPosts')
 
 
+const multer = require('multer');
+const path = require('path')
 
-// create a new sport with children
+// Set The Storage Engine
+const image_storage = multer.diskStorage({
+	destination: path.join(__dirname , '../../assets/images/uploads/sport_image'),
+	filename: function(req, file, cb){
+		// file name pattern fieldname-currentDate-fileformat
+		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+
+		filename_used_to_store_image_in_assets = file.originalname
+		cb(null, file.originalname);
+
+	}
+});
+
+// Check File Type
+function checkFileTypeForImage(file, cb){
+	// Allowed ext
+	let filetypes = /jpeg|jpg|png|gif/;
+	// Check ext
+	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+	// Check mime
+	let mimetype = filetypes.test(file.mimetype);
+
+	if(mimetype && extname){
+		return cb(null,true);
+	} else {
+		cb('Error: jpeg, jpg, png, gif Images Only!');
+	}
+}
+
+// Init Upload
+const upload_sport_by_user = multer({
+	storage: image_storage,
+	limits:{fileSize: 200000000}, // 1 mb
+	fileFilter: function(req, file, cb){
+		checkFileTypeForImage(file, cb);
+	}
+}).single('sport_image'); // this is the field that will be dealt
+// .array('sport_image', 12)
+
+
+
+
+// create blogpost with undefined
+// USED IN CREATING BLOGPOST
+router.post('/create-sport-with-user', passport.authenticate('jwt', { session: false }), isAllowedCreatingSports, function(req, res, next){
+	
+	// console.log('OUTER LOG')
+	// console.log(req.body)
+
+	upload_sport_by_user(req, res, (err) => {
+		if(err){
+
+			console.log(err)
+
+		} else {
+
+			if(req.file == undefined){
+
+				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
+
+			} else {
+				// console.log('INNER LOG')
+				// console.log(req.body)
+
+			// image is uploaded , now saving image in db
+				const newSport = new Sport({
+
+					_id: new mongoose.Types.ObjectId(),
+					sport_name: req.body.parent.sport_name,
+					sport_image: `./assets/images/uploads/sport_image/${filename_used_to_store_image_in_assets}`,
+					sport_description: req.body.parent.sport_description,
+					// endpoint: req.body.parent.endpoint,
+
+				});
+
+				newSport.save(function (err, newSport) {
+
+					if (err){
+						res.status(404).json({ success: false, msg: 'couldnt create page database entry'})
+						return console.log(err)
+					}
+					// assign user object then save
+					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+					.then((user) => {
+						if (user){
+
+							newSport.sport_created_by_user = user
+							newSport.save()
+
+
+							// in response sending new image too with base64 encoding
+							let base64_encoded_image = base64_encode(newSport.sport_image)
+
+							let new_sport = {
+								sport_name: newSport.sport_name,
+								sport_image: base64_encoded_image,
+								sport_description: newSport.sport_description,
+							}
+
+							res.status(200).json({ success: true, msg: 'new sport saved', new_sport: new_sport});	
+
+						} else {
+
+							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+
+						}
+					})
+					.catch((err) => {
+
+						next(err);
+
+					});
+
+				})
+
+				// not needed, this is used only in multer
+				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
+			}
+		}
+	})
+})
+
+
 
 // will be used for creating interest
 // USED
@@ -56,6 +181,52 @@ router.post('/create-interest-for-sport', passport.authenticate('jwt', { session
 	})
 
 })
+
+
+// get sports_list
+// USED
+router.get('/sports-list', function(req, res, next){
+
+	Sport.
+	find().
+	limit(10).
+	then((sports)=>{
+		var newSports_list = []
+		sports.map((sport, index)=>{
+			var newSport = {}
+
+			newSport.sport_name = sport[ 'sport_name' ]
+			newSport.sport_image = base64_encode( sport[ 'sport_image' ] )
+			newSport.sport_description = sport[ 'sport_description' ]
+			newSport.endpoint = sport[ 'endpoint' ]
+
+			newSports_list.push({...newSport})
+			newSport = {}
+		});
+
+		return newSports_list
+	})
+
+	.then((newSports_list) => {
+
+		if (!newSports_list) {
+
+			res.status(401).json({ success: false, msg: "could not find Sports_list" });
+
+		} else {
+
+			res.status(200).json(newSports_list);
+
+		}
+
+	})
+	.catch((err) => {
+
+		next(err);
+
+	});
+});
+
 
 
 // USED
@@ -197,49 +368,6 @@ router.get('/find-sport', function(req, res, next){
 		});
 });
 
-// get sports_list
-
-router.get('/sports-list', function(req, res, next){
-
-Sport.
-	find().
-	limit(10).
-	then((sports)=>{
-		var newSports_list = []
-		sports.map((sport, index)=>{
-			var newSport = {}
-
-			newSport.sport_name = sport[ 'sport_name' ]
-			newSport.sport_image = base64_encode( sport[ 'sport_image' ] )
-			newSport.sport_description = sport[ 'sport_description' ]
-			newSport.endpoint = sport[ 'endpoint' ]
-
-			newSports_list.push({...newSport})
-			newSport = {}
-		});
-
-		return newSports_list
-	})
-
-	.then((newSports_list) => {
-
-		if (!newSports_list) {
-
-			res.status(401).json({ success: false, msg: "could not find Sports_list" });
-
-		} else {
-
-			res.status(200).json(newSports_list);
-
-		}
-
-	})
-	.catch((err) => {
-
-		next(err);
-
-	});
-});
 
 // get sports_list_with_children
 

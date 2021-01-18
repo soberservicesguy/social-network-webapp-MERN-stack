@@ -5,45 +5,18 @@ var base64_encode = require('../lib/image_to_base64');
 const {resolve} = require('path')
 const mongoose = require('mongoose');
 
-require('../models/page');
-require('../models/comment');
-require('../models/like');
-require('../models/share');
 require('../models/user');
 
-const Page = mongoose.model('Page');
 const User = mongoose.model('User');
 
-const Comment = mongoose.model('Comment');
-const Like = mongoose.model('Like');
-const Share = mongoose.model('Share');
-
-
-
-const file_name = excel_file || '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/excel_to_databases/all_pages.xlsx'
-// const file_name = '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/excel_to_databases/all_pages.xlsx'
+const file_name = excel_file || '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/excel_to_databases/all_users.xlsx'
+// const file_name = '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/excel_to_databases/all_users.xlsx'
 
 const sheet_to_class_mapper = (sheet_name, db_object) => {
-	if (sheet_name === 'all_pages'){
+	if (sheet_name === 'all_users'){
 
-		return new Page(db_object)
+		return new User(db_object)
 	
-	} else if (sheet_name === 'comments'){
-
-	return new Comment(db_object)
-	
-	} else if (sheet_name === 'likes'){
-
-	return new Like(db_object)
-	
-	} else if (sheet_name === 'shares'){
-
-	return new Share(db_object)
-	
-	} else if (sheet_name === 'users'){
-
-	return new User(db_object)
-
 	} else {
 
 		null
@@ -69,9 +42,9 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 
 		} 
 
-		const socialpost = sheet_to_class_mapper(parent_sheet, {...parent_db_object_dict, _id: new mongoose.Types.ObjectId()})
+		const user = sheet_to_class_mapper(parent_sheet, {...parent_db_object_dict, _id: new mongoose.Types.ObjectId()})
 
-		socialpost.save(function (err, socialpost) {
+		user.save(function (err, user) {
 
 			if (err) return handleError(err);
 
@@ -99,7 +72,7 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 							child_db_object_dict[ child_header[m] ] = parent_row[m]
 						} 
 
-						const related_child = sheet_to_class_mapper(child_sheet, {...child_db_object_dict, socialpost: socialpost._id})
+						const related_child = sheet_to_class_mapper(child_sheet, {...child_db_object_dict, user: user._id})
 
 						related_child.save(function (err) {
 						  if (err) return handleError(err);
@@ -108,22 +81,22 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 	
 						if (child_sheet === 'comments'){
 
-							socialpost.comments.push(related_child._id)
+							user.comments.push(related_child._id)
 
 		
 						} else if (child_sheet === 'likes'){
 
-							socialpost.likes.push(related_child._id)
+							user.likes.push(related_child._id)
 
 		
 						} else if (child_sheet === 'shares'){
 
-							socialpost.shares.push(related_child._id)
+							user.shares.push(related_child._id)
 
 		
 						} else if (child_sheet === 'users'){
 
-							socialpost.users.push(related_child._id)
+							user.users.push(related_child._id)
 
 	
 						}
@@ -131,7 +104,7 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 				} 
 				// saving parent object after assigning child objects to it
  
- 				socialpost.save()
+ 				user.save()
 
 			}			
 		})

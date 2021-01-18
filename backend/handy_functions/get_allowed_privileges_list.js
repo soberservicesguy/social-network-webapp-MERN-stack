@@ -63,31 +63,31 @@ function get_allowed_privileges_list(user_object){
 
 	if ( !privileges_list.includes('Posts Creation') ){
 
-		privileges_list.push('Revoke Posts control')
+		privileges_list.push('Revoke Posts Creation')
 
 	} 
 
 	if ( !privileges_list.includes('Ads Creation') ){
 
-		privileges_list.push('Revoke Ads control')
+		privileges_list.push('Revoke Ads Creation')
 
 	} 
 
 	if ( !privileges_list.includes('Books Creation') ){
 
-		privileges_list.push('Revoke Books control')
+		privileges_list.push('Revoke Books Creation')
 
 	} 
 
 	if ( !privileges_list.includes('Pages Creation') ){
 
-		privileges_list.push('Revoke Pages control')
+		privileges_list.push('Revoke Pages Creation')
 
 	} 
 
 	if ( !privileges_list.includes('Sports Creation') ){
 
-		privileges_list.push('Revoke Sports control')
+		privileges_list.push('Revoke Sports Creation')
 
 	} 
 

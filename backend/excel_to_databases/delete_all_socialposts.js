@@ -17,8 +17,9 @@ const User = mongoose.model('User');
 const {resolve} = require('path')
 require('dotenv').config({path: resolve(__dirname,"../.env")})
 
-SocialPost.deleteMany({}, ()=>null)
-Comment.deleteMany({}, ()=>null)
-Like.deleteMany({}, ()=>null)
-Share.deleteMany({}, ()=>null)
-User.deleteMany({}, ()=>null)
+
+function bulk_delete_all_socialpages(){
+	SocialPost.deleteMany({}, ()=>null)
+}
+
+module.exports = bulk_delete_all_socialpages
