@@ -12,4 +12,8 @@ router.use('/pages', require('./page/pages'));
 router.use('/books', require('./book/books'));
 router.use('/sports', require('./sport/sports'));
 
+router.use('/friends', require('./friend_requests/friend_request_accept'));
+
+
+
 module.exports = router;

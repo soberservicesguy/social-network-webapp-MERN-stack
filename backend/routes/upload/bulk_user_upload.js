@@ -110,7 +110,7 @@ const bulk_upload_users = multer({
 
 // create blogpost with undefined
 // USED IN CREATING BLOGPOST
-router.post('/bulk-upload-users', function(req, res, next){
+router.post('/bulk-upload-users', passport.authenticate('jwt', { session: false }), function(req, res, next){
 	
 	// console.log('OUTER LOG')
 	// console.log(req.body)
@@ -124,17 +124,14 @@ router.post('/bulk-upload-users', function(req, res, next){
 
 			// give excel file name and run bulk import function
 			// req.files['excel_sheet_for_user'][0] // pull data from it and create users
-			try {
-				// console.log( req.files['excel_sheet_for_user'][0] )
-				// give path
+			try{
+
 				let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_users/${currentDate}_${currentTime}/${req.files['excel_sheet_for_user'][0].filename}`) 
-				sheet_to_class( uploaded_excel_sheet )
+				sheet_to_class( uploaded_excel_sheet, user_id )
 				res.status(200).json({ success: true, msg: 'new users created'});	
 
-			} catch (error){
-
+			} catch (err) {
 				res.status(200).json({ success: false, msg: "new users NOT created, try again" });
-
 			}
 
 		}
@@ -142,7 +139,7 @@ router.post('/bulk-upload-users', function(req, res, next){
 })
 
 
-router.get('/bulk-delete-users', function(req, res, next){
+router.get('/bulk-delete-users', passport.authenticate('jwt', { session: false }), function(req, res, next){
 	
 	try{
 

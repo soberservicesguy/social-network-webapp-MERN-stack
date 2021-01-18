@@ -13,9 +13,11 @@ const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
 const { isAllowedCreatingSports } = require('../authMiddleware/isAllowedCreatingSports')
 const { isAllowedInteractingWithOthersPosts } = require('../authMiddleware/isAllowedInteractingWithOthersPosts')
 
-
 const multer = require('multer');
 const path = require('path')
+
+require('../../models/activity');
+const Activity = mongoose.model('Activity');
 
 // Set The Storage Engine
 const image_storage = multer.diskStorage({
@@ -119,6 +121,16 @@ router.post('/create-sport-with-user', passport.authenticate('jwt', { session: f
 
 							res.status(200).json({ success: true, msg: 'new sport saved', new_sport: new_sport});	
 
+							let newActivity = new Activity({
+								_id: new mongoose.Types.ObjectId(),
+								user: user,
+								activity_type: 'created_sport',
+								sport_created: newSport,
+							})
+							newActivity.save()
+							user.activities.push(newActivity)
+							user.save()
+
 						} else {
 
 							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
@@ -170,6 +182,17 @@ router.post('/create-interest-for-sport', passport.authenticate('jwt', { session
 			// })
 				
 			sport.save((err, sport) => res.status(200).json(sport) )
+
+			let newActivity = new Activity({
+				_id: new mongoose.Types.ObjectId(),
+				user: user,
+				activity_type: 'got_interested_in_sport',
+				sport_liked: newSport,
+			})
+			newActivity.save()
+			user.activities.push(newActivity)
+			user.save()
+
 		})
 		.catch((err1) => {
 			console.log(err1)

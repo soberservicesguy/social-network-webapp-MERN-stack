@@ -12,6 +12,8 @@ const router = require('express').Router();
 const Page = mongoose.model('Page');
 const User = mongoose.model('User');
 
+require('../../models/activity');
+const Activity = mongoose.model('Activity');
 
 const multer = require('multer');
 const path = require('path')
@@ -118,6 +120,18 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 
 							res.status(200).json({ success: true, msg: 'new page saved', new_page: new_page});	
 
+
+							let newActivity = new Activity({
+								_id: new mongoose.Types.ObjectId(),
+								user: user,
+								activity_type: 'created_page',
+								page_created: newPage,
+							})
+							newActivity.save()
+							user.activities.push(newActivity)
+							user.save()
+
+
 						} else {
 
 							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
@@ -213,6 +227,19 @@ router.post('/create-interest-for-page', passport.authenticate('jwt', { session:
 			// })
 				
 			page.save((err, page) => res.status(200).json(page) )
+
+
+			let newActivity = new Activity({
+				_id: new mongoose.Types.ObjectId(),
+				user: user,
+				activity_type: 'got_interested_in_page',
+				page_liked: page,
+			})
+			newActivity.save()
+			user.activities.push(newActivity)
+			user.save()
+
+
 		})
 		.catch((err1) => {
 			console.log(err1)

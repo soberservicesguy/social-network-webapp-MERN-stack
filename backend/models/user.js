@@ -45,6 +45,9 @@ const UserSchema = new mongoose.Schema({
 	friends: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
 	total_friends:0,
 
+	friend_requests_sent: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
+	total_friend_requests_sent: 0,
+
 	friend_requests: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
 	total_friend_requests:0,
 
@@ -66,6 +69,7 @@ UserSchema.pre('save', function(next) {
 
 	this.total_friends = this.friends.length
 	this.total_friend_requests = this.friend_requests.length
+	this.total_friend_requests_sent = this.friend_requests_sent.length
 	this.total_activities = this.activities.length
 
 	this.total_privileges = this.privileges.length

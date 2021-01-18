@@ -20,6 +20,10 @@ const Share = mongoose.model('Share');
 const User = mongoose.model('User');
 
 
+require('../../models/activity');
+const Activity = mongoose.model('Activity');
+
+
 const multer = require('multer');
 const path = require('path')
 
@@ -426,6 +430,15 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 							}
 
+							let newActivity = new Activity({
+								_id: new mongoose.Types.ObjectId(),
+								user: user,
+								activity_type: 'created_post',
+								post_created: newSocialPost,
+							})
+							newActivity.save()
+							user.activities.push(newActivity)
+							user.save()
 							
 
 						} else {
@@ -543,6 +556,19 @@ router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { ses
 			})
 
 			socialpost.save((err, socialpost) => res.status(200).json(socialpost) )
+
+
+			let newActivity = new Activity({
+				_id: new mongoose.Types.ObjectId(),
+				user: user,
+				activity_type: 'commented_on_post',
+				post_commented: newComment,
+			})
+			newActivity.save()
+			user.activities.push(newActivity)
+			user.save()
+
+
 		})
 		.catch((err1) => {
 			console.log(err1)
@@ -584,6 +610,18 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 			})
 				
 			socialpost.save((err, socialpost) => res.status(200).json(socialpost) )
+
+
+			let newActivity = new Activity({
+				_id: new mongoose.Types.ObjectId(),
+				user: user,
+				activity_type: 'liked_post',
+				post_liked: newLike,
+			})
+			newActivity.save()
+			user.activities.push(newActivity)
+			user.save()
+
 		})
 		.catch((err1) => {
 			console.log(err1)
@@ -626,6 +664,18 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 			})
 				
 			socialpost.save((err, socialpost) => res.status(200).json(socialpost) )
+
+
+			let newActivity = new Activity({
+				_id: new mongoose.Types.ObjectId(),
+				user: user,
+				activity_type: 'shared_post',
+				post_share: newShare,
+			})
+			newActivity.save()
+			user.activities.push(newActivity)
+			user.save()
+
 		})
 		.catch((err1) => {
 			console.log(err1)

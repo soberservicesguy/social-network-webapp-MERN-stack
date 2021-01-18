@@ -14,6 +14,8 @@ const { isAllowedCreatingAds } = require('../authMiddleware/isAllowedCreatingAds
 const multer = require('multer');
 const path = require('path')
 
+require('../../models/activity');
+const Activity = mongoose.model('Activity');
 
 // Set The Storage Engine
 const image_storage = multer.diskStorage({
@@ -112,6 +114,17 @@ router.post('/create-ad-with-user', passport.authenticate('jwt', { session: fals
 							}
 
 							res.status(200).json({ success: true, msg: 'new ad saved', new_advertisement: new_advertisement});	
+
+
+							let newActivity = new Activity({
+								_id: new mongoose.Types.ObjectId(),
+								user: user,
+								activity_type: 'created_advertisement',
+								ad_created: newAdvertisement,
+							})
+							newActivity.save()
+							user.activities.push(newActivity)
+							user.save()
 
 						} else {
 

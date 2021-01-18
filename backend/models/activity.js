@@ -7,15 +7,34 @@ const ActivitySchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
 	user: { type: Schema.Types.ObjectId, ref: 'User'},
-	activity_type: { type:String, enum:['created_post', 'liked', 'shared', 'commented', 'sent_request', 'accepted_request'] },
+	activity_type: { type:String, enum:[
+		'created_post', 'liked_post', 'shared_post', 'commented_on_post', 
+		'sent_friend_request', 'accepted_friend_request',
+		'created_book', 'got_interested_in_book',
+		'created_page', 'got_interested_in_book',
+		'created_sport', 'got_interested_in_sport',
+		'created_advertisement', 'got_interested_in_advertisement',
+	]},
 //
-	post_created: { type: Schema.Types.ObjectId, ref: 'Social_Post'},
-	post_liked: { type: Schema.Types.ObjectId, ref: 'Like'},
-	page_liked: { type: Schema.Types.ObjectId, ref: 'Like'},
-	post_share: { type: Schema.Types.ObjectId, ref: 'Share'},
-	post_commented: { type: Schema.Types.ObjectId, ref: 'Comment'},
-	sent_friend_request: { type: Schema.Types.ObjectId, ref: 'User'},
-	accepted_friend_request: { type: Schema.Types.ObjectId, ref: 'User'},
+	post_created: { type: Schema.Types.ObjectId, ref: 'Social_Post', default:null },
+	post_liked: { type: Schema.Types.ObjectId, ref: 'Like', default:null },
+	post_share: { type: Schema.Types.ObjectId, ref: 'Share', default:null },
+	post_commented: { type: Schema.Types.ObjectId, ref: 'Comment', default:null },
+
+	sent_friend_request: { type: Schema.Types.ObjectId, ref: 'User', default:null },
+	accepted_friend_request: { type: Schema.Types.ObjectId, ref: 'User', default:null },
+
+	sport_created: { type: Schema.Types.ObjectId, ref: 'Sport', default:null },
+	sport_liked: { type: Schema.Types.ObjectId, ref: 'Sport', default:null },
+
+	page_created: { type: Schema.Types.ObjectId, ref: 'Page', default:null },
+	page_liked: { type: Schema.Types.ObjectId, ref: 'Page', default:null },
+
+	book_created: { type: Schema.Types.ObjectId, ref: 'Book', default:null },
+	book_liked: { type: Schema.Types.ObjectId, ref: 'Book', default:null },
+
+	ad_created: { type: Schema.Types.ObjectId, ref: 'Advertisement', default:null },
+	ad_liked: { type: Schema.Types.ObjectId, ref: 'Advertisement', default:null },
 
 	endpoint:String,
 	timestamp:String,

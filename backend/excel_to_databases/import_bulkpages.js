@@ -52,11 +52,14 @@ const sheet_to_class_mapper = (sheet_name, db_object) => {
 }
 
 
-const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_class_dict) =>{
+const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_class_dict, user_id) =>{
 
 	const parent_header = parent_children_rows_dict.parent_header
 	const parent_sheet = parent_children_rows_dict.parent_sheet_name
 	const row_details_list = parent_children_rows_dict.row_details
+
+// finding the user 
+	let user_object = await User.findOne({ _id: user_id }) // using req.user from passport js middleware
 
 	for (let i = 0; i < row_details_list.length; i++) {
 
@@ -69,11 +72,14 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 
 		} 
 
-		const socialpost = sheet_to_class_mapper(parent_sheet, {...parent_db_object_dict, _id: new mongoose.Types.ObjectId()})
+		const page = sheet_to_class_mapper(parent_sheet, {...parent_db_object_dict, _id: new mongoose.Types.ObjectId()})
 
-		socialpost.save(function (err, socialpost) {
+		page.save(function (err, page) {
 
 			if (err) return handleError(err);
+
+		// assigning the user
+			page.page_created_by_user = user_object
 
 			// accessing children
 
@@ -99,7 +105,7 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 							child_db_object_dict[ child_header[m] ] = parent_row[m]
 						} 
 
-						const related_child = sheet_to_class_mapper(child_sheet, {...child_db_object_dict, socialpost: socialpost._id})
+						const related_child = sheet_to_class_mapper(child_sheet, {...child_db_object_dict, page: page._id})
 
 						related_child.save(function (err) {
 						  if (err) return handleError(err);
@@ -108,22 +114,22 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 	
 						if (child_sheet === 'comments'){
 
-							socialpost.comments.push(related_child._id)
+							page.comments.push(related_child._id)
 
 		
 						} else if (child_sheet === 'likes'){
 
-							socialpost.likes.push(related_child._id)
+							page.likes.push(related_child._id)
 
 		
 						} else if (child_sheet === 'shares'){
 
-							socialpost.shares.push(related_child._id)
+							page.shares.push(related_child._id)
 
 		
 						} else if (child_sheet === 'users'){
 
-							socialpost.users.push(related_child._id)
+							page.users.push(related_child._id)
 
 	
 						}
@@ -131,7 +137,7 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 				} 
 				// saving parent object after assigning child objects to it
  
- 				socialpost.save()
+ 				page.save()
 
 			}			
 		})
@@ -142,7 +148,7 @@ const save_parent_and_children_in_db = (parent_children_rows_dict, sheet_to_clas
 
 
 
-const parent_children_detailed = (file_name, old_parent_child_relationship_data ,  parent_completely_detailed, sheet_to_class_dict) =>{
+const parent_children_detailed = (file_name, old_parent_child_relationship_data ,  parent_completely_detailed, sheet_to_class_dict, user_id) =>{
 
 	/**
 	 * -------------- CODE BLOCK 1 START ----------------
@@ -268,7 +274,7 @@ const parent_children_detailed = (file_name, old_parent_child_relationship_data 
 						.then( (ans_for_above) => {
 							if ( !all_results2.includes(ans_for_above) && ans_for_above !== undefined  ){
 								all_results2.push(ans_for_above);
-								save_parent_and_children_in_db(ans_for_above, sheet_to_class_dict); 
+								save_parent_and_children_in_db(ans_for_above, sheet_to_class_dict, user_id); 
 							}
 						})
 						// .then( ()=> console.log(parent_completely_detailed.row_details[0].children[0].child_rows) )
@@ -303,7 +309,7 @@ const parent_children_detailed = (file_name, old_parent_child_relationship_data 
 
 
 
-const generate_parent_completely_detailed = (file_name, parent_child_relationship_data, sheet_to_class_dict) => {
+const generate_parent_completely_detailed = (file_name, parent_child_relationship_data, sheet_to_class_dict, user_id) => {
 // NOTE : TEST THIS TO WORK FOR MULTIPLE PARENTS AND THEIR CHILDREN, OR ONLY USE IT FOR SINGLE PARENT AND ITS CHILDREN
 
 	/**
@@ -374,7 +380,7 @@ const generate_parent_completely_detailed = (file_name, parent_child_relationshi
 					  return parent_complete_details
 					}) // from .then block
 					// .then( res => console.log(res) )
-					.then( parent_detailed => parent_children_detailed(file_name, parent_child_relationship_data, parent_detailed, sheet_to_class_dict) )
+					.then( parent_detailed => parent_children_detailed(file_name, parent_child_relationship_data, parent_detailed, sheet_to_class_dict, user_id) )
 
 
 			}) // from parent_child_relationship_data.map block
@@ -393,7 +399,7 @@ const generate_parent_completely_detailed = (file_name, parent_child_relationshi
 
 
 
-const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict) => {
+const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict, user_id) => {
 	var all_collection = [];
 
 	var parent_child_details = {};
@@ -455,13 +461,13 @@ const pull_parent_child_data_from_excel = (file_name, sheet_to_class_dict) => {
 		return all_collection
 
 	})
-	.then( result => generate_parent_completely_detailed(file_name, result, sheet_to_class_dict) )
+	.then( result => generate_parent_completely_detailed(file_name, result, sheet_to_class_dict, user_id) )
 	// .catch( (err) => console.log('ERROR IS ', err) )
 }
 
 
 
-const sheet_to_class = (file_name) => {
+const sheet_to_class = (file_name, user_id) => {
 	const sheet_to_class_dict = {};
 
 	readXlsxFile( String(file_name), { sheet: String('sheets_classes') })
@@ -478,7 +484,7 @@ const sheet_to_class = (file_name) => {
 
 		})
 		// .then( (ans) => console.log(ans) )
-		.then ( (sheet_to_class_dict) => pull_parent_child_data_from_excel(file_name, sheet_to_class_dict) )
+		.then ( (sheet_to_class_dict) => pull_parent_child_data_from_excel(file_name, sheet_to_class_dict, user_id) )
 		.catch( err => console.log(err) )	
 }
 

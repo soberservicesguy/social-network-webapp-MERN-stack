@@ -16,7 +16,8 @@ const Book = mongoose.model('Book');
 const multer = require('multer');
 const path = require('path')
 
-
+require('../../models/activity');
+const Activity = mongoose.model('Activity');
 
 
 // Set The Storage Engine
@@ -121,6 +122,17 @@ router.post('/create-book-with-user', passport.authenticate('jwt', { session: fa
 
 							res.status(200).json({ success: true, msg: 'new book saved', new_book: new_book});	
 
+
+							let newActivity = new Activity({
+								_id: new mongoose.Types.ObjectId(),
+								user: user,
+								activity_type: 'created_book',
+								book_created: newBook,
+							})
+							newActivity.save()
+							user.activities.push(newActivity)
+							user.save()
+
 						} else {
 
 							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
@@ -171,6 +183,18 @@ router.post('/create-interest-for-book', passport.authenticate('jwt', { session:
 			// })
 				
 			book.save((err, book) => res.status(200).json(book) )
+
+
+			let newActivity = new Activity({
+				_id: new mongoose.Types.ObjectId(),
+				user: user,
+				activity_type: 'got_interested_in_book',
+				book_liked: book,
+			})
+			newActivity.save()
+			user.activities.push(newActivity)
+			user.save()
+
 		})
 		.catch((err1) => {
 			console.log(err1)

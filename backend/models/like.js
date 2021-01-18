@@ -10,7 +10,10 @@ const LikeSchema = new mongoose.Schema({
 
 // other model links
 	socialpost:{ type: Schema.Types.ObjectId, ref: 'SocialPost'  },
-	page: { type: Schema.Types.ObjectId, ref: 'Page'  },
+	// page: { type: Schema.Types.ObjectId, ref: 'Page'  },
+	// book: { type: Schema.Types.ObjectId, ref: 'Book'  },
+	// sport: { type: Schema.Types.ObjectId, ref: 'Sport'  },
+
 
 	endpoint:String,
 	timestamp:String,
