@@ -63,7 +63,7 @@ const styles = theme => ({
 });
 
 
-class BulkVideoUpload extends Component {
+class BulkSportUpload extends Component {
 	constructor(props) {
 		super(props);
 // STATE	
@@ -205,9 +205,9 @@ class BulkVideoUpload extends Component {
 	}
 }
 	
-BulkVideoUpload.defaultProps = {
+BulkSportUpload.defaultProps = {
 
 };
 
-// export default BulkVideoUpload // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(BulkVideoUpload)))
+// export default BulkSportUpload // REMOVE withResponsiveness and withStyles as much as possible
+export default withRouter(withResponsiveness(withStyles(styles)(BulkSportUpload)))
