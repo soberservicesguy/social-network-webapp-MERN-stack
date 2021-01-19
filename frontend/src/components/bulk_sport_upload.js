@@ -70,7 +70,7 @@ class BulkVideoUpload extends Component {
 		this.state = {
 			expanded:false,
 			redirectToRoute: false,
-			videos_to_upload: [],
+			sport_image: [],
 			excel_sheet:'',
 		}
 
@@ -93,7 +93,7 @@ class BulkVideoUpload extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/videos" }} />
+			return <Redirect to = {{ pathname: "/sports" }} />
 
 		} else {
 
@@ -103,11 +103,11 @@ class BulkVideoUpload extends Component {
 
 					<div style={styles.textinputContainer}>
 						<p style={styles.headingOverInput}>
-							UPLOAD VIDEOS HERE
+							UPLOAD SPORT IMAGES HERE
 						</p>
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
-								name="videos_to_upload" // name of input field or fieldName simply
+								name="sport_image" // name of input field or fieldName simply
 								multiple="multiple" // for selecting multiple files
 								enctype="multipart/form-data"
 								type="file"
@@ -115,7 +115,7 @@ class BulkVideoUpload extends Component {
 									// console logging selected file from menu
 									console.log( event.target.files ) // gives all files
 									// setState method with event.target.files[0] as argument
-									this.setState(prev => ({...prev, videos_to_upload: event.target.files}))
+									this.setState(prev => ({...prev, sport_image: event.target.files}))
 								}}
 							/>
 						</form>
@@ -124,11 +124,11 @@ class BulkVideoUpload extends Component {
 
 					<div style={styles.textinputContainer}>
 						<p style={styles.headingOverInput}>
-							UPLOAD VIDEOS EXCEL SHEET HERE
+							UPLOAD SPORTS EXCEL SHEET HERE
 						</p>
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
-								name="excel_sheet_for_videos" // name of input field or fieldName simply
+								name="excel_sheet_for_sport" // name of input field or fieldName simply
 								// multiple="multiple" // for selecting multiple files
 								enctype="multipart/form-data"
 								type="file"
@@ -154,12 +154,12 @@ class BulkVideoUpload extends Component {
 							const formData = new FormData()
 							// attaching multiple files with formData
 
-							Array.from(this.state.videos_to_upload).forEach((file) => {
-								formData.append('videos_to_upload', file, file.name)
+							Array.from(this.state.sport_image).forEach((file) => {
+								formData.append('sport_image', file, file.name)
 							})
-							formData.append('excel_sheet_for_videos', this.state.excel_sheet, this.state.excel_sheet.name)
+							formData.append('excel_sheet_for_sport', this.state.excel_sheet, this.state.excel_sheet.name)
 
-							axios.post(utils.baseUrl + '/uploads/bulk-upload-videos', formData)
+							axios.post(utils.baseUrl + '/uploads/bulk-upload-sports', formData)
 							.then(function (response) {
 								console.log(response.data) // current blogpost screen data
 								
@@ -177,14 +177,14 @@ class BulkVideoUpload extends Component {
 						}}
 					>
 						<p style={styles.innerText}>
-							Press To Create Bulk Videos
+							Press To Create Bulk SPORTS
 						</p>
 					</button>
 
 					<div>
 						<button style={styles.buttonWithoutBG}
 							onClick={ () => {
-								axios.get(utils.baseUrl + '/uploads/bulk-delete-videos')
+								axios.get(utils.baseUrl + '/uploads/bulk-delete-sports')
 								.then(function (response) {
 									console.log(response.data)
 								})
@@ -194,7 +194,7 @@ class BulkVideoUpload extends Component {
 							}}
 						>
 							<p style={styles.innerText}>
-								Press To DELETE ALL VIDEOS
+								Press To DELETE ALL SPORTS
 							</p>
 						</button>
 					</div>

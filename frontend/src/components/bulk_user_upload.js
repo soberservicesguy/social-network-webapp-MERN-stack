@@ -70,8 +70,7 @@ class BulkVideoUpload extends Component {
 		this.state = {
 			expanded:false,
 			redirectToRoute: false,
-			socialpost_image: [],
-			socialpost_video: [],
+			user_image: [],
 			excel_sheet:'',
 		}
 
@@ -94,7 +93,7 @@ class BulkVideoUpload extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/videos" }} />
+			return <Redirect to = {{ pathname: "/sports" }} />
 
 		} else {
 
@@ -104,11 +103,11 @@ class BulkVideoUpload extends Component {
 
 					<div style={styles.textinputContainer}>
 						<p style={styles.headingOverInput}>
-							UPLOAD SOCIAL POST IMAGES HERE
+							UPLOAD USER IMAGES HERE
 						</p>
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
-								name="socialpost_image" // name of input field or fieldName simply
+								name="user_image" // name of input field or fieldName simply
 								multiple="multiple" // for selecting multiple files
 								enctype="multipart/form-data"
 								type="file"
@@ -116,27 +115,7 @@ class BulkVideoUpload extends Component {
 									// console logging selected file from menu
 									console.log( event.target.files ) // gives all files
 									// setState method with event.target.files[0] as argument
-									this.setState(prev => ({...prev, socialpost_image: event.target.files}))
-								}}
-							/>
-						</form>
-					</div>
-
-					<div style={styles.textinputContainer}>
-						<p style={styles.headingOverInput}>
-							UPLOAD SOCIAL POST VIDEOS HERE
-						</p>
-						<form className={styles.root} noValidate autoComplete="off">
-							<input
-								name="socialpost_video" // name of input field or fieldName simply
-								multiple="multiple" // for selecting multiple files
-								enctype="multipart/form-data"
-								type="file"
-								onChange={(event) => {
-									// console logging selected file from menu
-									console.log( event.target.files ) // gives all files
-									// setState method with event.target.files[0] as argument
-									this.setState(prev => ({...prev, socialpost_video: event.target.files}))
+									this.setState(prev => ({...prev, user_image: event.target.files}))
 								}}
 							/>
 						</form>
@@ -145,11 +124,11 @@ class BulkVideoUpload extends Component {
 
 					<div style={styles.textinputContainer}>
 						<p style={styles.headingOverInput}>
-							UPLOAD VIDEOS EXCEL SHEET HERE
+							UPLOAD USER EXCEL SHEET HERE
 						</p>
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
-								name="excel_sheet_for_socialpost" // name of input field or fieldName simply
+								name="excel_sheet_for_user" // name of input field or fieldName simply
 								// multiple="multiple" // for selecting multiple files
 								enctype="multipart/form-data"
 								type="file"
@@ -175,15 +154,12 @@ class BulkVideoUpload extends Component {
 							const formData = new FormData()
 							// attaching multiple files with formData
 
-							Array.from(this.state.socialpost_image).forEach((file) => {
-								formData.append('socialpost_image', file, file.name)
+							Array.from(this.state.user_image).forEach((file) => {
+								formData.append('user_image', file, file.name)
 							})
-							Array.from(this.state.socialpost_video).forEach((file) => {
-								formData.append('socialpost_video', file, file.name)
-							})
-							formData.append('excel_sheet_for_socialpost', this.state.excel_sheet, this.state.excel_sheet.name)
+							formData.append('excel_sheet_for_user', this.state.excel_sheet, this.state.excel_sheet.name)
 
-							axios.post(utils.baseUrl + '/uploads/bulk-upload-socialposts', formData)
+							axios.post(utils.baseUrl + '/uploads/bulk-upload-users', formData)
 							.then(function (response) {
 								console.log(response.data) // current blogpost screen data
 								
@@ -201,14 +177,14 @@ class BulkVideoUpload extends Component {
 						}}
 					>
 						<p style={styles.innerText}>
-							Press To Create Bulk Videos
+							Press To Create Bulk Users
 						</p>
 					</button>
 
 					<div>
 						<button style={styles.buttonWithoutBG}
 							onClick={ () => {
-								axios.get(utils.baseUrl + '/uploads/bulk-delete-socialposts')
+								axios.get(utils.baseUrl + '/uploads/bulk-delete-users')
 								.then(function (response) {
 									console.log(response.data)
 								})
@@ -218,7 +194,7 @@ class BulkVideoUpload extends Component {
 							}}
 						>
 							<p style={styles.innerText}>
-								Press To DELETE ALL VIDEOS
+								Press To DELETE ALL USERS
 							</p>
 						</button>
 					</div>

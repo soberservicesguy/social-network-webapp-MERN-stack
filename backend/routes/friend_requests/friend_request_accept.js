@@ -104,4 +104,41 @@ router.post('/accept-friend-request', passport.authenticate('jwt', { session: fa
 })
 
 
+
+router.get('/friend-activity-notifications', passport.authenticate('jwt', { session: false }), async function(req, res, next){
+
+	try{
+
+		let user_checking_notifications = await User.findOne({ phone_number: req.user.user_object.phone_number }).populate('friends') // using req.user from passport js middleware
+		let { friends, last_timestamp_of_checking_notification } =  user_checking_notifications
+
+		let friends_activities = []
+		let all_activities = null
+
+		let all_friends = await Promise.all(friends.map(async (friend) => {
+
+			all_activities = await Promise.all(friend.activities.map(async (activity) => {
+
+				if ( last_timestamp_of_checking_notification !== null && activity.timestamp > last_timestamp_of_checking_notification ){
+					
+					let { activity_type, timestamp, endpoint} = activity
+					friends_activities.push({
+						activity_type,
+						timestamp,
+						endpoint,
+					})
+				}
+			}))
+
+		}))
+
+		res.status(200).json(friends_activities)
+
+	} catch (err){
+
+		console.log(err)
+
+	}
+})
+
 module.exports = router;

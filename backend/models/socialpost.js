@@ -12,17 +12,15 @@ const SocialPostSchema = new mongoose.Schema({
 	image_for_post:{ type:String, default: null},
 	video_for_post:{ type:String, default: null},
 	video_thumbnail_image:{ type:String, default: null},
-	total_likes:String,
-	total_shares:String,
 
 // other model links
 	comments:[{ type: Schema.Types.ObjectId, ref: 'Comment' }],
 	likes:[{ type: Schema.Types.ObjectId, ref: 'Like' }],
 	shares:[{ type: Schema.Types.ObjectId, ref: 'Share' }],
 	user:{ type: Schema.Types.ObjectId, ref: 'User' },
-	total_comments:0,
-	total_likes:0,
-	total_shares:0,
+	total_comments: {type:Number, default: 0 },
+	total_likes: {type:Number, default: 0 },
+	total_shares: {type:Number, default: 0 },
 
 	endpoint:String,
 	timestamp:String,

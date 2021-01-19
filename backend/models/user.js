@@ -58,6 +58,8 @@ const UserSchema = new mongoose.Schema({
 	timestamp:String,
 
 
+	last_timestamp_of_checking_notification: { type:String, default: null},
+
 })
 
 	

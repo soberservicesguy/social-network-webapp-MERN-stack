@@ -70,7 +70,7 @@ class BulkVideoUpload extends Component {
 		this.state = {
 			expanded:false,
 			redirectToRoute: false,
-			videos_to_upload: [],
+			page_image: [],
 			excel_sheet:'',
 		}
 
@@ -107,7 +107,7 @@ class BulkVideoUpload extends Component {
 						</p>
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
-								name="videos_to_upload" // name of input field or fieldName simply
+								name="page_image" // name of input field or fieldName simply
 								multiple="multiple" // for selecting multiple files
 								enctype="multipart/form-data"
 								type="file"
@@ -115,7 +115,7 @@ class BulkVideoUpload extends Component {
 									// console logging selected file from menu
 									console.log( event.target.files ) // gives all files
 									// setState method with event.target.files[0] as argument
-									this.setState(prev => ({...prev, videos_to_upload: event.target.files}))
+									this.setState(prev => ({...prev, page_image: event.target.files}))
 								}}
 							/>
 						</form>
@@ -128,7 +128,7 @@ class BulkVideoUpload extends Component {
 						</p>
 						<form className={styles.root} noValidate autoComplete="off">
 							<input
-								name="excel_sheet_for_videos" // name of input field or fieldName simply
+								name="excel_sheet_for_page" // name of input field or fieldName simply
 								// multiple="multiple" // for selecting multiple files
 								enctype="multipart/form-data"
 								type="file"
@@ -154,12 +154,12 @@ class BulkVideoUpload extends Component {
 							const formData = new FormData()
 							// attaching multiple files with formData
 
-							Array.from(this.state.videos_to_upload).forEach((file) => {
-								formData.append('videos_to_upload', file, file.name)
+							Array.from(this.state.page_image).forEach((file) => {
+								formData.append('page_image', file, file.name)
 							})
-							formData.append('excel_sheet_for_videos', this.state.excel_sheet, this.state.excel_sheet.name)
+							formData.append('excel_sheet_for_page', this.state.excel_sheet, this.state.excel_sheet.name)
 
-							axios.post(utils.baseUrl + '/uploads/bulk-upload-videos', formData)
+							axios.post(utils.baseUrl + '/uploads/bulk-upload-pages', formData)
 							.then(function (response) {
 								console.log(response.data) // current blogpost screen data
 								
@@ -184,7 +184,7 @@ class BulkVideoUpload extends Component {
 					<div>
 						<button style={styles.buttonWithoutBG}
 							onClick={ () => {
-								axios.get(utils.baseUrl + '/uploads/bulk-delete-videos')
+								axios.get(utils.baseUrl + '/uploads/bulk-delete-pages')
 								.then(function (response) {
 									console.log(response.data)
 								})
