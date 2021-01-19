@@ -40,16 +40,17 @@ class PageContainer extends Component {
 	componentDidMount() {
 
 // FETCHING DATA FOR COMPONENT
-			axios.get(utils.baseUrl + '/pages/pages-list-with-children',)
-			.then((response) => {
-				this.props.set_fetched_pages(response.data)
-			})
-			.catch((error) => {
-				console.log(error);
-			})
+		axios.get(utils.baseUrl + '/pages/pages-list-with-children',)
+		.then((response) => {
+			this.props.set_fetched_pages(response.data)
+		})
+		.catch((error) => {
+			console.log(error);
+		})
 
 
 	}
+
 	get_10_more_items() {
 		axios.get(utils.baseUrl + `/pages/pages-list-next-10-with-children`)
 		.then((response) => {
@@ -81,7 +82,7 @@ class PageContainer extends Component {
 					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
 						<ConnectedPageCard
 							dataPayloadFromParent = { item }
-						
+							likes = { item.likes || [] }
 						/>
 					</Grid>
 

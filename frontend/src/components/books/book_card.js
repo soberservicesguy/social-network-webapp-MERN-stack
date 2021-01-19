@@ -11,8 +11,17 @@ import axios from 'axios';
 import firebase from 'firebase';
 
 import {
+	ConnectedCreateLikeForBook,
+} from "../../redux_stuff/connected_components"
+
+import {
 	ComponentForShowingBook
 } from "."
+
+import {
+	SummarizeLikesOfBook,
+	ShowLikesOfBook,
+} from "../likes/";
 
 import utils from "../../utilities";
 
@@ -47,6 +56,7 @@ class BookCard extends Component {
 // STATE	
 		this.state = {
 			expanded: false,
+			likes: [],
 		}	
 
 	}
@@ -56,6 +66,27 @@ class BookCard extends Component {
 	componentDidMount() {
 
 	}
+
+	fetchAllLike(endpoint) {
+
+		axios.get(utils.baseUrl + '/books/get-all-likes-of-book', 
+			{
+			    params: {
+					endpoint: endpoint,
+					child_count: 3,
+			    }
+			})
+		.then((response) => {
+			// console.log(response.data);
+			this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
+			
+		})
+		.catch((error) => {
+			console.log(error);
+		})
+		
+	}
+
 
 	render() {
 
@@ -71,14 +102,33 @@ class BookCard extends Component {
 
 				<div>
 					{/* 2nd show individual summary of childs */}
+					<SummarizeLikesOfBook
+						showOnlyQuantity= { false }
+						child_quantity = { this.props.likes_quantity }
+						dataPayloadFromParent = { this.props.likes }
+					/>
 				</div>
 
 				<div>
 					{/* 3rd show individual button for showing childs */}
+					<button style={styles.buttonWithoutBG}
+						onPress={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
+					>
+						<p>
+							Show All Like
+						</p>
+					</button>
+					
+					<ShowLikesOfBook
+						dataPayloadFromParent = { this.state.likes }
+					/>
 				</div>
 
 				<div>
 					{/* 4th create individual child options like comment / like */}
+					<ConnectedCreateLikeForBook
+						parentDetailsPayload = { this.props.dataPayloadFromParent }
+					/>
 				</div>
 
 		  	</div>

@@ -40,13 +40,13 @@ class BookContainer extends Component {
 	componentDidMount() {
 
 // FETCHING DATA FOR COMPONENT
-			axios.get(utils.baseUrl + '/books/books-list-with-children',)
-			.then((response) => {
-				this.props.set_fetched_books(response.data)
-			})
-			.catch((error) => {
-				console.log(error);
-			})
+		axios.get(utils.baseUrl + '/books/books-list-with-children',)
+		.then((response) => {
+			this.props.set_fetched_books(response.data)
+		})
+		.catch((error) => {
+			console.log(error);
+		})
 
 
 	}
@@ -81,7 +81,7 @@ class BookContainer extends Component {
 					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
 						<ConnectedBookCard
 							dataPayloadFromParent = { item }
-						
+							likes = { item.likes || [] }						
 						/>
 					</Grid>
 

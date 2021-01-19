@@ -14,6 +14,15 @@ import {
 	ComponentForShowingPage
 } from "."
 
+import {
+	SummarizeLikesOfPage,
+	ShowLikesOfPage,
+} from "../likes"
+
+import {
+	ConnectedCreateLikeForPage
+} from "../../redux_stuff/connected_components"
+
 import utils from "../../utilities";
 
 import { withStyles } from '@material-ui/styles';
@@ -47,6 +56,7 @@ class PageCard extends Component {
 // STATE	
 		this.state = {
 			expanded: false,
+			likes: [],
 		}	
 
 	}
@@ -55,6 +65,26 @@ class PageCard extends Component {
 // COMPONENT DID MOUNT
 	componentDidMount() {
 
+	}
+
+	fetchAllLike(endpoint) {
+
+		axios.get(utils.baseUrl + '/pages/get-all-likes-of-page', 
+			{
+			    params: {
+					endpoint: endpoint,
+					child_count: 3,
+			    }
+			})
+		.then((response) => {
+			// console.log(response.data);
+			this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
+			
+		})
+		.catch((error) => {
+			console.log(error);
+		})
+		
 	}
 
 	render() {
@@ -71,14 +101,33 @@ class PageCard extends Component {
 
 				<div>
 					{/* 2nd show individual summary of childs */}
+					<SummarizeLikesOfPage
+						showOnlyQuantity= { false }
+						child_quantity = { this.props.likes_quantity }
+						dataPayloadFromParent = { this.props.likes }
+					/>
 				</div>
 
 				<div>
 					{/* 3rd show individual button for showing childs */}
+					<button style={styles.buttonWithoutBG}
+						onPress={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
+					>
+						<p>
+							Show All Like
+						</p>
+					</button>
+					
+					<ShowLikesOfPage
+						dataPayloadFromParent = { this.state.likes }
+					/>
 				</div>
 
 				<div>
 					{/* 4th create individual child options like comment / like */}
+					<ConnectedCreateLikeForPage
+						parentDetailsPayload = { this.props.dataPayloadFromParent }
+					/>
 				</div>
 
 		  	</div>

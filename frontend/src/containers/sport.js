@@ -40,13 +40,13 @@ class SportContainer extends Component {
 	componentDidMount() {
 
 // FETCHING DATA FOR COMPONENT
-			axios.get(utils.baseUrl + '/sports/sports-list-with-children',)
-			.then((response) => {
-				this.props.set_fetched_sports(response.data)
-			})
-			.catch((error) => {
-				console.log(error);
-			})
+		axios.get(utils.baseUrl + '/sports/sports-list-with-children',)
+		.then((response) => {
+			this.props.set_fetched_sports(response.data)
+		})
+		.catch((error) => {
+			console.log(error);
+		})
 
 
 	}
@@ -81,7 +81,7 @@ class SportContainer extends Component {
 					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
 						<ConnectedSportCard
 							dataPayloadFromParent = { item }
-						
+							likes = { item.likes || [] }						
 						/>
 					</Grid>
 
