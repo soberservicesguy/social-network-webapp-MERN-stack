@@ -22,12 +22,14 @@ import {
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
+
 const styles = theme => ({
 	root: {
-		height: 48,
+		height: 100,
+		backgroundColor: '#000000',
 		color: props => (props.cool) ? 'red' : 'black',
 		[theme.breakpoints.up('sm')]:{
-			paddingLeft:100
+			// paddingLeft:200
 		},
 	},
 	buttonWithoutBG:{
@@ -40,10 +42,11 @@ const styles = theme => ({
 	textinputContainer:{
 		// marginTop: windowHeight * 0.05, // or 30  gap
 		// height: windowHeight * 0.1, // or 100
-		width: '80%',
+		// width: '100%',
+		width:'80%',
 		justifyContent: 'center', // vertically centered
 		alignSelf: 'center', // horizontally centered
-		// backgroundColor: utils.lightGreen,
+		backgroundColor: utils.lightGreen,
 	},
 	textinput:{
 		marginTop:20,
@@ -73,14 +76,35 @@ class CreateSocialPost extends Component {
 			post_text: '',
 			image_upload: '',
 			video_upload: '',
-		}
 
+
+
+			tracked_width1: 0,
+			tracked_height1: 0,
+			tracked_width2: 0,
+			tracked_height2: 0,
+
+		}
+		this.resizeHandler = this.resizeHandler.bind(this);
 	}
 
+	resizeHandler() {
+		this.setState(prev => ({
+			...prev, 
+			tracked_width1:this.divElement1.clientWidth, 
+			tracked_height1:this.divElement1.clientHeight,
+			tracked_width2:this.divElement2.clientWidth,
+			tracked_height2:this.divElement2.clientHeight,
+		}))
+	}
 
-// COMPONENT DID MOUNT
 	componentDidMount() {
+		this.resizeHandler();
+		window.addEventListener('resize', this.resizeHandler);
+	}
 
+	componentWillUnmount(){
+		window.removeEventListener('resize', this.resizeHandler);
 	}
 
 	render() {
@@ -102,58 +126,100 @@ class CreateSocialPost extends Component {
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 				<div style={styles.outerContainer}>
 
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your post_text" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
+					<div style={{width:'90%', margin:'auto'}}>
+						<form>
+							<input 
+								ref={ (divElement) => { this.divElement1 = divElement } }
+								placeholder="What's in your mind" 
+								type="text" 
+								name="post_text"
+								multiline={true}
 								onChange={ (event) => this.setState( prev => ({...prev, post_text: event.target.value})) }
+								style={{
+									outline:'none', 
+									width:'100%', 
+									height:50, 
+									paddingLeft:20,
+									paddingRight:100, 
+									color:'black', 
+									borderRadius:30,
+									borderWidth:1, 
+									borderStyle:'solid',
+									borderColor:'black', 
+									backgroundColor: '#eee'
+								}} 
 							/>
 						</form>
-				  	</div>
+						<div 
+							ref={ (divElement) => { this.divElement2 = divElement } }
+							style={{
+								width:'20%',
+								// width:100,
+								height:40,
+								backgroundColor: '#000000',
+								borderRadius:30,
+								borderWidth:1, 
+								borderStyle:'solid',
+								borderColor:'black', 
 
-					<div style={styles.textinputContainer}>
-						<p style={styles.headingOverInput}>
-							Post Image
-						</p>
-						<form className={styles.root} noValidate autoComplete="off">
-							<input
-								// multiple="multiple" // for selecting multiple files
-								name="image_upload" // name of input field or fieldName simply
-								enctype="multipart/form-data"
-								type="file"
-								onChange={(event) => {
-									// console logging selected file from menu
-									console.log( event.target.files[0] ) // gives first file
-									// setState method with event.target.files[0] as argument
-									this.setState(prev => ({...prev, image_upload: event.target.files[0]}))
-								}}
-							/>
-						</form>
+								position:'relative',
+								bottom: (this.state.tracked_height2 + 2) + (this.state.tracked_height1 + 2 - this.state.tracked_height2 - 2)/2, // self_height_including_border_thickness + difference in heights of both / 2
+								left: this.state.tracked_width1 + 2 - this.state.tracked_width2 - 10, // tracked_width - self_width - some_gap 
+							}}
+						>
+							<p style={{
+								color:'white',
+								textAlign:'center',
+								margin:'auto',
+								paddingTop:10,
+								paddingBottom:10,
+							}}>
+								Create Post
+							</p>
+						</div>
 					</div>
 
-
-					<div style={styles.textinputContainer}>
-						<p style={styles.headingOverInput}>
-							Post Video
-						</p>
-						<form className={styles.root} noValidate autoComplete="off">
-							<input
-								// multiple="multiple" // for selecting multiple files
-								name="video_upload" // name of input field or fieldName simply
-								enctype="multipart/form-data"
-								type="file"
-								onChange={(event) => {
-									// console logging selected file from menu
-									console.log( event.target.files[0] ) // gives first file
-									// setState method with event.target.files[0] as argument
-									this.setState(prev => ({...prev, video_upload: event.target.files[0]}))
-								}}
-							/>
-						</form>
+				{/*image upload*/}
+					<div>
+						<label htmlFor="myImageInput">
+							{/* below div will act as myInput button*/}
+							<div style={{width:20, height:20, backgroundColor: '#000000'}}>
+							</div>
+						</label>
+						<input
+							id="myImageInput"
+							style={{display:'none'}}
+							type={"file"}
+							onChange={(event) => {
+								// console logging selected file from menu
+								// setState method with event.target.files[0] as argument
+								this.setState(prev => ({...prev, image_upload: event.target.files[0]}))
+								console.log( event.target.files[0] ) // gives first file
+							}}
+						/>
 					</div>
+
+				{/*video upload*/}
+					<div>
+						<label htmlFor="myVideoInput">
+							{/* below div will act as myInput button*/}
+							<div style={{width:20, height:20, backgroundColor: '#000000'}}>
+							</div>
+						</label>
+						<input
+							id="myVideoInput"
+							style={{display:'none'}}
+							type={"file"}
+							onChange={(event) => {
+								// console logging selected file from menu
+								console.log( event.target.files[0] ) // gives first file
+								// setState method with event.target.files[0] as argument
+								this.setState(prev => ({...prev, video_upload: event.target.files[0]}))
+							}}
+
+						/>
+					</div>
+
 
 
 					<button style={styles.buttonWithoutBG}

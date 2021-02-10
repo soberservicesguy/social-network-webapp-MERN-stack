@@ -40,13 +40,13 @@ class SocialPostContainer extends Component {
 	componentDidMount() {
 
 // FETCHING DATA FOR COMPONENT
-			axios.get(utils.baseUrl + '/socialposts/socialposts-list-with-children',)
-			.then((response) => {
-				this.props.set_fetched_socialposts(response.data)
-			})
-			.catch((error) => {
-				console.log(error);
-			})
+		axios.get(utils.baseUrl + '/socialposts/socialposts-list-with-children',)
+		.then((response) => {
+			this.props.set_fetched_socialposts(response.data)
+		})
+		.catch((error) => {
+			console.log(error);
+		})
 
 
 	}
@@ -70,34 +70,55 @@ class SocialPostContainer extends Component {
 
 		return (
 
-			<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+			<Grid container direction="row" style={{backgroundColor: '#eee'}} >
 				
-				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-		  			<ConnectedCreateSocialPost/>
-		  		</Grid>
-
-				{total_socialposts.map((item, index)=>(
-
-					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-						<ConnectedSocialPostCard
-							dataPayloadFromParent = { item }
-
-							comments_quantity = { item.comments_quantity }
-							comments = { item.comments || [] }
-
-							likes_quantity = { item.likes_quantity }
-							likes = { item.likes || [] }
-
-							shares_quantity = { item.shares_quantity }
-							shares = { item.shares || [] }
-
-							user_quantity = { item.user_quantity }
-							user = { item.user || [] }
+				<Grid container xs={12} sm={12} md={3} lg={3} xl={3}>
+					<div style={{backgroundColor: '#000000', width:'100%', marginLeft:30, marginRight:30,}}>
 						
-						/>
-					</Grid>
+					</div>
+				</Grid>
 
-				))}
+
+				<Grid container direction="column" xs={12} sm={12} md={6} lg={6} xl={6}>
+
+					<Grid item xs={12}>
+						<div>
+				  			<ConnectedCreateSocialPost/>
+						</div>
+			  		</Grid>
+
+					{total_socialposts.map((item, index)=>(
+
+						<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+							<ConnectedSocialPostCard
+								dataPayloadFromParent = { item }
+
+								comments_quantity = { item.comments_quantity }
+								comments = { item.comments || [] }
+
+								likes_quantity = { item.likes_quantity }
+								likes = { item.likes || [] }
+
+								shares_quantity = { item.shares_quantity }
+								shares = { item.shares || [] }
+
+								// user_quantity = { item.user_quantity }
+								// user = { item.user || [] }
+							
+							/>
+						</Grid>
+
+					))}
+					
+				</Grid>
+
+
+				<Grid container xs={12} sm={12} md={3} lg={3} xl={3}>
+					<div style={{backgroundColor: '#000000', width:'100%', marginLeft:30, marginRight:30,}}>
+						
+					</div>					
+				</Grid>
+
 
 			</Grid>
 
