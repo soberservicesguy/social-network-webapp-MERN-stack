@@ -1,3 +1,8 @@
+  // current screen size
+    // const { _xs, _sm, _md, _lg, _xl } = this.props
+
+
+
 import React from 'react';
 import { useMediaQuery } from 'react-responsive'
 

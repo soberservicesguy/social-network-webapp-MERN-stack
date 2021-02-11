@@ -23,47 +23,85 @@ import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
 
-const styles = theme => ({
-	root: {
-		height: 100,
-		backgroundColor: '#000000',
-		color: props => (props.cool) ? 'red' : 'black',
-		[theme.breakpoints.up('sm')]:{
-			// paddingLeft:200
-		},
-	},
-	buttonWithoutBG:{
-		marginTop:50,
-		marginBottom:50,
-	},
-	innerText:{
 
-	},
-	textinputContainer:{
-		// marginTop: windowHeight * 0.05, // or 30  gap
-		// height: windowHeight * 0.1, // or 100
-		// width: '100%',
-		width:'80%',
-		justifyContent: 'center', // vertically centered
-		alignSelf: 'center', // horizontally centered
-		backgroundColor: utils.lightGreen,
-	},
-	textinput:{
-		marginTop:20,
-		textAlign:'left',
-		borderWidth:1,
-		borderColor:(utils.lightGrey),
-		borderStyle:'solid',
-		paddingLeft:20,
-		paddingTop:15,
-		paddingBottom:15,
-		fontSize:18,
-	},
-	outerContainer: {
-	},
-	bigBlue: {
-	},
-});
+// const styles = theme => ({
+// 	roundTextInputContainer:{
+// 		width:'80%', 
+// 		margin:'auto',
+// 	},
+// 	roundTextInput:{
+// 		outline:'none', 
+// 		width:'100%', 
+// 		height:50, 
+// 		paddingLeft:20,
+// 		paddingRight:100, 
+// 		color:'black', 
+// 		borderRadius:30,
+// 		borderWidth:1, 
+// 		borderStyle:'solid',
+// 		borderColor:'black', 
+// 		backgroundColor: '#eee'
+// 	},
+
+
+
+
+
+// 	roundButtonInsideTextInputContainer:{
+// 		width: '20%',
+// 		// width: 100,
+// 		height: 40,
+// 		backgroundColor: '#000000',
+// 		borderRadius: props => props.tracked_height2 / 2,
+// 		borderWidth: 1, 
+// 		borderStyle: 'solid',
+// 		borderColor: 'black', 
+
+// 		position: 'relative',
+// 		bottom: props => (props.tracked_height2 + 2) + (props.tracked_height1 + 2 - props.tracked_height2 - 2)/2, // self_height_including_border_thickness + difference in heights of both / 2
+// 		left: props => props.tracked_width1 + 2 - props.tracked_width2 - 10, // tracked_width - self_width - some_gap 
+// 	},
+
+// 	// root: {
+// 	// 	height: 100,
+// 	// 	backgroundColor: '#000000',
+// 	// 	color: props => (props.cool) ? 'red' : 'black',
+// 	// 	[theme.breakpoints.up('sm')]:{
+// 	// 		// paddingLeft:200
+// 	// 	},
+// 	// },
+// 	// buttonWithoutBG:{
+// 	// 	marginTop:50,
+// 	// 	marginBottom:50,
+// 	// },
+// 	// innerText:{
+
+// 	// },
+// 	// textinputContainer:{
+// 	// 	// marginTop: windowHeight * 0.05, // or 30  gap
+// 	// 	// height: windowHeight * 0.1, // or 100
+// 	// 	// width: '100%',
+// 	// 	width:'80%',
+// 	// 	justifyContent: 'center', // vertically centered
+// 	// 	alignSelf: 'center', // horizontally centered
+// 	// 	backgroundColor: utils.lightGreen,
+// 	// },
+// 	// textinput:{
+// 	// 	marginTop:20,
+// 	// 	textAlign:'left',
+// 	// 	borderWidth:1,
+// 	// 	borderColor:(utils.lightGrey),
+// 	// 	borderStyle:'solid',
+// 	// 	paddingLeft:20,
+// 	// 	paddingTop:15,
+// 	// 	paddingBottom:15,
+// 	// 	fontSize:18,
+// 	// },
+// 	// outerContainer: {
+// 	// },
+// 	// bigBlue: {
+// 	// },
+// });
 
 
 class CreateSocialPost extends Component {
@@ -76,8 +114,6 @@ class CreateSocialPost extends Component {
 			post_text: '',
 			image_upload: '',
 			video_upload: '',
-
-
 
 			tracked_width1: 0,
 			tracked_height1: 0,
@@ -109,8 +145,53 @@ class CreateSocialPost extends Component {
 
 	render() {
 
-		// parameters being passed from previous route
+	// parameters being passed from previous route
 		const endpoint_params_passed = this.props.match.params
+
+	// current screen size
+		const { _xs, _sm, _md, _lg, _xl } = this.props
+
+		const styles = {
+			outerContainer:{
+
+			},
+
+		// round text input
+			roundTextInputContainer:{
+				width:'80%', 
+				margin:'auto',
+			},
+			roundTextInput:{
+				outline:'none', 
+				width:'100%', 
+				height:50, 
+				paddingLeft:20,
+				paddingRight:100, 
+				color:'black', 
+				borderRadius:30,
+				borderWidth:1, 
+				borderStyle:'solid',
+				borderColor:'black', 
+				backgroundColor: '#eee'
+			},
+
+		// roundButtonInsideTextInput
+			roundButtonInsideTextInputContainer:{
+				width: '20%',
+				// width: 100,
+				height: 40,
+				backgroundColor: '#000000',
+				borderRadius: this.state.tracked_height2 / 2,
+				borderWidth: 1, 
+				borderStyle: 'solid',
+				borderColor: 'black', 
+
+				position: 'relative',
+				bottom: (this.state.tracked_height2 + 2) + (this.state.tracked_height1 + 2 - this.state.tracked_height2 - 2)/2, // self_height_including_border_thickness + difference in heights of both / 2
+				left: this.state.tracked_width1 + 2 - this.state.tracked_width2 - 10, // tracked_width - self_width - some_gap 
+			},
+
+		}
 
 		if ( this.state.redirectToRoute !== false ){
 
@@ -126,7 +207,8 @@ class CreateSocialPost extends Component {
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 				<div style={styles.outerContainer}>
 
-					<div style={{width:'90%', margin:'auto'}}>
+				{/* round text input */}
+					<div style={styles.roundTextInputContainer}>
 						<form>
 							<input 
 								ref={ (divElement) => { this.divElement1 = divElement } }
@@ -135,37 +217,13 @@ class CreateSocialPost extends Component {
 								name="post_text"
 								multiline={true}
 								onChange={ (event) => this.setState( prev => ({...prev, post_text: event.target.value})) }
-								style={{
-									outline:'none', 
-									width:'100%', 
-									height:50, 
-									paddingLeft:20,
-									paddingRight:100, 
-									color:'black', 
-									borderRadius:30,
-									borderWidth:1, 
-									borderStyle:'solid',
-									borderColor:'black', 
-									backgroundColor: '#eee'
-								}} 
+								style={styles.roundTextInput} 
 							/>
 						</form>
+					{/* round button inside round text input */}
 						<div 
 							ref={ (divElement) => { this.divElement2 = divElement } }
-							style={{
-								width:'20%',
-								// width:100,
-								height:40,
-								backgroundColor: '#000000',
-								borderRadius:30,
-								borderWidth:1, 
-								borderStyle:'solid',
-								borderColor:'black', 
-
-								position:'relative',
-								bottom: (this.state.tracked_height2 + 2) + (this.state.tracked_height1 + 2 - this.state.tracked_height2 - 2)/2, // self_height_including_border_thickness + difference in heights of both / 2
-								left: this.state.tracked_width1 + 2 - this.state.tracked_width2 - 10, // tracked_width - self_width - some_gap 
-							}}
+							style={styles.roundButtonInsideTextInputContainer}
 						>
 							<p style={{
 								color:'white',
@@ -260,10 +318,12 @@ class CreateSocialPost extends Component {
 		}			
 	}
 }
+
 	
 CreateSocialPost.defaultProps = {
 
 };
 
 // export default CreateSocialPost // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateSocialPost)))
+// export default withRouter(withResponsiveness(withStyles(styles)(CreateSocialPost)))
+export default withRouter(withResponsiveness(CreateSocialPost))
