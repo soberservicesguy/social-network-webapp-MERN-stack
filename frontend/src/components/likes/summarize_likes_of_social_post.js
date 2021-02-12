@@ -21,6 +21,7 @@ import {
 	// Button 
 } from "@material-ui/core";
 
+
 const styles = theme => ({
 	outerContainer: {
 	},
@@ -46,29 +47,19 @@ class SummarizeLikesOfSocialPost extends Component {
 
 			<div style={styles.outerContainer}>
 
-				{( this.props.showOnlyQuantity ) ? (
+				<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}}>
 
-					<div>
-						<p>
-							{this.props.child_quantity} like
-						</p>
-					</div>
+					{ this.props.dataPayloadFromParent.map((item, index) => (
 
-				) : (
+						<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+							<ComponentForShowingLike
+								componentData = { item }
+							/>
+						</Grid>
+					))}
 
-					<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}}>
+				</Grid>
 
-						{ this.props.dataPayloadFromParent.map((item, index) => (
-
-							<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-								<ComponentForShowingLike
-									componentData = { item }
-								/>
-							</Grid>
-						))}
-
-					</Grid>
-				)}
 			</div>
 		);
 	}

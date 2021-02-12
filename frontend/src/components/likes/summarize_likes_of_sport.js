@@ -21,6 +21,8 @@ import {
 	// Button 
 } from "@material-ui/core";
 
+import ThumbUp from '@material-ui/icons/ThumbUp';
+
 const styles = theme => ({
 	outerContainer: {
 	},
@@ -48,11 +50,9 @@ class SummarizeLikesOfSport extends Component {
 
 				{( this.props.showOnlyQuantity ) ? (
 
-					<div>
-						<p>
-							{this.props.child_quantity} like
-						</p>
-					</div>
+					<p style={{color: 'grey'}}>
+						<ThumbUp style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.child_quantity} likes
+					</p>
 
 				) : (
 

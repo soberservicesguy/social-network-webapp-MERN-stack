@@ -22,45 +22,8 @@ import {
 	Redirect,
 } from "react-router-dom";
 
-const styles = theme => ({
-	root: {
-		height: 48,
-		color: props => (props.cool) ? 'red' : 'black',
-		[theme.breakpoints.up('sm')]:{
-			paddingLeft:100
-		},
-	},
-	buttonWithoutBG:{
-		marginTop:50,
-		marginBottom:50,
-	},
-	innerText:{
+import Share from '@material-ui/icons/Share';
 
-	},
-	textinputContainer:{
-		// marginTop: windowHeight * 0.05, // or 30  gap
-		// height: windowHeight * 0.1, // or 100
-		width: '80%',
-		justifyContent: 'center', // vertically centered
-		alignSelf: 'center', // horizontally centered
-		// backgroundColor: utils.lightGreen,
-	},
-	textinput:{
-		marginTop:20,
-		textAlign:'left',
-		borderWidth:1,
-		borderColor:(utils.lightGrey),
-		borderStyle:'solid',
-		paddingLeft:20,
-		paddingTop:15,
-		paddingBottom:15,
-		fontSize:18,
-	},
-	outerContainer: {
-	},
-	bigBlue: {
-	},
-});
 
 class CreateShareForSocialpost extends Component {
 	constructor(props) {
@@ -78,6 +41,15 @@ class CreateShareForSocialpost extends Component {
 	}
 
 	render() {
+
+		var styles = {
+			buttonWithoutBG:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white'
+			}
+		}
 
 		// parameters being passed from previous route
 		const endpoint_params_passed = this.props.match.params
@@ -122,9 +94,7 @@ class CreateShareForSocialpost extends Component {
 
 						}}
 					>
-						<p style={styles.innerText}>
-							Press To Create Share
-						</p>
+						<Share style={{color:utils.maroonColor, fontSize:30, }}/>
 					</button>
 				</div>
 			);
@@ -137,4 +107,4 @@ CreateShareForSocialpost.defaultProps = {
 };
 
 // export default CreateShareForSocialpost;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateShareForSocialpost)))
+export default withRouter(withResponsiveness(CreateShareForSocialpost))

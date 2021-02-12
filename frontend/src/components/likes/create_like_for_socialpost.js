@@ -22,45 +22,8 @@ import {
 	Redirect,
 } from "react-router-dom";
 
-const styles = theme => ({
-	root: {
-		height: 48,
-		color: props => (props.cool) ? 'red' : 'black',
-		[theme.breakpoints.up('sm')]:{
-			paddingLeft:100
-		},
-	},
-	buttonWithoutBG:{
-		marginTop:50,
-		marginBottom:50,
-	},
-	innerText:{
+import ThumbUp from '@material-ui/icons/ThumbUp';
 
-	},
-	textinputContainer:{
-		// marginTop: windowHeight * 0.05, // or 30  gap
-		// height: windowHeight * 0.1, // or 100
-		width: '80%',
-		justifyContent: 'center', // vertically centered
-		alignSelf: 'center', // horizontally centered
-		// backgroundColor: utils.lightGreen,
-	},
-	textinput:{
-		marginTop:20,
-		textAlign:'left',
-		borderWidth:1,
-		borderColor:(utils.lightGrey),
-		borderStyle:'solid',
-		paddingLeft:20,
-		paddingTop:15,
-		paddingBottom:15,
-		fontSize:18,
-	},
-	outerContainer: {
-	},
-	bigBlue: {
-	},
-});
 
 class CreateLikeForSocialpost extends Component {
 	constructor(props) {
@@ -82,6 +45,15 @@ class CreateLikeForSocialpost extends Component {
 		// parameters being passed from previous route
 		const endpoint_params_passed = this.props.match.params
 
+		var styles = {
+			buttonWithoutBG:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white'
+			}
+		}
+
 		if ( this.state.redirectToRoute !== false ){
 
 			// switching it back to false
@@ -95,7 +67,7 @@ class CreateLikeForSocialpost extends Component {
 		return (
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 
-				<div style={styles.outerContainer}>
+				<div>
 
 					<button style={styles.buttonWithoutBG}
 						onClick={ () => {
@@ -123,9 +95,7 @@ class CreateLikeForSocialpost extends Component {
 
 						}}
 					>
-						<p style={styles.innerText}>
-							Press To Create Like
-						</p>
+						<ThumbUp style={{color:utils.maroonColor, fontSize:30,}}/>
 					</button>
 				</div>
 			);
@@ -138,4 +108,4 @@ CreateLikeForSocialpost.defaultProps = {
 };
 
 // export default CreateLikeForSocialpost;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateLikeForSocialpost)))
+export default withRouter(withResponsiveness(CreateLikeForSocialpost))
