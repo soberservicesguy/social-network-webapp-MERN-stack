@@ -15,6 +15,8 @@ import withResponsiveness from "../responsiveness_hook";
 import {
 	ConnectedSocialPostCard,
 	ConnectedCreateSocialPost,
+
+	ConnectedAdvertisementContainer,
 } from '../redux_stuff/connected_components';
 
 
@@ -114,8 +116,8 @@ class SocialPostContainer extends Component {
 
 
 				<Grid container xs={12} sm={12} md={3} lg={3} xl={3}>
-					<div style={{backgroundColor: '#000000', width:'100%', marginLeft:30, marginRight:30,}}>
-						
+					<div style={{width:'100%', marginLeft:30, marginRight:30,}}>
+						<ConnectedAdvertisementContainer/>
 					</div>					
 				</Grid>
 

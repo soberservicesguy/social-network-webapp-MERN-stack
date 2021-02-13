@@ -18,16 +18,6 @@ import {
 } from '../redux_stuff/connected_components';
 
 
-const styles = theme => ({
-  root: {
-    height: 48,
-//    color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
-
 class AdvertisementContainer extends Component {
 	constructor(props) {
 		super(props);
@@ -70,15 +60,15 @@ class AdvertisementContainer extends Component {
 
 		return (
 
-			<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+			<Grid container direction="column" style={{backgroundColor: '#eee'}} >
 				
-				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+				<Grid item>
 		  			<ConnectedCreateAdvertisement/>
 		  		</Grid>
 
 				{total_advertisements.map((item, index)=>(
 
-					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+					<Grid item>
 						<ConnectedAdvertisementCard
 							dataPayloadFromParent = { item }
 						
@@ -97,5 +87,5 @@ AdvertisementContainer.defaultProps = {
 	// : ,
 };
 
-export default withResponsiveness(withStyles(styles)(AdvertisementContainer));
+export default withResponsiveness(AdvertisementContainer);
 

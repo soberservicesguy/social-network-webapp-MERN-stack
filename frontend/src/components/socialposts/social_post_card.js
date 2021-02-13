@@ -171,7 +171,15 @@ class SocialPostCard extends Component {
 				display:'flex',
 				flexDirection:'row',
 				justifyContent: 'space-between',
+				alignItems: 'center',
 				marginTop:20,
+				paddingBottom:20,
+
+				borderWidth:0,
+				borderTopWidth:1,
+				borderStyle:'solid',
+				borderColor:utils.maroonColor,
+				paddingTop:10,
 			},
 		}
 
@@ -216,7 +224,9 @@ class SocialPostCard extends Component {
 					</div>
 				</div>
 
-				<div>
+				<div style={{
+					marginBottom: 25,
+				}}>
 					<ShowLikesOfSocialPost
 						dataPayloadFromParent = { this.props.likes }
 					/>
