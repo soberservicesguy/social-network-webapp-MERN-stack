@@ -61,15 +61,36 @@ class NotificationsContainer extends Component {
 
 			<Grid container direction="column">
 
-				{total_notifications.map((item, index)=>(
+				<div style={{backgroundColor: 'white', paddingLeft:20, paddingRight:20}}>
 
-					<Grid item>
-						<ConnectedComponentForShowingNotification
-							dataPayloadFromParent = { item }
-						/>
-					</Grid>
+					<div>
+						<p style={{fontWeight:'bold', fontSize:20, marginTop:20}}>
+							Recent Notifications
+						</p>
+						<div style={{
+							width:'20%',
+							height:1,
+							borderWidth:0,
+							borderBottomWidth: 1,
+							borderStyle:'solid',
+							borderBottomColor:utils.maroonColor,
+							marginBottom:20,
+						}}>
+							<p></p>
+						</div>
+					</div>
 
-				))}
+					{total_notifications.map((item, index)=>(
+
+						<Grid item>
+							<ConnectedComponentForShowingNotification
+								dataPayloadFromParent = { item }
+							/>
+						</Grid>
+
+					))}
+
+				</div>
 
 			</Grid>
 

@@ -58,16 +58,41 @@ class FriendsContainer extends Component {
 		return (
 
 			<Grid container direction="column">
+				<div style={{backgroundColor: 'white', marginTop:30, paddingLeft:20, paddingRight:20}}>
 
-				{this.props.all_friends.map((item, index)=>(
+					<div>
+						<p style={{fontWeight:'bold', fontSize:20, marginTop:20}}>
+							Friends Zone
+						</p>
+						<div style={{
+							width:'20%',
+							height:1,
+							borderWidth:0,
+							borderBottomWidth: 1,
+							borderStyle:'solid',
+							borderBottomColor:utils.maroonColor,
+							marginBottom:20,
+						}}>
+							<p></p>
+						</div>
+					</div>
 
-					<Grid item>
-						<ConnectedComponentForShowingFriend
-							dataPayloadFromParent = { item }
-						/>
-					</Grid>
 
-				))}
+
+
+					{this.props.all_friends.map((item, index)=>(
+
+						<Grid item>
+							<ConnectedComponentForShowingFriend
+								dataPayloadFromParent = { item }
+								// showFriendsSuggestionsInstead = {true}
+							/>
+						</Grid>
+
+					))}
+					
+				</div>
+
 
 			</Grid>
 

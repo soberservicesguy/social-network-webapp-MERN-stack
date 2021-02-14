@@ -62,7 +62,7 @@ class AdvertisementContainer extends Component {
 
 			<Grid container direction="column">
 
-				<div style={{backgroundColor: 'white', paddingLeft:20, paddingRight:20,}}>
+				<div style={{backgroundColor: 'white', paddingLeft:20, paddingRight:20, marginTop:30,}}>
 
 					<div>
 						<p style={{fontWeight:'bold', fontSize:20, marginTop:20}}>

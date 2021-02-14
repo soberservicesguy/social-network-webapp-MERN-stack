@@ -47,6 +47,10 @@ class ComponentForShowingFriend extends Component {
 		const styles = {
 		// button
 			outerContainer:{
+				outline:'none',
+				background:'none',
+				// backgroundColor: 'white',
+				borderWidth:0,
 				// flexDirection:'row',
 				justifyContent: 'center',
 				alignItems:'center',
@@ -55,14 +59,15 @@ class ComponentForShowingFriend extends Component {
 				// backgroundColor: '#000000',
 				// marginTop:windowHeight * 0.01,
 				marginBottom:10,
-				borderBottomWidth: 1,
-				borderBottomColor: utils.dimWhite,
+				// borderBottomWidth: 1,
+				// borderBottomColor: utils.dimWhite,
 
 			},
 
 			innerContainer:{
 				width: '90%',
 				alignSelf:'center',
+				display:'flex',
 				flexDirection: 'row',
 				// backgroundColor: '#000000',
 				justifyContent: 'center',
@@ -80,9 +85,9 @@ class ComponentForShowingFriend extends Component {
 			},
 			imageStyle:{
 				resizeMode: "stretch",
-				height: 100,
-				width: 100,
-				borderRadius: 100/2,
+				height: 50,
+				width: 50,
+				borderRadius: 50/2,
 			},
 
 		// friend name
@@ -103,6 +108,7 @@ class ComponentForShowingFriend extends Component {
 
 		// icon
 			iconContainer:{
+				marginLeft:10,
 				flex:2,
 				flexDirection:'row',
 				justifyContent: 'center',
@@ -112,7 +118,7 @@ class ComponentForShowingFriend extends Component {
 				height: '40%',
 			},
 			followingText:{
-				fontSize:15,
+				fontSize:12,
 				color:utils.dimWhite,
 				fontWeight:'bold',
 			},
@@ -136,8 +142,8 @@ class ComponentForShowingFriend extends Component {
 								<div style={styles.innerContainer}>
 									<div style={styles.imageContainer}>
 										<img 
-											source={utils.image}
-											// source={{uri: base64Image}} 
+											src={utils.image}
+											// src={{uri: base64Image}} 
 											style={styles.imageStyle}
 										/>
 									</div>
@@ -175,8 +181,8 @@ class ComponentForShowingFriend extends Component {
 								<div style={styles.innerContainer}>
 									<div style={styles.imageContainer}>
 										<img
-											source={utils.image}
-											// source={{uri: base64Image}} 
+											src={utils.image}
+											// src={{uri: base64Image}} 
 											style={styles.imageStyle}
 										/>
 									</div>

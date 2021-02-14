@@ -338,17 +338,24 @@ class ComponentForShowingNotification extends Component {
 				alignItems:'center',
 				height: 100,
 				width: '100%',
-				// backgroundColor: '#000000',
 				marginTop:10,
-				marginBottom:10,
-				borderBottomWidth: 1,
-				borderBottomColor: utils.dimWhite,
+				// marginBottom:10,
+				// borderBottomWidth: 1,
+				// borderBottomColor: utils.dimWhite,
 
 			},
 
+			buttonWrapper:{
+	  			background:'none',
+	  			outline:'none',
+	  			border:'none',
+	  			width:'100%',
+	  		},
+
 			innerContainer:{
-				width: '90%',
+				width: '100%',
 				alignSelf:'center',
+				display:'flex',
 				flexDirection: 'row',
 				// backgroundColor: '#000000',
 				justifyContent: 'center',
@@ -358,25 +365,24 @@ class ComponentForShowingNotification extends Component {
 
 		// image
 			imageContainer:{
-				height: '100%',
 				justifyContent: 'center', // vertically centered
 				alignSelf: 'center', // horizontally centered
-				// backgroundColor: utils.lightGreen,
+				// backgroundColor: '#eee',
 				flex:1,
 			},
 			imageStyle:{
 				resizeMode: "stretch",
-				height: 100,
-				width: 100,
-				borderRadius: 100/2,
+				height: 50,
+				width: 50,
+				borderRadius: 50/2,
 			},
 
 		// text
 			textContainer:{
-				flex:3,
-				marginLeft:10,
+				flex:4,
+				marginLeft:15,
 				alignSelf:'center',
-				alignItems:'flex-start',
+				alignItems:'center',
 				justifyContent: 'center', 
 				// backgroundColor: '#000000',
 
@@ -384,11 +390,14 @@ class ComponentForShowingNotification extends Component {
 			nameText:{
 				fontSize:20,
 				fontWeight:'bold',
+				textAlign:'left',
+				marginBottom:0,
 			},
 			activityText:{
 				fontSize:15,
 				fontStyle: 'italic', 
-				color:utils.darkBlue
+				color:utils.darkBlue,
+				textAlign:'left',
 			},
 			newFriendsName:{
 				fontSize:20,
@@ -398,6 +407,7 @@ class ComponentForShowingNotification extends Component {
 		// icon
 			iconContainer:{
 				flex:1,
+				// margin:'auto',
 				// backgroundColor: '#000000'
 			}
 
@@ -430,8 +440,8 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
@@ -463,8 +473,8 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
@@ -498,8 +508,8 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
@@ -533,8 +543,8 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
@@ -569,15 +579,15 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64ImageNewFriend}} 
+								src={utils.image}
+								// src={{uri: base64ImageNewFriend}} 
 								style={styles.imageStyle}
 							/>
 						</div>
@@ -616,16 +626,16 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
 
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Book}} 
+								src={utils.image}
+								// src={{uri: base64Book}} 
 								style={{...styles.imageStyle, borderRadius:0, width: 100}}
 							/>
 						</div>
@@ -660,16 +670,16 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
 
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Book}} 
+								src={utils.image}
+								// src={{uri: base64Book}} 
 								style={{...styles.imageStyle, borderRadius:0, width: 100}}
 							/>
 						</div>
@@ -704,16 +714,16 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
 
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Page}} 
+								src={utils.image}
+								// src={{uri: base64Page}} 
 								style={{...styles.imageStyle, borderRadius:0, width: 100}}
 							/>
 						</div>
@@ -748,16 +758,16 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
 
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Page}} 
+								src={utils.image}
+								// src={{uri: base64Page}} 
 								style={{...styles.imageStyle, borderRadius:0, width: 100}}
 							/>
 						</div>
@@ -792,16 +802,16 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
 
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Sport}} 
+								src={utils.image}
+								// src={{uri: base64Sport}} 
 								style={{...styles.imageStyle, borderRadius:0, width: 100}}
 							/>
 						</div>
@@ -836,16 +846,16 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
 
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Sport}} 
+								src={utils.image}
+								// src={{uri: base64Sport}} 
 								style={{...styles.imageStyle, borderRadius:0, width: 100}}
 							/>
 						</div>
@@ -881,16 +891,16 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
 
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Ad}} 
+								src={utils.image}
+								// src={{uri: base64Ad}} 
 								style={{...styles.imageStyle, borderRadius:0, width: 100}}
 							/>
 						</div>
@@ -924,8 +934,8 @@ class ComponentForShowingNotification extends Component {
 					<div style={styles.innerContainer}>
 						<div style={styles.imageContainer}>
 							<img 
-								source={utils.image}
-								// source={{uri: base64Image}} 
+								src={utils.image}
+								// src={{uri: base64Image}} 
 								style={styles.imageStyle}
 							/>
 						</div>
@@ -948,7 +958,8 @@ class ComponentForShowingNotification extends Component {
 		return (
 
 			<div style={styles.outerContainer}>
-			  	<button 
+			  	<button
+			  		style={styles.buttonWrapper}
 			  		onPress={() => this.switchToProperScreen(data.activity_type)} 
 		  		>
 		  			{componentToShow}

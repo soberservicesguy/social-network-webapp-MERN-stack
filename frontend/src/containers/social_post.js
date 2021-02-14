@@ -24,6 +24,9 @@ import {
 	ConnectedFriendsContainer,
 } from '../redux_stuff/connected_components';
 
+import {
+	ProfileHeader,
+} from "../components"
 
 class SocialPostContainer extends Component {
 	constructor(props) {
@@ -75,9 +78,9 @@ class SocialPostContainer extends Component {
 				
 				<Grid container xs={12} sm={12} md={3} lg={3} xl={3}>
 					<div style={{width:'100%', marginLeft:30, marginRight:30}}>
+						<ProfileHeader/>
 						<ConnectedPageContainer/>
 						<ConnectedFriendsContainer/>
-						<ConnectedNotificationsContainer/>
 					</div>
 				</Grid>
 
@@ -118,6 +121,7 @@ class SocialPostContainer extends Component {
 
 				<Grid container xs={12} sm={12} md={3} lg={3} xl={3}>
 					<div style={{width:'100%', marginLeft:30, marginRight:30}}>
+						<ConnectedNotificationsContainer/>
 						<ConnectedAdvertisementContainer/>
 					</div>					
 				</Grid>
