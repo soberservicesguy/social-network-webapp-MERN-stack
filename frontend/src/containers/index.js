@@ -15,3 +15,4 @@ export {default as SignUpContainer } from "./sign_up.js";
 
 export {default as NotificationsContainer} from "./notification";
 export {default as FriendsContainer} from "./friend";
+export {default as AboutMeContainer} from "./about_me"

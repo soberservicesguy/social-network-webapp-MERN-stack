@@ -77,7 +77,11 @@ class SocialPostContainer extends Component {
 			<Grid container style={{backgroundColor: '#eee'}} >
 				
 				<Grid container xs={12} sm={12} md={3} lg={3} xl={3}>
-					<div style={{width:'100%', marginLeft:30, marginRight:30}}>
+					<div style={{
+						width:'100%', 
+						marginLeft:(_md || _lg || _xl) ? 30 : 0, 
+						marginRight:(_md || _lg || _xl) ? 30 : 0,
+					}}>
 						<ProfileHeader/>
 						<ConnectedPageContainer/>
 						<ConnectedFriendsContainer/>
@@ -120,7 +124,11 @@ class SocialPostContainer extends Component {
 
 
 				<Grid container xs={12} sm={12} md={3} lg={3} xl={3}>
-					<div style={{width:'100%', marginLeft:30, marginRight:30}}>
+					<div style={{
+						width:'100%', 
+						marginLeft:(_md || _lg || _xl) ? 30 : 0, 
+						marginRight:(_md || _lg || _xl) ? 30 : 0,
+					}}>
 						<ConnectedNotificationsContainer/>
 						<ConnectedAdvertisementContainer/>
 					</div>					

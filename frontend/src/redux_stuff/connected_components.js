@@ -21,7 +21,7 @@ import {
 
 	NotificationsContainer,
 	FriendsContainer,
-
+	AboutMeContainer,
 } from "../containers";
 
 
@@ -75,7 +75,10 @@ import {
 	CreateShareForSocialpost,
 } from "../components/shares"
 
-
+export const ConnectedAboutMeContainer = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(AboutMeContainer);
 
 export const ConnectedNotificationsContainer = connect(
 	mapStateToProps,

@@ -44,6 +44,7 @@ import {
 	ConnectedIndividualBook,
 	ConnectedSportContainer,
 	ConnectedIndividualSport,
+	ConnectedAboutMeContainer,
 } from "../redux_stuff/connected_components";
 
 // IMPORT material-ui stuff
@@ -305,10 +306,10 @@ class RootRouterContainer extends Component {
 									</IconButton>
 								</Link>
 
-								<Link to="/advertisements">
+								<Link to="/about-me">
 									<IconButton aria-label="show 4 new mails" color="inherit">
 										<p>
-											Advertisement
+											About Me
 										</p>
 
 									</IconButton>
@@ -411,6 +412,12 @@ class RootRouterContainer extends Component {
 
 						<Route path="/socialposts/:endpoint-param">
 							<ConnectedIndividualSocialPost/>
+						</Route>
+
+
+
+						<Route exact path="/about-me">
+							<ConnectedAboutMeContainer/>
 						</Route>
 
 
