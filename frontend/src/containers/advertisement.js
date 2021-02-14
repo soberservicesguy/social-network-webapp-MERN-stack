@@ -60,22 +60,43 @@ class AdvertisementContainer extends Component {
 
 		return (
 
-			<Grid container direction="column" style={{backgroundColor: '#eee'}} >
-				
-				<Grid item>
-		  			<ConnectedCreateAdvertisement/>
-		  		</Grid>
+			<Grid container direction="column">
 
-				{total_advertisements.map((item, index)=>(
+				<div style={{backgroundColor: 'white', paddingLeft:20, paddingRight:20,}}>
 
+					<div>
+						<p style={{fontWeight:'bold', fontSize:20, marginTop:20}}>
+							Advertisement
+						</p>
+						<div style={{
+							width:'20%',
+							height:1,
+							borderWidth:0,
+							borderBottomWidth: 1,
+							borderStyle:'solid',
+							borderBottomColor:utils.maroonColor,
+							marginBottom:20,
+						}}>
+							<p></p>
+						</div>
+					</div>
+					
 					<Grid item>
-						<ConnectedAdvertisementCard
-							dataPayloadFromParent = { item }
-						
-						/>
-					</Grid>
+			  			<ConnectedCreateAdvertisement/>
+			  		</Grid>
 
-				))}
+					{total_advertisements.map((item, index)=>(
+
+						<Grid item>
+							<ConnectedAdvertisementCard
+								dataPayloadFromParent = { item }
+							
+							/>
+						</Grid>
+
+					))}
+					
+				</div>
 
 			</Grid>
 

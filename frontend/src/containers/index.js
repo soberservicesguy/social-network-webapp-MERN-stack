@@ -12,3 +12,6 @@ export {default as SocialPostContainer } from "./social_post.js";
 export {default as SportContainer } from "./sport.js";
 
 export {default as SignUpContainer } from "./sign_up.js";
+
+export {default as NotificationsContainer} from "./notification";
+export {default as FriendsContainer} from "./friend";

@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -12,23 +11,19 @@ import {
 // IMPORT responsiveness hook
 import withResponsiveness from "../responsiveness_hook";
 
+
 import {
 	ConnectedSocialPostCard,
 	ConnectedCreateSocialPost,
 
 	ConnectedAdvertisementContainer,
+	ConnectedPageContainer,
+
+	ConnectedNotificationsContainer,
+
+	ConnectedFriendsContainer,
 } from '../redux_stuff/connected_components';
 
-
-const styles = theme => ({
-  root: {
-    height: 48,
-//    color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
 
 class SocialPostContainer extends Component {
 	constructor(props) {
@@ -52,6 +47,7 @@ class SocialPostContainer extends Component {
 
 
 	}
+
 	get_10_more_items() {
 		axios.get(utils.baseUrl + `/socialposts/socialposts-list-next-10-with-children`)
 		.then((response) => {
@@ -67,16 +63,21 @@ class SocialPostContainer extends Component {
 			
 		const total_socialposts = this.props.total_socialposts
 
-		const { classes } = this.props;
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
+
+	  	const styles = {
+
+	  	}
 
 		return (
 
-			<Grid container direction="row" style={{backgroundColor: '#eee'}} >
+			<Grid container style={{backgroundColor: '#eee'}} >
 				
 				<Grid container xs={12} sm={12} md={3} lg={3} xl={3}>
-					<div style={{backgroundColor: '#000000', width:'100%', marginLeft:30, marginRight:30,}}>
-						
+					<div style={{width:'100%', marginLeft:30, marginRight:30}}>
+						<ConnectedPageContainer/>
+						<ConnectedFriendsContainer/>
+						<ConnectedNotificationsContainer/>
 					</div>
 				</Grid>
 
@@ -116,7 +117,7 @@ class SocialPostContainer extends Component {
 
 
 				<Grid container xs={12} sm={12} md={3} lg={3} xl={3}>
-					<div style={{width:'100%', marginLeft:30, marginRight:30,}}>
+					<div style={{width:'100%', marginLeft:30, marginRight:30}}>
 						<ConnectedAdvertisementContainer/>
 					</div>					
 				</Grid>
@@ -132,5 +133,4 @@ SocialPostContainer.defaultProps = {
 	// : ,
 };
 
-export default withResponsiveness(withStyles(styles)(SocialPostContainer));
-
+export default withResponsiveness(SocialPostContainer);

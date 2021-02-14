@@ -19,8 +19,16 @@ import {
 	LoginContainer,
 	SignUpContainer,
 
+	NotificationsContainer,
+	FriendsContainer,
+
 } from "../containers";
 
+
+import  {
+	ComponentForShowingNotification,
+	ComponentForShowingFriend,
+} from "../components";
 
 import {
 	CreateSocialPost,
@@ -66,6 +74,29 @@ import {
 import {
 	CreateShareForSocialpost,
 } from "../components/shares"
+
+
+
+export const ConnectedNotificationsContainer = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(NotificationsContainer);
+
+export const ConnectedFriendsContainer = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(FriendsContainer);
+
+export const ConnectedComponentForShowingNotification = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(ComponentForShowingNotification);
+
+export const ConnectedComponentForShowingFriend = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(ComponentForShowingFriend);
+
 
 export const ConnectedRootRouterContainer = connect(
 	mapStateToProps,

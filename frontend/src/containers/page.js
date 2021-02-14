@@ -18,16 +18,6 @@ import {
 } from '../redux_stuff/connected_components';
 
 
-const styles = theme => ({
-  root: {
-    height: 48,
-//    color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
-
 class PageContainer extends Component {
 	constructor(props) {
 		super(props);
@@ -71,22 +61,44 @@ class PageContainer extends Component {
 
 		return (
 
-			<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+			<Grid container direction="column">
+
+				<div style={{backgroundColor: 'white', paddingLeft:20, paddingRight:20,}}>
+
+					<div>
+						<p style={{fontWeight:'bold', fontSize:20, marginTop:20}}>
+							Pages You May Like
+						</p>
+						<div style={{
+							width:'20%',
+							height:1,
+							borderWidth:0,
+							borderBottomWidth: 1,
+							borderStyle:'solid',
+							borderBottomColor:utils.maroonColor,
+							marginBottom:20,
+						}}>
+							<p></p>
+						</div>
+					</div>
+
+					<Grid item>
+			  			<ConnectedCreatePage/>
+			  		</Grid>
+
+					{total_pages.map((item, index)=>(
+
+						<Grid item>
+							<ConnectedPageCard
+								dataPayloadFromParent = { item }
+								likes = { item.likes || [] }
+							/>
+						</Grid>
+
+					))}
+					
+				</div>
 				
-				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-		  			<ConnectedCreatePage/>
-		  		</Grid>
-
-				{total_pages.map((item, index)=>(
-
-					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-						<ConnectedPageCard
-							dataPayloadFromParent = { item }
-							likes = { item.likes || [] }
-						/>
-					</Grid>
-
-				))}
 
 			</Grid>
 
@@ -98,5 +110,5 @@ PageContainer.defaultProps = {
 	// : ,
 };
 
-export default withResponsiveness(withStyles(styles)(PageContainer));
+export default withResponsiveness(PageContainer);
 

@@ -88,6 +88,66 @@ class CreatePage extends Component {
 		// parameters being passed from previous route
 		const endpoint_params_passed = this.props.match.params
 
+		const styles = {
+		// round text input
+			roundTextInputContainer:{
+				width:'95%', 
+				height:50,
+				margin:'auto',
+				// marginBottom:0,
+				// backgroundColor: '#000000',
+			},
+
+			roundTextInput:{
+				outline:'none', 
+				width:'100%', 
+				height:50, 
+				paddingLeft:20,
+				paddingRight:100, 
+				color:'black', 
+				borderRadius:30,
+				borderWidth:1, 
+				borderStyle:'solid',
+				borderColor:'#eee', 
+				backgroundColor: '#eee',
+			},
+
+		// roundButtonInsideTextInput
+			roundButtonInsideTextInputContainer:{
+				width: '20%',
+				// width: 100,
+				height: 40,
+				backgroundColor: utils.maroonColor,
+				borderRadius: this.state.tracked_height2 / 2,
+				borderWidth: 1, 
+				borderStyle: 'solid',
+				borderColor: utils.maroonColor, 
+			},
+
+		// upload image and create ad button
+			buttonsContainer:{
+				width:'80%',
+				margin:'auto',
+				marginTop:10,
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+			},
+			uploadImageButton:{
+				fontWeight:'bold',
+				color:utils.maroonColor
+			},
+
+			createPageButton:{
+				outline:'none',
+				background:'none',
+				border:'none',
+				color:utils.maroonColor,
+				fontWeight:'bold',
+			}
+
+		}
+
 		if ( this.state.redirectToRoute !== false ){
 
 			// switching it back to false
@@ -102,30 +162,54 @@ class CreatePage extends Component {
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 				<div style={styles.outerContainer}>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your page_name" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
+				{/* round text input */}
+					<div style={styles.roundTextInputContainer}>
+						<form>
+							<input 
+								ref={ (divElement) => { this.divElement1 = divElement } }
+								placeholder="Type your page_name" 
+								type="text" 
+								name="post_text"
+								multiline={true}
 								onChange={ (event) => this.setState( prev => ({...prev, page_name: event.target.value})) }
+								style={styles.roundTextInput} 
 							/>
 						</form>
-				  	</div>
+
+					</div>
 
 
-					<div style={styles.textinputContainer}>
-						<p style={styles.headingOverInput}>
-							IMAGE MAIN
-						</p>
-						<form className={styles.root} noValidate autoComplete="off">
+					<div style={styles.roundTextInputContainer}>
+						<form style={{marginTop:10}}>
+							<input 
+								placeholder="Type your page_description" 
+								type="text" 
+								name="post_text"
+								multiline={true}
+								onChange={ (event) => this.setState( prev => ({...prev, page_description: event.target.value})) }
+								style={styles.roundTextInput} 
+							/>
+						</form>
+
+					</div>
+
+
+
+					<div style={styles.buttonsContainer}>
+						<div>
+							<label htmlFor="myInput">
+								{/* below div will act as myInput button*/}
+								<div style={styles.uploadImageButton}>
+									Upload Image
+								</div>
+							</label>
 							<input
+								id="myInput"
+								style={{display:'none'}}
+								name="ad_image" // name of input field or fieldName simply
+								type={"file"}
 								// multiple="multiple" // for selecting multiple files
-								name="page_image" // name of input field or fieldName simply
 								enctype="multipart/form-data"
-								type="file"
 								onChange={(event) => {
 									// console logging selected file from menu
 									console.log( event.target.files[0] ) // gives first file
@@ -133,55 +217,52 @@ class CreatePage extends Component {
 									this.setState(prev => ({...prev, page_image: event.target.files[0]}))
 								}}
 							/>
-						</form>
+						</div>
+
+
+
+
+
+						<button style={styles.createPageButton}
+							onClick={ () => {
+
+								let setResponseInCurrentPage = (arg) => this.props.set_current_page(arg)
+								let redirectToNewPage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+
+								const formData = new FormData()
+								if (this.state.page_description !== ''){
+									formData.append('page_description', this.state.page_description)
+								}
+								if (this.state.page_name){
+									formData.append('page_name', this.state.page_name)
+								}
+								if (this.state.page_image){
+									formData.append('page_image', this.state.page_image, this.state.page_image.name)
+								}
+
+								axios.post(utils.baseUrl + '/pages/create-page-with-user', formData)
+								.then(function (response) {
+									console.log(response.data) // current page screen data
+									
+									// set to current parent object
+									setResponseInCurrentPage(response.data)
+
+									// change route to current_page
+									redirectToNewPage()
+
+								})
+								.catch(function (error) {
+									console.log(error)
+								});						
+
+							}}
+						>
+							<p style={styles.innerText}>
+								Create Page
+							</p>
+						</button>
 					</div>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your page_description" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, page_description: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-					<button style={styles.buttonWithoutBG}
-						onClick={ () => {
-
-							let setResponseInCurrentPage = (arg) => this.props.set_current_page(arg)
-							let redirectToNewPage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
-
-							const formData = new FormData()
-							formData.append('page_description', this.state.page_description)
-							formData.append('page_name', this.state.page_name)
-							formData.append('page_image', this.state.page_image, this.state.page_image.name)
-
-							axios.post(utils.baseUrl + '/pages/create-page-with-user', formData)
-							.then(function (response) {
-								console.log(response.data) // current page screen data
-								
-								// set to current parent object
-								setResponseInCurrentPage(response.data)
-
-								// change route to current_page
-								redirectToNewPage()
-
-							})
-							.catch(function (error) {
-								console.log(error)
-							});						
-
-						}}
-					>
-						<p style={styles.innerText}>
-							Press To Create Page
-						</p>
-					</button>
 				</div>
 			);
 		}			

@@ -1,4 +1,3 @@
-
 import { persistStore, persistReducer } from 'redux-persist' 
 import storage from 'redux-persist/lib/storage'
 
@@ -23,6 +22,8 @@ import {
 	reducerForPage,
 	reducerForBook,
 	reducerForSport,
+
+	reducerForNotification,
 } from "./reducers"
 
 export const rootReducer = combineReducers({
@@ -30,33 +31,44 @@ export const rootReducer = combineReducers({
 	comments: reducerForComment,
 	likes: reducerForLike,
 	shares: reducerForShare,
-	users: reducerForUser,
 	advertisements: reducerForAdvertisement,
 	pages: reducerForPage,
 	books: reducerForBook,
 	sports: reducerForSport,
 	privileges: reducerForPrivileges,
+
+	all_users: reducerForUser,
+	notifications:reducerForNotification,
 });
+
+
 
 export const mapStateToProps = state => {
 	return {
 
+		all_friends: state.all_users.all_friends,
+		friend_suggestions: state.all_users.friend_suggestions,
+
+		total_notifications:state.notifications.all_notifications,
+
+		show_socialpost_comments:state.socialposts.showOnlyCommentsQuantityForSocialPost,
+
 		total_socialposts: state.socialposts.totalSocialPost,
 		current_socialpost: state.socialposts.currentSocialPost,
 
-		userToken: state.users.userToken,
-		isSignedIn: state.users.isSignedIn,
+		userToken: state.all_users.userToken,
+		isSignedIn: state.all_users.isSignedIn,
 
-		phone_number: state.users.phone_number,
-		user_name: state.users.user_name,
-		// user_name_in_profile: state.users.user_name_in_profile,
-		// user_avatar_image: state.users.user_avatar_image,
-		// user_cover_image: state.users.user_cover_image,
-		// user_brief_intro: state.users.user_brief_intro,
-		// user_about_me: state.users.user_about_me,
-		// user_working_zone: state.users.user_working_zone,
-		// user_education: state.users.user_education,
-		// user_contact_details: state.users.user_contact_details,
+		phone_number: state.all_users.phone_number,
+		user_name: state.all_users.user_name,
+		// user_name_in_profile: state.all_users.user_name_in_profile,
+		// user_avatar_image: state.all_users.user_avatar_image,
+		// user_cover_image: state.all_users.user_cover_image,
+		// user_brief_intro: state.all_users.user_brief_intro,
+		// user_about_me: state.all_users.user_about_me,
+		// user_working_zone: state.all_users.user_working_zone,
+		// user_education: state.all_users.user_education,
+		// user_contact_details: state.all_users.user_contact_details,
 
 		total_advertisements: state.advertisements.totalAdvertisement,
 		current_advertisement: state.advertisements.currentAdvertisement,
@@ -84,6 +96,13 @@ export const mapStateToProps = state => {
 
 export const mapDispatchToProps = dispatch => {
 	return {
+		set_friends: (friends_list) => dispatch( { type: "SET_FRIENDS", friends_list: friends_list } ),
+		set_friends_suggestions: (friends_suggestions_list) => dispatch( { type: "SET_FRIENDS_SUGGESTIONS", friends_suggestions_list: friends_suggestions_list } ),
+
+
+		set_fetched_notifications: (notifications_list) => dispatch( { type: "SET_FETCHED_NOTIFICATIONS", notifications_list: notifications_list } ),
+
+
 
 // user
 		set_is_signed_in: (booleon) => dispatch( { type:"SET_IS_SIGNED_IN", booleon: booleon } ),
