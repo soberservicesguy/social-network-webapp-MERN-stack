@@ -10,11 +10,6 @@ import utils from "../../utilities";
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
-const styles = theme => ({
-	outerContainer: {
-	},
-});
-
 class ComponentForShowingSport extends Component {
 	constructor(props) {
 		super(props);
@@ -31,23 +26,38 @@ class ComponentForShowingSport extends Component {
 	}
 
 	render() {
+		const styles = {
+			outerContainer:{
+			},
+			imageContainer:{
+				textAlign:'center',
+			},
+			imageStyle:{
+				width:'100%', 
+				height:300, 
+				resizeMode: "stretch"
+			}
+		}
+
 
 		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
 
+		// var base64Image = "data:image/jpeg;base64," + data.sport_image
+
 		return (
 			<div style={styles.outerContainer}>
-				<p>
-					{ data.sport_name }
+				<div style={styles.imageContainer}>
+					<img 
+						alt="" 
+						// src={base64Image}
+						src={utils.image} 
+						style={styles.imageStyle}
+					/>
+				</div>
+				<p style={{textAlign:'center', fontWeight:'bold', marginTop:10,}}>
+					Name{ data.sport_name }
 				</p>
-				<p>
-					{ data.sport_image }
-				</p>
-				<p>
-					{ data.sport_description }
-				</p>
-				<p>
-					{ data.endpoint }
-				</p>
+
 			</div>
 		);
 	}
@@ -58,4 +68,10 @@ ComponentForShowingSport.defaultProps = {
 };
 
 // export default ComponentForShowingSport;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(withStyles(styles)(ComponentForShowingSport))
+export default withResponsiveness(ComponentForShowingSport)
+				// <p>
+				// 	{ data.sport_description }
+				// </p>
+				// <p>
+				// 	{ data.endpoint }
+				// </p>

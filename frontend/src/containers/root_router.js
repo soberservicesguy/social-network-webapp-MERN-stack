@@ -45,6 +45,8 @@ import {
 	ConnectedSportContainer,
 	ConnectedIndividualSport,
 	ConnectedAboutMeContainer,
+	ConnectedCompleteFriendsContainer,
+	ConnectedTimelineContainer,
 } from "../redux_stuff/connected_components";
 
 // IMPORT material-ui stuff
@@ -315,6 +317,25 @@ class RootRouterContainer extends Component {
 									</IconButton>
 								</Link>
 
+								<Link to="/friends">
+									<IconButton aria-label="show 4 new mails" color="inherit">
+										<p>
+											Friends
+										</p>
+
+									</IconButton>
+								</Link>
+
+								<Link to="/timeline">
+									<IconButton aria-label="show 4 new mails" color="inherit">
+										<p>
+											Timeline
+										</p>
+
+									</IconButton>
+								</Link>
+
+
 								<Link to="/pages">
 									<IconButton aria-label="show 4 new mails" color="inherit">
 										<p>
@@ -418,6 +439,14 @@ class RootRouterContainer extends Component {
 
 						<Route exact path="/about-me">
 							<ConnectedAboutMeContainer/>
+						</Route>
+
+						<Route exact path="/friends">
+							<ConnectedCompleteFriendsContainer/>
+						</Route>
+
+						<Route exact path="/timeline">
+							<ConnectedTimelineContainer/>
 						</Route>
 
 

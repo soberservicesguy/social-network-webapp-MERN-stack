@@ -16,3 +16,6 @@ export {default as SignUpContainer } from "./sign_up.js";
 export {default as NotificationsContainer} from "./notification";
 export {default as FriendsContainer} from "./friend";
 export {default as AboutMeContainer} from "./about_me"
+
+export {default as CompleteFriendsContainer} from "./complete_friend_container"
+export {default as TimelineContainer} from "./timeline_container"

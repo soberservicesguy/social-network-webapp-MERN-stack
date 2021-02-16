@@ -10,10 +10,6 @@ import utils from "../../utilities";
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
-const styles = theme => ({
-	outerContainer: {
-	},
-});
 
 class ComponentForShowingBook extends Component {
 	constructor(props) {
@@ -32,21 +28,36 @@ class ComponentForShowingBook extends Component {
 
 	render() {
 
+		const styles = {
+			outerContainer:{
+			},
+			imageContainer:{
+				textAlign:'center',
+			},
+			imageStyle:{
+				width:'100%', 
+				height:300, 
+				resizeMode: "stretch"
+			}
+		}
+
 		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
+
+		// var base64Image = "data:image/jpeg;base64," + data.book_image
+
 
 		return (
 			<div style={styles.outerContainer}>
-				<p>
-					{ data.book_name }
-				</p>
-				<p>
-					{ data.book_image }
-				</p>
-				<p>
-					{ data.book_description }
-				</p>
-				<p>
-					{ data.endpoint }
+				<div style={styles.imageContainer}>
+					<img 
+						alt="" 
+						// src={base64Image}
+						src={utils.image} 
+						style={styles.imageStyle}
+					/>
+				</div>
+				<p style={{textAlign:'center', fontWeight:'bold', marginTop:10,}}>
+					Name{ data.book_name }
 				</p>
 			</div>
 		);
@@ -58,4 +69,11 @@ ComponentForShowingBook.defaultProps = {
 };
 
 // export default ComponentForShowingBook;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(withStyles(styles)(ComponentForShowingBook))
+export default withResponsiveness(ComponentForShowingBook)
+
+				// <p>
+				// 	{ data.book_description }
+				// </p>
+				// <p>
+				// 	{ data.endpoint }
+				// </p>

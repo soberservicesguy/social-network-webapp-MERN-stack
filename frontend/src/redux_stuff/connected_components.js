@@ -22,6 +22,10 @@ import {
 	NotificationsContainer,
 	FriendsContainer,
 	AboutMeContainer,
+
+	CompleteFriendsContainer,
+
+	TimelineContainer,
 } from "../containers";
 
 
@@ -74,6 +78,16 @@ import {
 import {
 	CreateShareForSocialpost,
 } from "../components/shares"
+
+export const ConnectedTimelineContainer = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(TimelineContainer);
+
+export const ConnectedCompleteFriendsContainer = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CompleteFriendsContainer);
 
 export const ConnectedAboutMeContainer = connect(
 	mapStateToProps,

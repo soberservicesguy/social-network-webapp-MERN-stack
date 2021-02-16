@@ -13,8 +13,9 @@ import withResponsiveness from "../responsiveness_hook";
 
 import {
 	ConnectedComponentForShowingFriend,
-	ConnectedComponentForShowingBook,
-	ConnectedComponentForShowingSport,
+	// ConnectedSocialPostContainer,
+	ConnectedCreateSocialPost,
+	ConnectedSocialPostCard,
 } from '../redux_stuff/connected_components';
 
 import {
@@ -22,7 +23,7 @@ import {
 } from "react-router-dom";
 
 
-class AboutMeContainer extends Component {
+class TimelineContainer extends Component {
 	constructor(props) {
 		super(props);
 // STATE	
@@ -31,8 +32,6 @@ class AboutMeContainer extends Component {
 			tracked_width1: 0,
 			tracked_height1: 0,
 
-			tracked_width2: 0,
-			tracked_height2: 0,
 
 		}
 		this.resizeHandler = this.resizeHandler.bind(this);
@@ -45,8 +44,6 @@ class AboutMeContainer extends Component {
 			tracked_width1:this.divElement1.clientWidth, 
 			tracked_height1:this.divElement1.clientHeight,
 
-			tracked_width2:this.divElement2.clientWidth, 
-			tracked_height2:this.divElement2.clientHeight,
 		}))
 	}
 
@@ -184,41 +181,6 @@ class AboutMeContainer extends Component {
 				marginBottom:0,
 				fontWeight:'bold',
 			},
-			sectionButtonsContainer:{
-				backgroundColor: 'white',
-				marginRight:10,
-				paddingLeft:30,
-				paddingRight:30,
-				paddingTop:30,
-				paddingBottom:30,
-				// width: 330,
-			},
-			sectionButton:{
-				marginBottom:30,
-				outline:'none',
-				background:'none',
-				borderWidth:0,
-				width:'100%',
-				borderBottomColor:'light-grey',
-				borderBottomWidth:1,
-				borderStyle:'solid',
-				paddingBottom:10,
-				textAlign:'left',
-				paddingLeft:0,
-				fontSize:18,
-				fontWeight: 'bold',
-			},
-
-			shortBottomBorder:{
-				width:'20%',
-				height:1,
-				borderWidth:0,
-				borderBottomWidth: 1,
-				borderStyle:'solid',
-				borderBottomColor:utils.maroonColor,
-				marginBottom:20,
-			},
-
 
 			headingForBlockContainer:{
 				borderStyle:'solid',
@@ -270,6 +232,10 @@ class AboutMeContainer extends Component {
 		let all_friends = [1,2,3,4,5,6,7,8,9,10]
 		// let total_books = this.props.total_books
 		let total_books = [1,2,3,4,5,6,7,8,9,10]
+		// let friend_suggestions = this.props.friend_suggestions
+		let friend_suggestions = [1,2,3,4,5,6,7,8,9,10]
+
+		const total_socialposts = this.props.total_socialposts
 
 		return (
 
@@ -293,7 +259,7 @@ class AboutMeContainer extends Component {
 								<div style={styles.upperMenu}>
 									<div style={styles.upperMenuButtonContainer}>
 										<Link to="/timeline">
-											<p style={styles.menuText}>
+											<p style={{...styles.menuText, color:utils.maroonColor}}>
 												Timeline
 											</p>
 										</Link>
@@ -301,7 +267,7 @@ class AboutMeContainer extends Component {
 
 									<div style={styles.upperMenuButtonContainer}>
 										<Link to="/about-me">
-											<p style={{...styles.menuText, color:utils.maroonColor}}>
+											<p style={styles.menuText}>
 												About
 											</p>
 										</Link>
@@ -359,7 +325,7 @@ class AboutMeContainer extends Component {
 										marginLeft:20,
 									}}>
 										<p style={styles.currentSectionHeading}>
-											About
+											Friends
 										</p>
 									</div>
 								</div>
@@ -369,130 +335,6 @@ class AboutMeContainer extends Component {
 					</div>
 
 
-					<div style={{
-						width:'85%',
-						margin:'auto',
-						marginTop:20,
-						// backgroundColor: 'black',
-					}}>
-						<Grid container direction="row">
-							<Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
-								<div 
-									ref={ (divElement) => { this.divElement2 = divElement } }
-									style={styles.sectionButtonsContainer}
-								>
-									<button
-										style={styles.sectionButton}
-										onClick={ () => this.setState(prev => ({...prev, sectionToShow: 'something_about_me' })) }
-									>
-										Something About Me
-									</button>
-
-									<button
-										style={styles.sectionButton}
-										onClick={ () => this.setState(prev => ({...prev, sectionToShow: 'working_zone' })) }
-									>
-										Working Zone
-									</button>
-
-									<button
-										style={styles.sectionButton}
-										onClick={ () => this.setState(prev => ({...prev, sectionToShow: 'educational_qualification' })) }
-									>
-										Educational Qualification
-									</button>
-
-									<button
-										style={{...styles.sectionButton, marginBottom:10}}
-										onClick={ () => this.setState(prev => ({...prev, sectionToShow: 'contact_details' })) }
-									>
-										Contacts Details
-									</button>
-
-								</div>
-							</Grid>
-
-							<Grid item xs={12} sm={12} md={6} lg={9} xl={9}>
-								<div style={{
-									backgroundColor: 'white',
-									marginLeft:10,
-									height:this.state.tracked_height2,
-									paddingLeft:60,
-									paddingTop:20,
-
-								}}>
-									{(() => {
-										if (this.state.sectionToShow === 'something_about_me'){
-											return (
-
-												<div>
-													<p style={{fontWeight:'bold', fontSize:20,}}>
-														Something About Me
-													</p>
-													<div style={styles.shortBottomBorder}>
-														<p></p>
-													</div>
-
-													<p>lorem ipsum</p>
-												</div>
-
-											)
-										} else if (this.state.sectionToShow === 'working_zone'){
-											return (
-
-												<div>
-													<p style={{fontWeight:'bold', fontSize:20,}}>
-														Working Zone
-													</p>
-													<div style={styles.shortBottomBorder}>
-														<p></p>
-													</div>
-
-													<p>lorem ipsum</p>
-												</div>
-
-											)
-										} else if (this.state.sectionToShow === 'educational_qualification'){
-											return (
-
-												<div>
-													<p style={{fontWeight:'bold', fontSize:20,}}>
-														Educational Qualification
-													</p>
-													<div style={styles.shortBottomBorder}>
-														<p></p>
-													</div>
-
-													<p>lorem ipsum</p>
-												</div>
-
-											)
-										} else if (this.state.sectionToShow === 'contact_details'){
-											return (
-
-												<div>
-													<p style={{fontWeight:'bold', fontSize:20,}}>
-														Contact Details
-													</p>
-													<div style={styles.shortBottomBorder}>
-														<p></p>
-													</div>
-
-													<p>lorem ipsum</p>
-												</div>
-
-											)
-										} else {
-											return null
-										}
-
-									})()}
-								</div>
-							</Grid>
-
-
-						</Grid>
-					</div>
 
 				{/*Friends Section starts here*/}
 					<div style={{
@@ -506,24 +348,51 @@ class AboutMeContainer extends Component {
 							<Grid item xs={12}>
 								<div style={styles.headingForBlockContainer}>
 									<p style={styles.headingForBlockText}>
-										Friends
+										Personal Wall
 									</p>
 								</div>
 							</Grid>
 
 							<Grid container direction="row">
-								{all_friends.map((item, index) => {
-									return (
-										<Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
-											<div style={{...styles.blockChildrenInnerContainer, paddingLeft:20}}>
-												<ConnectedComponentForShowingFriend
-													dataPayloadFromParent = { item }
-													// showFriendsSuggestionsInstead = {true}
-												/>
-											</div>
+
+								<Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
+								</Grid>
+
+								<Grid container direction="column" xs={12} sm={12} md={8} lg={8} xl={8}>
+
+									<Grid item>
+										<div>
+								  			<ConnectedCreateSocialPost/>
+										</div>
+							  		</Grid>
+
+									{total_socialposts.map((item, index)=>(
+
+										<Grid item>
+											<ConnectedSocialPostCard
+												dataPayloadFromParent = { item }
+
+												comments_quantity = { item.comments_quantity }
+												comments = { item.comments || [] }
+
+												likes_quantity = { item.likes_quantity }
+												likes = { item.likes || [] }
+
+												shares_quantity = { item.shares_quantity }
+												shares = { item.shares || [] }
+
+												// user_quantity = { item.user_quantity }
+												// user = { item.user || [] }
+											
+											/>
 										</Grid>
-									)
-								})}
+
+									))}
+									
+								</Grid>
+
+								<Grid item xs={0} sm={0} md={2} lg={2} xl={2}></Grid>
+
 							</Grid>
 
 							<Grid item xs={12}>
@@ -539,7 +408,9 @@ class AboutMeContainer extends Component {
 				{/*Friends Section ends here*/}
 
 
-				{/*Books Section starts here*/}
+
+
+				{/*Friends suggestions Section starts here*/}
 					<div style={{
 						paddingTop:20,
 						width:'85%',
@@ -551,65 +422,19 @@ class AboutMeContainer extends Component {
 							<Grid item xs={12}>
 								<div style={styles.headingForBlockContainer}>
 									<p style={styles.headingForBlockText}>
-										Favourite Books
+										Friends Suggestions
 									</p>
 								</div>
 							</Grid>
 
 							<Grid container direction="row">
-								{total_books.map((item, index) => {
-									return (
-										<Grid item xs={12} sm={12} md={3} lg={2} xl={2}>
-											<div style={{...styles.blockChildrenInnerContainer, paddingLeft:0,}}>
-												<ConnectedComponentForShowingBook
-													dataPayloadFromParent = { item }
-													// showFriendsSuggestionsInstead = {true}
-												/>
-											</div>
-										</Grid>
-									)
-								})}
-							</Grid>
-
-							<Grid item xs={12}>
-								<button style={styles.blockBottomButton}>
-									<p style={styles.blockBottomButtonText}>
-										Load More
-									</p>
-								</button>
-							</Grid>
-
-						</Grid>
-					</div>
-				{/*Books Section ends here*/}
-
-
-
-				{/*Sports Section starts here*/}
-					<div style={{
-						paddingTop:20,
-						width:'85%',
-						margin:'auto',
-						marginTop:20,
-						backgroundColor: 'white',
-					}}>
-						<Grid container direction="column">
-							<Grid item xs={12}>
-								<div style={styles.headingForBlockContainer}>
-									<p style={styles.headingForBlockText}>
-										Sports
-									</p>
-								</div>
-							</Grid>
-
-							<Grid container direction="row">
-								{total_books.map((item, index) => {
+								{friend_suggestions.map((item, index) => {
 									return (
 										<Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
-											<div style={{...styles.blockChildrenInnerContainer, paddingLeft:0,}}>
-												<ConnectedComponentForShowingSport
+											<div style={{...styles.blockChildrenInnerContainer, paddingLeft:20}}>
+												<ConnectedComponentForShowingFriend
 													dataPayloadFromParent = { item }
-													// showFriendsSuggestionsInstead = {true}
+													showFriendsSuggestionsInstead = {true}
 												/>
 											</div>
 										</Grid>
@@ -627,8 +452,7 @@ class AboutMeContainer extends Component {
 
 						</Grid>
 					</div>
-				{/*Sports Section ends here*/}
-
+				{/*Friends suggestions Section ends here*/}
 
 
 				</div>
@@ -638,8 +462,8 @@ class AboutMeContainer extends Component {
 	}
 }
 
-AboutMeContainer.defaultProps = {
+TimelineContainer.defaultProps = {
 	// : ,
 };
 
-export default withResponsiveness(AboutMeContainer);
+export default withResponsiveness(TimelineContainer);
