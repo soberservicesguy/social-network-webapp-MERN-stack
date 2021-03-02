@@ -45,8 +45,8 @@ import {
 	ConnectedCreateShareForSocialpost,
 } from "../../redux_stuff/connected_components"
 
-import Comment from '@material-ui/icons/Comment';
 import Share from '@material-ui/icons/Share';
+import Comment from '@material-ui/icons/Comment';
 import ThumbUp from '@material-ui/icons/ThumbUp';
 
 

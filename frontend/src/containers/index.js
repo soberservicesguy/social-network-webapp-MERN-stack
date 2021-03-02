@@ -19,3 +19,5 @@ export {default as AboutMeContainer} from "./about_me"
 
 export {default as CompleteFriendsContainer} from "./complete_friend_container"
 export {default as TimelineContainer} from "./timeline_container"
+
+export {default as MyResponsiveNavigation} from "./my_responsive_navigation"
