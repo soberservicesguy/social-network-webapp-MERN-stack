@@ -117,8 +117,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created a post!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created a<span style={{fontWeight:'normal', color:utils.maroonColor}}> post!</span>
 						</p>
 					</div>
 				</div>
@@ -141,8 +141,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked a post!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked a<span style={{fontWeight:'normal', color:utils.maroonColor}}> post!</span>
 						</p>
 					</div>
 				</div>
@@ -164,8 +164,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> shared a post!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} shared a<span style={{fontWeight:'normal', color:utils.maroonColor}}> post!</span>
 						</p>
 					</div>
 				</div>
@@ -187,8 +187,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> commented a post!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} commented on a<span style={{fontWeight:'normal', color:utils.maroonColor}}> post!</span>
 						</p>
 					</div>
 				</div>
@@ -210,8 +210,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created a book!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created a<span style={{fontWeight:'normal', color:utils.maroonColor}}> book title!</span>
 						</p>
 					</div>
 				</div>
@@ -233,8 +233,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked a book!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked a<span style={{fontWeight:'normal', color:utils.maroonColor}}> book!</span>
 						</p>
 					</div>
 				</div>
@@ -256,8 +256,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created a page!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created a<span style={{fontWeight:'normal', color:utils.maroonColor}}> page!</span>
 						</p>
 					</div>
 				</div>
@@ -279,8 +279,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked a page!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked a <span style={{fontWeight:'normal', color:utils.maroonColor}}> page!</span>
 						</p>
 					</div>
 				</div>
@@ -302,8 +302,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created a sport!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created a<span style={{fontWeight:'normal', color:utils.maroonColor}}> sport activity!</span>
 						</p>
 					</div>
 				</div>
@@ -325,8 +325,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked a sport!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked a<span style={{fontWeight:'normal', color:utils.maroonColor}}> sport!</span>
 						</p>
 					</div>
 				</div>
@@ -348,8 +348,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created an ad!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created an<span style={{fontWeight:'normal', color:utils.maroonColor}}> ad!</span>
 						</p>
 					</div>
 				</div>
@@ -371,8 +371,8 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={{...styles.usernameContainer, flex:10}}>
-						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
-							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked an ad!</span>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked an<span style={{fontWeight:'normal', color:utils.maroonColor}}> ad!</span>
 						</p>
 					</div>
 				</div>
