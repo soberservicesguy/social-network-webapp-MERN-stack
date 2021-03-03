@@ -1,3 +1,7 @@
+import { 
+	// withRouter,
+	Link,
+} from "react-router-dom";
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -31,8 +35,6 @@ class ComponentForShowingSocialPost extends Component {
 	}
 
 	render() {
-
-		// const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
 
 		const styles = {
 			outerContainer:{
@@ -91,183 +93,932 @@ class ComponentForShowingSocialPost extends Component {
 		}
 
 
-		const data = {type_of_post:'text_with_image_post'} 
+		const data = {type_of_post:'text_post', notification_type:'created_page'} 
+
+		// const data = this.props.dataPayloadFromParent
+
 		// var base64Image = "data:image/jpeg;base64," + data.image_for_post
+
+
+
+	/* activity headers start here */
+		let user_activity_header_for_post_create = (
+	  		<Link 
+	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created a post!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+
+		let user_activity_header_for_like = (
+	  		<Link 
+	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked a post!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_share = (
+	  		<Link 
+	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> shared a post!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_comment = (
+	  		<Link 
+	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> commented a post!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_book_creating = (
+	  		<Link 
+	  			to={`/books/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created a book!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_book_liking = (
+	  		<Link 
+	  			to={`/books/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked a book!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_page_creating = (
+	  		<Link 
+	  			to={`/pages/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created a page!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_page_liking = (
+	  		<Link 
+	  			to={`/pages/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked a page!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_sport_creating = (
+	  		<Link 
+	  			to={`/sports/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created a sport!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_sport_liking = (
+	  		<Link 
+	  			to={`/sports/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked a sport!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_ad_creating = (
+	  		<Link 
+	  			to={`/ads/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> created an ad!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_ad_liking = (
+	  		<Link 
+	  			to={`/ads/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20}}>
+							{data.friends_user_name} <span style={{fontWeight:'normal', color:utils.maroonColor}}> liked an ad!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+	/* activity headers end here */
+
+
+	/* username and avatar start here */
+
+		let username_avatar_in_created_post_type = (
+			<div style={styles.avatarAndUsernameContainer}>
+				<div style={styles.avatarContainer}>
+					<img 
+						alt="" 
+						src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+						// src={utils.image}
+						style={styles.avatarImage}
+					/>
+				</div>
+				<div style={styles.usernameContainer}>
+					<p style={styles.usernameText}>
+						{data.friends_user_name}
+					</p>
+				</div>
+			</div>
+		)
+
+		let username_avatar_in_rest_cases = (
+			<div style={styles.avatarAndUsernameContainer}>
+				<div style={styles.avatarContainer}>
+					<img 
+						alt="" 
+						src={"data:image/jpeg;base64," + data.user_avatar_image} 
+						// src={utils.image}
+						style={styles.avatarImage}
+					/>
+				</div>
+				<div style={styles.usernameContainer}>
+					<p style={styles.usernameText}>
+						{data.user_name}
+					</p>
+				</div>
+			</div>
+		)
+
+	/* username and avatar end here */
+
+
+		let post_text_content = (
+			<div style={styles.postTextContainer}>
+				<p style={styles.postText}>
+					{ data.post_text }
+				</p>
+			</div>
+		)
+
+		let post_image_content = (
+			<div style={styles.postImageContainer}>
+				<img 
+					src={"data:image/jpeg;base64," + data.image_for_post} 
+					// src={utils.image}
+					alt="" 
+					style={styles.postImage}
+				/>
+			</div>
+		)
+
+		let post_video_content = (
+			<div style={styles.postVideoContainer}>
+				<video 
+					width="100%" 
+					height="300" 
+					controls
+					src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
+				/>
+			</div>
+		)
+
+		let book_content = (
+			// , , , interested_users, endpoint
+			<div>
+				<div style={styles.postTextContainer}>
+					<p style={{...styles.postText, fontWeight:'bold'}}>
+						{ data.book_name }
+					</p>
+				</div>
+
+				<div style={{...styles.postImageContainer, width:'30%',  margin:'auto'}}>
+					<img 
+						src={"data:image/jpeg;base64," + data.book_image} 
+						// src={utils.image}
+						alt="" 
+						style={styles.postImage}
+					/>
+				</div>
+
+				<div style={styles.postTextContainer}>
+					<p style={styles.postText}>
+						{ data.book_description }
+					</p>
+				</div>				
+			</div>
+		)
+		
+		let page_content = (
+			// , , , endpoint
+			<div>
+				<div style={styles.postTextContainer}>
+					<p style={{...styles.postText, fontWeight:'bold'}}>
+						{ data.page_name }
+					</p>
+				</div>
+
+				<div style={{...styles.postImageContainer, width:'70%',  margin:'auto'}}>
+					<img 
+						src={"data:image/jpeg;base64," + data.page_image} 
+						// src={utils.image}
+						alt="" 
+						style={styles.postImage}
+					/>
+				</div>
+
+				<div style={styles.postTextContainer}>
+					<p style={styles.postText}>
+						{ data.page_description }
+					</p>
+				</div>
+			</div>
+		)
+
+		let sport_content = (
+			// , , , endpoint
+			<div>
+				<div style={styles.postTextContainer}>
+					<p style={{...styles.postText, fontWeight:'bold'}}>
+						{ data.sport_name }
+					</p>
+				</div>
+
+				<div style={styles.postImageContainer}>
+					<img 
+						src={"data:image/jpeg;base64," + data.sport_image} 
+						// src={utils.image}
+						alt="" 
+						style={styles.postImage}
+					/>
+				</div>
+
+				<div style={styles.postTextContainer}>
+					<p style={styles.postText}>
+						{ data.sport_description }
+					</p>
+				</div>				
+			</div>
+
+		)
+
+		let ad_content = (
+			// , , , endpoint
+			<div>
+				<div style={styles.postTextContainer}>
+					<p style={{...styles.postText, fontWeight:'bold'}}>
+						{ data.ad_name }
+					</p>
+				</div>
+
+				<div style={styles.postImageContainer}>
+					<img 
+						src={"data:image/jpeg;base64," + data.ad_image} 
+						// src={utils.image}
+						alt="" 
+						style={styles.postImage}
+					/>
+				</div>
+
+				<div style={styles.postTextContainer}>
+					<p style={styles.postText}>
+						{ data.ad_description }
+					</p>
+				</div>				
+			</div>
+		)
 
 		return (
 			<div>
 
 				{(() => {
 
-					if (data.type_of_post === 'text_post'){
+				// created_post section
+
+					if (data.notification_type === 'created_post' && data.type_of_post === 'text_post'){
 
 						return (
 							<div style={styles.outerContainer}>
-								<div style={styles.avatarAndUsernameContainer}>
-									<div style={styles.avatarContainer}>
-										<img 
-											alt="" 
-											// src={base64Image} 
-											src={utils.image}
-											style={styles.avatarImage}
-										/>
-									</div>
-									<div style={styles.usernameContainer}>
-										<p style={styles.usernameText}>
-											Arsalan
-										</p>
-									</div>
-								</div>
 
-								<div style={styles.postTextContainer}>
-									<p style={styles.postText}>
-										post text post text post text post text post text post text 
-										{ data.post_text }
-									</p>
-								</div>
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+								{username_avatar_in_created_post_type}
+
+								{post_text_content}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+								{username_avatar_in_created_post_type}
+
+								{post_image_content}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+								{username_avatar_in_created_post_type}
+
+								{post_video_content}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'text_with_image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+								{username_avatar_in_created_post_type}
+
+								{post_text_content}
+
+								{post_image_content}
 								
 							</div>
 						)
 
-					} else if (data.type_of_post === 'image_post'){
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'text_with_video_post'){
 
 						return (
 							<div style={styles.outerContainer}>
-								<div style={styles.avatarAndUsernameContainer}>
-									<div style={styles.avatarContainer}>
-										<img 
-											alt="" 
-											// src={base64Image} 
-											src={utils.image}
-											style={styles.avatarImage}
-										/>
-									</div>
-									<div style={styles.usernameContainer}>
-										<p style={styles.usernameText}>
-											Arsalan
-										</p>
-									</div>
-								</div>
 
-								<div style={styles.postImageContainer}>
-									<img 
-										// src={base64Image} 
-										src={utils.image}
-										alt="" 
-										style={styles.postImage}
-									/>
-								</div>
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+								{username_avatar_in_created_post_type}
+
+								{post_text_content}
+
+								{post_video_content}
+
+							</div>
+						)
+
+				// liked_post section
+
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'text_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
+
+								{username_avatar_in_rest_cases}
+
+								{post_text_content}
 								
 							</div>
 						)
 
-					} else if (data.type_of_post === 'video_post'){
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'image_post'){
 
 						return (
 							<div style={styles.outerContainer}>
-								<div style={styles.avatarAndUsernameContainer}>
-									<div style={styles.avatarContainer}>
-										<img 
-											alt="" 
-											// src={base64Image} 
-											src={utils.image}
-											style={styles.avatarImage}
-										/>
-									</div>
-									<div style={styles.usernameContainer}>
-										<p style={styles.usernameText}>
-											Arsalan
-										</p>
-									</div>
-								</div>
 
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
 
-								<div style={styles.postVideoContainer}>
-									<video 
-										width="100%" 
-										height="300" 
-										controls
-										src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
-									/>
-								</div>
+								{username_avatar_in_rest_cases}
 
-							</div>
-						)
-
-					} else if (data.type_of_post === 'text_with_image_post'){
-
-						return (
-							<div style={styles.outerContainer}>
-								<div style={styles.avatarAndUsernameContainer}>
-									<div style={styles.avatarContainer}>
-										<img 
-											alt="" 
-											// src={base64Image} 
-											src={utils.image}
-											style={styles.avatarImage}
-										/>
-									</div>
-									<div style={styles.usernameContainer}>
-										<p style={styles.usernameText}>
-											Arsalan
-										</p>
-									</div>
-								</div>
-
-								<div style={styles.postTextContainer}>
-									<p style={styles.postText}>
-										post text post text post text post text post text post text 
-										{ data.post_text }
-									</p>
-								</div>
-
-								<div style={styles.postImageContainer}>
-									<img 
-										// src={base64Image} 
-										src={utils.image}
-										alt="" 
-										style={styles.postImage}
-									/>
-								</div>
+								{post_image_content}
 								
 							</div>
 						)
 
-					} else if (data.type_of_post === 'text_with_video_post'){
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'video_post'){
 
 						return (
 							<div style={styles.outerContainer}>
-								<div style={styles.avatarAndUsernameContainer}>
-									<div style={styles.avatarContainer}>
-										<img 
-											alt="" 
-											// src={base64Image} 
-											src={utils.image}
-											style={styles.avatarImage}
-										/>
-									</div>
-									<div style={styles.usernameContainer}>
-										<p style={styles.usernameText}>
-											Arsalan
-										</p>
-									</div>
-								</div>
 
-								<div style={styles.postTextContainer}>
-									<p style={styles.postText}>
-										post text post text post text post text post text post text 
-										{ data.post_text }
-									</p>
-								</div>
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
 
-								<div style={styles.postVideoContainer}>
-									<video 
-										width="100%" 
-										height="300" 
-										controls
-										src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
-									/>
-								</div>
+								{username_avatar_in_rest_cases}
+
+								{post_video_content}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'text_with_image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
+
+								{username_avatar_in_rest_cases}
+
+								{post_text_content}
+
+								{post_image_content}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'text_with_video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
+
+								{username_avatar_in_rest_cases}
+
+								{post_text_content}
+
+								{post_video_content}
+
+							</div>
+						)
+
+				// shared_post section
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'text_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+
+								{username_avatar_in_rest_cases}
+
+								{post_text_content}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+
+								{username_avatar_in_rest_cases}
+
+								{post_image_content}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+
+								{username_avatar_in_rest_cases}
+
+								{post_video_content}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'text_with_image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+
+								{username_avatar_in_rest_cases}
+
+								{post_text_content}
+
+								{post_image_content}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'text_with_video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+
+								{username_avatar_in_rest_cases}
+
+								{post_text_content}
+
+								{post_video_content}
+
+							</div>
+						)
+
+				// commented_on_post section
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'text_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+
+								{username_avatar_in_rest_cases}
+
+								{post_text_content}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+
+								{username_avatar_in_rest_cases}
+
+								{post_image_content}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+
+								{username_avatar_in_rest_cases}
+
+								{post_video_content}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'text_with_image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+
+								{username_avatar_in_rest_cases}
+
+								{post_text_content}
+
+								{post_image_content}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'text_with_video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+
+								{username_avatar_in_rest_cases}
+
+								{post_text_content}
+
+								{post_video_content}
+
+							</div>
+						)
+
+				// created_book
+
+					} else if (data.notification_type === 'created_book'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_book_creating}
+
+								{username_avatar_in_rest_cases}
+
+								{book_content}
+
+							</div>
+						)
+
+
+				// got_interested_in_book
+
+					} else if (data.notification_type === 'got_interested_in_book'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_book_liking}
+
+								{username_avatar_in_rest_cases}
+
+								{book_content}
+
+							</div>
+						)
+
+				// created_page
+
+					} else if (data.notification_type === 'created_page'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_page_creating}
+
+								{username_avatar_in_rest_cases}
+
+								{page_content}
+
+							</div>
+						)
+
+				// got_interested_in_page
+
+					} else if (data.notification_type === 'got_interested_in_page'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_page_liking}
+
+								{username_avatar_in_rest_cases}
+
+								{page_content}
+
+							</div>
+						)
+
+				// created_sport
+
+					} else if (data.notification_type === 'created_sport'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_sport_creating}
+
+								{username_avatar_in_rest_cases}
+
+								{sport_content}
+
+							</div>
+						)
+
+				// got_interested_in_sport
+
+					} else if (data.notification_type === 'got_interested_in_sport'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_sport_liking}
+
+								{username_avatar_in_rest_cases}
+
+								{sport_content}
+
+							</div>
+						)
+
+				// got_interested_in_advertisement
+
+					} else if (data.notification_type === 'created_advertisement'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_ad_creating}
+
+								{username_avatar_in_rest_cases}
+
+								{ad_content}
+
+							</div>
+						)
+
+				// 'got_interested_in_advertisement'
+
+					} else if (data.notification_type === 'got_interested_in_advertisement'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_ad_liking}
+
+								{username_avatar_in_rest_cases}
+
+								{ad_content}
 
 							</div>
 						)

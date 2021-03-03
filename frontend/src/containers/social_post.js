@@ -22,10 +22,10 @@ import {
 	ConnectedNotificationsContainer,
 
 	ConnectedFriendsContainer,
+	ConnectedProfileHeader,
 } from '../redux_stuff/connected_components';
 
 import {
-	ProfileHeader,
 } from "../components"
 
 class SocialPostContainer extends Component {
@@ -40,7 +40,7 @@ class SocialPostContainer extends Component {
 	componentDidMount() {
 
 // FETCHING DATA FOR COMPONENT
-		axios.get(utils.baseUrl + '/socialposts/socialposts-list-with-children',)
+		axios.get(utils.baseUrl + '/socialposts/get-socialposts-from-friends',)
 		.then((response) => {
 			this.props.set_fetched_socialposts(response.data)
 		})
@@ -82,7 +82,7 @@ class SocialPostContainer extends Component {
 						marginLeft:(_md || _lg || _xl) ? 30 : 0, 
 						marginRight:(_md || _lg || _xl) ? 30 : 0,
 					}}>
-						<ProfileHeader/>
+						<ConnectedProfileHeader/>
 						<ConnectedPageContainer/>
 						<ConnectedFriendsContainer/>
 					</div>

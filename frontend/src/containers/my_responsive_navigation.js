@@ -88,42 +88,42 @@ class MyResponsiveNavigation extends Component {
 			  		</Grid>
 
 
-						{navigation_options.map((item, index)=>(
-			
+					{navigation_options.map((item, index)=>(
+		
 
-							<Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
+						<Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
 
-						  		<Link 
-						  			to={`/${item.endpoint}`} 
-						  			style={{
-						  				color: 'inherit', 
-						  				textDecoration: 'inherit',
-						  			}}
-								>
-									<p style={{
-										textAlign:'center',
-										marginBottom: 0,
-										paddingBottom: 0,
-										fontSize:18,
-										fontWeight:'bold',
-										// color:'grey',
-									// color of active link
-										color:( `/${item.endpoint}` === pathname) ? 'black' : 'grey',
-									// border below active link
-										// borderBottomWidth:( item.endpoint === this.state.current_route) ? 3 : 0,
-										// borderBottomColor:'black',
-										// borderBottomStyle:'solid',
-										// marginLeft:20,
-										// marginRight:20,
-						  				marginBottom:15,
-									}}>
-										{item.option_name}
-									</p>
-								</Link>
-						
-							</Grid>
+					  		<Link 
+					  			to={`/${item.endpoint}`} 
+					  			style={{
+					  				color: 'inherit', 
+					  				textDecoration: 'inherit',
+					  			}}
+							>
+								<p style={{
+									textAlign:'center',
+									marginBottom: 0,
+									paddingBottom: 0,
+									fontSize:18,
+									fontWeight:'bold',
+									// color:'grey',
+								// color of active link
+									color:( `/${item.endpoint}` === pathname) ? 'black' : 'grey',
+								// border below active link
+									// borderBottomWidth:( item.endpoint === this.state.current_route) ? 3 : 0,
+									// borderBottomColor:'black',
+									// borderBottomStyle:'solid',
+									// marginLeft:20,
+									// marginRight:20,
+					  				marginBottom:15,
+								}}>
+									{item.option_name}
+								</p>
+							</Link>
+					
+						</Grid>
 
-						))}
+					))}
 
 
 				</Grid>

@@ -513,7 +513,9 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 		let all_friends = await Promise.all(friends.map(async (friend) => {
 
 			// access friend data here
-			let { user_name, user_avatar_image } = friend
+			var { user_name, user_avatar_image } = friend
+			let friends_user_name = user_name
+			let friends_user_avatar_image = user_avatar_image
 			let friend_endpoint = friend.endpoint
 
 			let all_activities = await Promise.all(friend.activities.map(async (activity) => {
@@ -521,19 +523,22 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 				activity = await Activity.findOne({_id: activity})
 
 				let post_details = {}
-				post_details = { user_name, user_avatar_image, friend_endpoint }
+				post_details = { friends_user_name, friends_user_avatar_image, friend_endpoint }
 
 				if ( last_timestamp_of_checking_notification !== null && timestamp.activity > last_timestamp_of_checking_notification ){
 
 					let { activity_type } = activity
+					let user_owning_post
 
 					switch (activity_type) {
+
 						case "created_post":
 
 							var { post_created } = activity
 							post_created = await SocialPost.findOne({_id: post_created})
 							var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_created
-							post_details = { ...post_details, activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'created_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
 // DRYed out
 							// switch (type_of_post) {
 							// 	case "text_post":
@@ -568,7 +573,12 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							var { post_liked } = activity
 							post_liked = await SocialPost.findOne({_id: post_liked})
 							var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_liked
-							post_details = { ...post_details, activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'liked_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
+							// incorporating user_owning_post user_name and user_avatar_image
+							user_owning_post = await User.findOne({_id: post_liked.user})
+							var { user_name, user_avatar_image } = user_owning_post
+							post_details = {...post_details, user_name, user_avatar_image}
 							post_details = await get_post_details(type_of_post, post_created, post_details)
 							activities_to_send.push(post_details)
 							break
@@ -578,7 +588,12 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							var { post_share } = activity
 							post_share = await SocialPost.findOne({_id: post_share})
 							var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_share
-							post_details = { ...post_details, activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'shared_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
+							// incorporating user_owning_post user_name and user_avatar_image
+							user_owning_post = await User.findOne({_id: post_share.user})
+							var { user_name, user_avatar_image } = user_owning_post
+							post_details = {...post_details, user_name, user_avatar_image}
 							post_details = await get_post_details(type_of_post, post_created, post_details)
 							activities_to_send.push(post_details)
 							break
@@ -591,7 +606,12 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							original_post = await SocialPost.findOne({_id: original_post})
 							var { comment_text } = post_commented
 							var { type_of_post, total_likes, total_shares, total_comments, endpoint } = original_post
-							post_details = { ...post_details, activity_type, comment_text, type_of_post, total_likes, total_shares, total_comments, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'commented_on_post', activity_type, comment_text, type_of_post, total_likes, total_shares, total_comments, endpoint }
+							// incorporating user_owning_post user_name and user_avatar_image
+							user_owning_post = await User.findOne({_id: post_commented.user})
+							var { user_name, user_avatar_image } = user_owning_post
+							post_details = {...post_details, user_name, user_avatar_image}
 							post_details = await get_post_details(type_of_post, post_created, post_details)
 							activities_to_send.push(post_details)
 							break
@@ -601,7 +621,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							let { book_created } = activity
 							book_created = await Book.findOne({_id: book_created})
 							var { book_name, book_image, book_description, interested_users, endpoint } = book_created
-							post_details = { ...post_details, activity_type, book_name, book_image, book_description, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'created_book', activity_type, book_name, book_image, book_description, endpoint }
 							activities_to_send.push(post_details)
 							break
 
@@ -610,7 +631,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							let { book_liked } = activity
 							book_liked = await Book.findOne({_id: book_liked})
 							var { book_name, book_image, book_description, endpoint } = book_liked
-							post_details = { ...post_details, activity_type, book_name, book_image, book_description, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'got_interested_in_book', activity_type, book_name, book_image, book_description, endpoint }
 							activities_to_send.push(post_details)
 							break
 
@@ -619,7 +641,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							let { page_created } = activity
 							page_created = await Page.findOne({_id: page_created})
 							var { page_name, page_image, page_description, endpoint } = page_created
-							post_details = { ...post_details, activity_type, page_name, page_image, page_description, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'created_page', activity_type, page_name, page_image, page_description, endpoint }
 							activities_to_send.push(post_details)
 							break
 
@@ -628,7 +651,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							let { page_liked } = activity
 							page_liked = await Page.findOne({_id: page_liked})
 							var { page_name, page_image, page_description, endpoint } = page_liked
-							post_details = { ...post_details, activity_type, page_name, page_image, page_description, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'got_interested_in_page', activity_type, page_name, page_image, page_description, endpoint }
 							activities_to_send.push(post_details)
 							break
 
@@ -637,7 +661,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							let { sport_created } = activity
 							sport_created = await Sport.findOne({_id: sport_created})
 							var { sport_name, sport_image, sport_description, endpoint } = sport_created
-							post_details = { ...post_details, activity_type, sport_name, sport_image, sport_description, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'created_sport', activity_type, sport_name, sport_image, sport_description, endpoint }
 							activities_to_send.push(post_details)
 							break
 
@@ -646,7 +671,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							let { sport_liked } = activity
 							sport_liked = await Sport.findOne({_id: sport_liked})
 							var { sport_name, sport_image, sport_description, endpoint } = sport_created
-							post_details = { ...post_details, activity_type, sport_name, sport_image, sport_description, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'got_interested_in_sport', activity_type, sport_name, sport_image, sport_description, endpoint }
 							activities_to_send.push(post_details)
 							break
 
@@ -655,7 +681,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							let { ad_created } = activity
 							ad_created = await Advertisement.findOne({_id: ad_created})
 							var { ad_name, ad_image, ad_description, endpoint } = ad_created
-							post_details = { ...post_details, activity_type, ad_name, ad_image, ad_description, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'created_advertisement', activity_type, ad_name, ad_image, ad_description, endpoint }
 							activities_to_send.push(post_details)
 							break
 
@@ -664,7 +691,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							let { ad_liked } = activity
 							ad_liked = await Advertisement.findOne({_id: ad_liked})
 							var { ad_name, ad_image, ad_description, endpoint } = ad_liked
-							post_details = { ...post_details, activity_type, ad_name, ad_image, ad_description, endpoint }
+							// incorporating notification_type
+							post_details = { ...post_details, notification_type:'got_interested_in_advertisement', activity_type, ad_name, ad_image, ad_description, endpoint }
 							activities_to_send.push(post_details)
 							break
 

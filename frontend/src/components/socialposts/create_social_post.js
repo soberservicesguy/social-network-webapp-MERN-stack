@@ -159,7 +159,7 @@ class CreateSocialPost extends Component {
 
 		}
 
-		// var base64Image = "data:image/jpeg;base64," + this.props.current_image
+		var base64Image = "data:image/jpeg;base64," + this.props.user_avatar_image
 
 		if ( this.state.redirectToRoute !== false ){
 
@@ -178,8 +178,8 @@ class CreateSocialPost extends Component {
 						<div styles={styles.avatarContainer}>
 							<img 
 								alt="" 
-								// src={base64Image}
-								src={utils.image}
+								src={base64Image}
+								// src={utils.image}
 								// src={require("../../images/samosa.jpeg").default}
 								style={{
 									width:80,

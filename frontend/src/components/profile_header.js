@@ -43,7 +43,7 @@ class ProfileHeader extends Component {
 
 			backgroundImage:{
 				height:200,				
-				backgroundImage: `url(${utils.image})`,
+				backgroundImage: `url(${this.props.user_cover_image})`,
 				// backgroundColor: '#cccccc', // Used if the image is unavailable
 				backgroundPosition: 'center',
 				backgroundRepeat: 'no-repeat',
@@ -89,8 +89,8 @@ class ProfileHeader extends Component {
 			}
 		}
 
-		let data = this.props.dataPayloadFromParent
-		// var base64Image = "data:image/jpeg;base64," + this.props.current_image
+		let data = this.props.user_avatar_image
+		var base64Image = "data:image/jpeg;base64," + this.props.current_image
 
 		return (
 
@@ -101,19 +101,19 @@ class ProfileHeader extends Component {
 
 				<div style={styles.roundImageContainer}>
 					<img 
-						// src={base64Image}
-						src={utils.image} 
+						src={base64Image}
+						// src={utils.image} 
 						alt="" 
 						style={styles.roundImage}
 					/>
 				</div>
 
 				<p style={styles.headingText}>
-					Arsalan
+					{this.props.user_name_in_profile}
 				</p>
 
 				<p style={styles.longText}>
-					lorem ipsum this is lorem ipsum this is lorem ipsum this is lorem ipsum this is lorem ipsum 
+					{this.props.user_brief_intro}
 				</p>
 			</div>
 			  	

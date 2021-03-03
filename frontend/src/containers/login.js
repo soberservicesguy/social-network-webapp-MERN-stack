@@ -58,6 +58,15 @@ class LoginContainer extends Component {
 		let verify_privilege_callack = (response) => verify_privilege(this, response.data.privileges)
 		let set_signed_in_callback = () => this.props.set_is_signed_in( true )
 		let set_phone_number_callback = () => this.props.set_phone_number( this.state.phone_number )
+		
+		let set_user_name_in_profile_callback = (response) => this.props.set_user_name_in_profile( response.data.user_name_in_profile )
+		let set_user_avatar_image_callback = (response) => this.props.set_user_avatar_image( response.data.user_avatar_image )
+		let set_user_cover_image_callback = (response) => this.props.set_user_cover_image( response.data.user_cover_image )
+		let set_user_brief_intro_callback = (response) => this.props.set_user_brief_intro( response.data.user_brief_intro )
+		let set_user_about_me_callback = (response) => this.props.set_user_about_me( response.data.user_about_me )
+		let set_user_working_zone_callback = (response) => this.props.set_user_working_zone( response.data.user_working_zone )
+		let set_user_education_callback = (response) => this.props.set_user_education( response.data.user_education )
+		let set_user_contact_details_callback = (response) => this.props.set_user_contact_details( response.data.user_contact_details )
 
 		axios.post(utils.baseUrl + '/users/login', 
 			{
@@ -74,6 +83,15 @@ class LoginContainer extends Component {
 				verify_privilege_callack(response)
 				set_signed_in_callback()
 				set_phone_number_callback()
+
+				set_user_name_in_profile_callback(response)
+				set_user_avatar_image_callback(response)
+				set_user_cover_image_callback(response)
+				set_user_brief_intro_callback(response)
+				set_user_about_me_callback(response)
+				set_user_working_zone_callback(response)
+				set_user_education_callback(response)
+				set_user_contact_details_callback(response)
 
 			} else {
 				console.log('couldnt login')
@@ -247,14 +265,14 @@ class LoginContainer extends Component {
 						</button>
 					</div>
 
-					<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
+					{/*<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
 						<button 
 							style={styles.roundButton}
 							onClick={ () => this.make_request_to_protected_route() }
 						>
 							MAKE REQUEST AT PROTECTED ROUTE
 						</button>
-					</div>
+					</div>*/}
 
 
 					<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>

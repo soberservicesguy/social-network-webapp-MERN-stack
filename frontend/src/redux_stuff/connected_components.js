@@ -32,6 +32,7 @@ import {
 import  {
 	ComponentForShowingNotification,
 	ComponentForShowingFriend,
+	ProfileHeader,
 } from "../components";
 
 import {
@@ -78,6 +79,13 @@ import {
 import {
 	CreateShareForSocialpost,
 } from "../components/shares"
+
+
+export const ConnectedProfileHeader = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(ProfileHeader);
+
 
 export const ConnectedTimelineContainer = connect(
 	mapStateToProps,

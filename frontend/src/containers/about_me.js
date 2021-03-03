@@ -430,7 +430,7 @@ class AboutMeContainer extends Component {
 														Something About Me
 													</p>
 													<div style={styles.shortBottomBorder}>
-														<p></p>
+														<p>{this.props.user_about_me}</p>
 													</div>
 
 													<p>lorem ipsum</p>
@@ -445,7 +445,7 @@ class AboutMeContainer extends Component {
 														Working Zone
 													</p>
 													<div style={styles.shortBottomBorder}>
-														<p></p>
+														<p>{this.props.user_working_zone}</p>
 													</div>
 
 													<p>lorem ipsum</p>
@@ -460,7 +460,7 @@ class AboutMeContainer extends Component {
 														Educational Qualification
 													</p>
 													<div style={styles.shortBottomBorder}>
-														<p></p>
+														<p>{this.props.user_education}</p>
 													</div>
 
 													<p>lorem ipsum</p>
@@ -475,7 +475,7 @@ class AboutMeContainer extends Component {
 														Contact Details
 													</p>
 													<div style={styles.shortBottomBorder}>
-														<p></p>
+														<p>{this.props.user_contact_details}</p>
 													</div>
 
 													<p>lorem ipsum</p>

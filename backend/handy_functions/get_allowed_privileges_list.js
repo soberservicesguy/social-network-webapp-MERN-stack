@@ -1,38 +1,55 @@
-function get_allowed_privileges_list(user_object){
+require("../models/privilige")
+const Privilege = require('mongoose').model('Privilege');
 
-	let privileges_list = [] 
+async function get_allowed_privileges_list(user_object){
+
+	let privileges_names = [] 
+
+	// console.log('user_object.privileges')
+	// console.log(user_object.privileges)
+
+// getting privilege names
+	await Promise.all(user_object.privileges.map(async (privilege_id) => {
+		let privilege_object = await Privilege.findOne({_id: privilege_id})
+		console.log(privilege_id)
+		console.log(privilege_object)
+		privileges_names.push( privilege_object.privilege_name )
+	}))
+
+
 	
-	user_object.privileges.map((privilege_object) => {
+	let privileges_list = [] 
+	privileges_names.map((privilege_name) => {
 
-		if ( privilege_object.privilege_name === 'allow_surfing' ){
+		if ( privilege_name === 'allow_surfing' ){
 	
 			privileges_list.push( 'Basic' )
 
-		} else if ( privilege_object.privilege_name === 'allow_interacting_with_others_post' ){
+		} else if ( privilege_name === 'allow_interacting_with_others_post' ){
 
 			privileges_list.push( 'Posts Interaction' )
 
-		} else if ( privilege_object.privilege_name === 'allow_post_creating' ){
+		} else if ( privilege_name === 'allow_post_creating' ){
 
 			privileges_list.push( 'Posts Creation' )
 
-		} else if ( privilege_object.privilege_name === 'allow_ad_creating' ){
+		} else if ( privilege_name === 'allow_ad_creating' ){
 
 			privileges_list.push( 'Ads Creation' )
 
-		} else if ( privilege_object.privilege_name === 'allow_book_creating' ){
+		} else if ( privilege_name === 'allow_book_creating' ){
 
 			privileges_list.push( 'Books Creation' )
 
-		} else if ( privilege_object.privilege_name === 'allow_page_creating' ){
+		} else if ( privilege_name === 'allow_page_creating' ){
 
 			privileges_list.push( 'Pages Creation' )
 
-		} else if ( privilege_object.privilege_name === 'allow_sport_creating' ){
+		} else if ( privilege_name === 'allow_sport_creating' ){
 
 			privileges_list.push( 'Sports Creation' )
 
-		} else if ( privilege_object.privilege_name === 'admin_control' ){
+		} else if ( privilege_name === 'admin_control' ){
 
 			privileges_list.push( 'Basic' )
 			privileges_list.push( 'Posts Interaction' )
@@ -48,12 +65,12 @@ function get_allowed_privileges_list(user_object){
 	})
 
 // add revoked or privileges that are not given
-	if ( !privileges_list.includes('Basic') ){
+	// if ( !privileges_list.includes('Basic') ){
 
 	// not needed to revoke basic
 		// privileges_list.push('Revoke Basic')
 	
-	} 
+	// } 
 
 	if ( !privileges_list.includes('Posts Interaction') ){
 

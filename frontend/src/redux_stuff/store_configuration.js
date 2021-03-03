@@ -61,14 +61,15 @@ export const mapStateToProps = state => {
 
 		phone_number: state.all_users.phone_number,
 		user_name: state.all_users.user_name,
-		// user_name_in_profile: state.all_users.user_name_in_profile,
-		// user_avatar_image: state.all_users.user_avatar_image,
-		// user_cover_image: state.all_users.user_cover_image,
-		// user_brief_intro: state.all_users.user_brief_intro,
-		// user_about_me: state.all_users.user_about_me,
-		// user_working_zone: state.all_users.user_working_zone,
-		// user_education: state.all_users.user_education,
-		// user_contact_details: state.all_users.user_contact_details,
+
+		user_name_in_profile: state.all_users.user_name_in_profile,
+		user_avatar_image: state.all_users.user_avatar_image,
+		user_cover_image: state.all_users.user_cover_image,
+		user_brief_intro: state.all_users.user_brief_intro,
+		user_about_me: state.all_users.user_about_me,
+		user_working_zone: state.all_users.user_working_zone,
+		user_education: state.all_users.user_education,
+		user_contact_details: state.all_users.user_contact_details,
 
 		total_advertisements: state.advertisements.totalAdvertisement,
 		current_advertisement: state.advertisements.currentAdvertisement,
@@ -99,10 +100,7 @@ export const mapDispatchToProps = dispatch => {
 		set_friends: (friends_list) => dispatch( { type: "SET_FRIENDS", friends_list: friends_list } ),
 		set_friends_suggestions: (friends_suggestions_list) => dispatch( { type: "SET_FRIENDS_SUGGESTIONS", friends_suggestions_list: friends_suggestions_list } ),
 
-
 		set_fetched_notifications: (notifications_list) => dispatch( { type: "SET_FETCHED_NOTIFICATIONS", notifications_list: notifications_list } ),
-
-
 
 // user
 		set_is_signed_in: (booleon) => dispatch( { type:"SET_IS_SIGNED_IN", booleon: booleon } ),
@@ -111,6 +109,24 @@ export const mapDispatchToProps = dispatch => {
 		remove_phone_number: () => dispatch( { type: "REMOVE_PHONE_NUMBER" } ),
 		set_user_name: (user_name) => dispatch( { type: "SET_USER_NAME", user_name: user_name} ),
 		remove_user_name: () => dispatch( { type: "REMOVE_USER_NAME" } ),
+
+		set_user_name_in_profile: (user_name_in_profile) => dispatch( { type: "SET_USER_NAME_IN_PROFILE", user_name_in_profile: user_name_in_profile} ),
+		remove_user_name_in_profile: () => dispatch( { type: "REMOVE_USER_NAME_IN_PROFILE" } ),
+		set_user_avatar_image: (user_avatar_image) => dispatch( { type: "SET_USER_AVATAR_IMAGE", user_avatar_image: user_avatar_image} ),
+		remove_user_avatar_image: () => dispatch( { type: "REMOVE_USER_AVATAR_IMAGE" } ),
+		set_user_cover_image: (user_cover_image) => dispatch( { type: "SET_USER_COVER_IMAGE", user_cover_image: user_cover_image} ),
+		remove_user_cover_image: () => dispatch( { type: "REMOVE_USER_COVER_IMAGE" } ),
+		set_user_brief_intro: (user_brief_intro) => dispatch( { type: "SET_USER_BRIEF_INTRO", user_brief_intro: user_brief_intro} ),
+		remove_user_brief_intro: () => dispatch( { type: "REMOVE_USER_BRIEF_INTRO" } ),
+		set_user_about_me: (user_about_me) => dispatch( { type: "SET_USER_ABOUT_ME", user_about_me: user_about_me} ),
+		remove_user_about_me: () => dispatch( { type: "REMOVE_USER_ABOUT_ME" } ),
+		set_user_working_zone: (user_working_zone) => dispatch( { type: "SET_USER_WORKING_ZONE", user_working_zone: user_working_zone} ),
+		remove_user_working_zone: () => dispatch( { type: "REMOVE_USER_WORKING_ZONE" } ),
+		set_user_education: (user_education) => dispatch( { type: "SET_USER_EDUCATION", user_education: user_education} ),
+		remove_user_education: () => dispatch( { type: "REMOVE_USER_EDUCATION" } ),
+		set_user_contact_details: (user_contact_details) => dispatch( { type: "SET_USER_CONTACT_DETAILS", user_contact_details: user_contact_details} ),
+		remove_user_contact_details: () => dispatch( { type: "REMOVE_USER_CONTACT_DETAILS" } ),
+
 
 // privileges
 		allow_basic_privilege: () => dispatch( { type:"ALLOW_BASIC" } ),
@@ -140,24 +156,6 @@ export const mapDispatchToProps = dispatch => {
 		remove_like_from_socialpost: (socialpost_id, like_object, like_id) => dispatch( { type: "REMOVE_LIKE_FROM_SOCIALPOST", socialpost_id: socialpost_id, like_object: like_object, like_id: like_id } ),
 		add_share_to_socialpost: (socialpost_id, share_object) => dispatch( { type: "ADD_SHARE_TO_SOCIALPOST", socialpost_id: socialpost_id, share_object: share_object } ),
 		remove_share_from_socialpost: (socialpost_id, share_object, share_id) => dispatch( { type: "REMOVE_SHARE_FROM_SOCIALPOST", socialpost_id: socialpost_id, share_object: share_object, share_id: share_id } ),
-
-
-		// set_user_name_in_profile: (user_name_in_profile) => dispatch( { type: "SET_USER_NAME_IN_PROFILE", user_name_in_profile: user_name_in_profile} ),
-		// remove_user_name_in_profile: () => dispatch( { type: "REMOVE_USER_NAME_IN_PROFILE" } ),
-		// set_user_avatar_image: (user_avatar_image) => dispatch( { type: "SET_USER_AVATAR_IMAGE", user_avatar_image: user_avatar_image} ),
-		// remove_user_avatar_image: () => dispatch( { type: "REMOVE_USER_AVATAR_IMAGE" } ),
-		// set_user_cover_image: (user_cover_image) => dispatch( { type: "SET_USER_COVER_IMAGE", user_cover_image: user_cover_image} ),
-		// remove_user_cover_image: () => dispatch( { type: "REMOVE_USER_COVER_IMAGE" } ),
-		// set_user_brief_intro: (user_brief_intro) => dispatch( { type: "SET_USER_BRIEF_INTRO", user_brief_intro: user_brief_intro} ),
-		// remove_user_brief_intro: () => dispatch( { type: "REMOVE_USER_BRIEF_INTRO" } ),
-		// set_user_about_me: (user_about_me) => dispatch( { type: "SET_USER_ABOUT_ME", user_about_me: user_about_me} ),
-		// remove_user_about_me: () => dispatch( { type: "REMOVE_USER_ABOUT_ME" } ),
-		// set_user_working_zone: (user_working_zone) => dispatch( { type: "SET_USER_WORKING_ZONE", user_working_zone: user_working_zone} ),
-		// remove_user_working_zone: () => dispatch( { type: "REMOVE_USER_WORKING_ZONE" } ),
-		// set_user_education: (user_education) => dispatch( { type: "SET_USER_EDUCATION", user_education: user_education} ),
-		// remove_user_education: () => dispatch( { type: "REMOVE_USER_EDUCATION" } ),
-		// set_user_contact_details: (user_contact_details) => dispatch( { type: "SET_USER_CONTACT_DETAILS", user_contact_details: user_contact_details} ),
-		// remove_user_contact_details: () => dispatch( { type: "REMOVE_USER_CONTACT_DETAILS" } ),
 
 // ad
 		set_current_advertisement: (current_advertisement) => dispatch( { type: "SET_CURRENT_ADVERTISEMENT", current_advertisement:current_advertisement } ),
