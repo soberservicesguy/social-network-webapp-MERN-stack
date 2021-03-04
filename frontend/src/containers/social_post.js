@@ -63,6 +63,7 @@ class SocialPostContainer extends Component {
 	resizeHandler() {
 		this.setState(prev => ({
 			...prev, 
+
 			// tracked_container_width:this.social_posts_container.clientWidth, 
 			tracked_container_height:this.social_posts_container.clientHeight,
 		}))
