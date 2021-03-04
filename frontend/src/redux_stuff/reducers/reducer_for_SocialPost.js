@@ -28,15 +28,23 @@ const initialState = {
 	}
 
 const reducerForSocialPost = (state = initialState, action) => {
+	let list_with_key = []
+	let last_key
 
 	switch (action.type) {
 
 		case "APPEND_FETCHED_SOCIALPOST":
 
-			return {...state, totalSocialPost: [...state.totalSocialPost, ...action.socialpost_list]}
+			last_key = (state.totalSocialPost.length > 0) ? state.totalSocialPost[ state.totalSocialPost.length - 1 ].key : 0
+			// console.log({last_key:last_key})
+			list_with_key = [ ...state.totalSocialPost ] // since previously we assigned keys
+
+			action.socialpost_list.map((item, index) => {
+				list_with_key.push( {key: last_key + index + 1, ...item} )
+			})
+
+			return {...state, totalSocialPost: list_with_key }
 			break;
-
-
 
 		case "SET_CURRENT_SOCIALPOST":
 
@@ -46,12 +54,26 @@ const reducerForSocialPost = (state = initialState, action) => {
 
 		case "SET_FETCHED_SOCIALPOST":
 
-			return {...state, totalSocialPost: action.socialpost_list}
+			list_with_key = []
+
+			action.socialpost_list.map((item, index) => {
+				list_with_key.push( {key: index, ...item} )
+			})
+
+			return {...state, totalSocialPost: list_with_key}
 			break;
 
 		case "SET_FETCHED_10_MORE_SOCIALPOST":
 
-			return {...state, totalSocialPost: [...state.totalSocialPost, ...action.socialpost_list] }
+			last_key = (state.totalSocialPost.length > 0) ? state.totalSocialPost[ state.totalSocialPost.length - 1 ].key : 0
+
+			list_with_key = [ ...state.totalSocialPost ] // since previously we assigned keys
+
+			action.socialpost_list.map((item, index) => {
+				list_with_key.push( {key: last_key + index + 1, ...item} )
+			})
+
+			return {...state, totalSocialPost: list_with_key }
 			break;
 
 
