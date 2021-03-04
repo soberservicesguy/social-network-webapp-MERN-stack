@@ -46,8 +46,6 @@ class RootRouterContainer extends Component {
 		super(props);
 
 		this.state = {
-			anchorEl:null,
-			mobileMoreAnchorEl:null,
 		}
 
 	}
@@ -61,6 +59,7 @@ class RootRouterContainer extends Component {
 		return (
 			<Router>
 				<div>
+
 					<MyResponsiveNavigation/>
 
 					<Switch>

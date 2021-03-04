@@ -502,6 +502,8 @@ async function get_post_details(type_of_post, post_created, post_details){
 // get posts from friends for wall
 router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { session: false }), async function(req, res, next){
 
+	let posts_to_show_per_friend = 5
+
 	try{
 
 		let user_checking_others_posts = await User.findOne({ phone_number: req.user.user_object.phone_number }).populate('friends') // using req.user from passport js middleware
@@ -518,8 +520,21 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 			let friends_user_avatar_image = user_avatar_image
 			let friend_endpoint = friend.endpoint
 
-			let all_activities = await Promise.all(friend.activities.map(async (activity) => {
+			let last_n_activities_of_friend
+
+			if ( req.query.request_number === 1 ){
 				
+				last_n_activities_of_friend = friend.activities.slice(1).slice(-posts_to_show_per_friend)
+
+			} else {
+
+				last_n_activities_of_friend = friend.activities.slice(1).slice( -posts_to_show_per_friend * req.query.request_number, -posts_to_show_per_friend * (req.query.request_number-1)  )
+
+			}
+
+			// let all_activities = await Promise.all(friend.activities.map(async (activity) => {
+			let all_activities = await Promise.all(last_n_activities_of_friend.map(async (activity) => {
+
 				activity = await Activity.findOne({_id: activity})
 
 				let post_details = {}
@@ -702,6 +717,9 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 				}
 			}))
 		}))
+
+		user_checking_others_posts.last_timestamp_of_checking_notification = new Date()
+		await user_checking_others_posts.save()
 
 		res.status(200).json(activities_to_send)
 

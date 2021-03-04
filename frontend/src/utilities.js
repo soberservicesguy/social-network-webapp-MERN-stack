@@ -1,6 +1,6 @@
 
 const utils = {
-    baseUrl:'https://00a1d01a58f3.ngrok.io',
+    baseUrl:'http://localhost:3001',
     productsEndpoint:'',
 
 // THIS IS DIFFERENT FROM NATIVE, IN NATIVE NO .default needed
