@@ -145,6 +145,8 @@ export const mapDispatchToProps = dispatch => {
 		revoke_sports_creation_privilege: () => dispatch( { type:"REVOKE_SPORTS_CREATION" } ),
 
 // social posts
+		append_fetched_socialposts: (socialpost_list) => dispatch( { type: "APPEND_FETCHED_SOCIALPOST", socialpost_list: socialpost_list } ),
+
 		set_current_socialpost: (current_socialpost) => dispatch( { type: "SET_CURRENT_SOCIALPOST", current_socialpost:current_socialpost } ),
 		set_fetched_socialposts: (socialpost_list) => dispatch( { type: "SET_FETCHED_SOCIALPOST", socialpost_list: socialpost_list } ),
 		set_fetched_10_more_socialpost: (socialpost_list) => dispatch( { type: "SET_FETCHED_10_MORE_SOCIALPOST", socialpost_list: socialpost_list } ),
@@ -188,7 +190,7 @@ const persistConfig = {
 	key: 'root',
 	storage,
 	blacklist: [
-		'total_socialposts',
+		// 'total_socialposts',
 		'current_socialpost',
 		'total_advertisements',
 		'current_advertisement',

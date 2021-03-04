@@ -1,3 +1,4 @@
+
 const initialState = {
 
 	currentSocialPost:{
@@ -30,6 +31,13 @@ const reducerForSocialPost = (state = initialState, action) => {
 
 	switch (action.type) {
 
+		case "APPEND_FETCHED_SOCIALPOST":
+
+			return {...state, totalSocialPost: [...state.totalSocialPost, ...action.socialpost_list]}
+			break;
+
+
+
 		case "SET_CURRENT_SOCIALPOST":
 
 			return {...state, currentSocialPost: action.current_socialpost}
@@ -43,7 +51,7 @@ const reducerForSocialPost = (state = initialState, action) => {
 
 		case "SET_FETCHED_10_MORE_SOCIALPOST":
 
-			return {...state, totalSocialPost: [...state.SocialPost, action.socialpost_list] }
+			return {...state, totalSocialPost: [...state.totalSocialPost, ...action.socialpost_list] }
 			break;
 
 
