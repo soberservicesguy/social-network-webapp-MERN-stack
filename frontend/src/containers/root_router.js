@@ -7,6 +7,7 @@ import {
 	Switch,
 	Route,
 	Link,
+	Redirect,
 } from "react-router-dom";
 
 // IMPORT CONNECTED CONTAINERS
@@ -30,13 +31,14 @@ import {
 
 import {
 	MyResponsiveNavigation,
+	SettingsContainer,
 } from "./"
 
 // IMPORT material-ui stuff
 // import { withStyles } from '@material-ui/styles';
 import { Grid, Button } from "@material-ui/core";
 // IMPORT responsiveness hook
-import withResponsiveness from "../responsiveness_hook";
+// import withResponsiveness from "../responsiveness_hook";
 
 
 
@@ -73,84 +75,134 @@ class RootRouterContainer extends Component {
 							<ConnectedLoginContainer/>
 						</Route>
 
+						<Route exact path="/" render={() => (
+							(this.props.isSignedIn) ? (
+								<Redirect to="/socialposts"/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
+						<Route exact path="/settings" render={() => (
+							(this.props.isSignedIn) ? (
+								<SettingsContainer/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
-						<Route exact path="/socialposts">
-							<ConnectedSocialPostContainer/>
-						</Route>
+						<Route exact path="/socialposts" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedSocialPostContainer/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
+						<Route exact path="/socialposts/:endpoint-param" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedIndividualSocialPost/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
+						<Route exact path="/about-me" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedAboutMeContainer/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
-						<Route path="/socialposts/:endpoint-param">
-							<ConnectedIndividualSocialPost/>
-						</Route>
+						<Route exact path="/friends" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedCompleteFriendsContainer/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
+						<Route exact path="/timeline" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedTimelineContainer/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
+						<Route exact path="/advertisements" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedAdvertisementContainer/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
-						<Route exact path="/about-me">
-							<ConnectedAboutMeContainer/>
-						</Route>
+						<Route exact path="/advertisements/:endpoint-param" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedIndividualAdvertisement/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
-						<Route exact path="/friends">
-							<ConnectedCompleteFriendsContainer/>
-						</Route>
+						<Route exact path="/pages" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedPageContainer/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
-						<Route exact path="/timeline">
-							<ConnectedTimelineContainer/>
-						</Route>
+						<Route exact path="/pages/:endpoint-param" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedIndividualPage/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
+						<Route exact path="/books" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedBookContainer/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
+						<Route exact path="/books/:endpoint-param" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedIndividualBook/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
-						<Route exact path="/advertisements">
-							<ConnectedAdvertisementContainer/>
-						</Route>
+						<Route exact path="/sports" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedSportContainer/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
+						<Route exact path="/sports/:endpoint-param" render={() => (
+							(this.props.isSignedIn) ? (
+								<ConnectedIndividualSport/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
+						<Route exact path="/*" render={() => (
+							(this.props.isSignedIn) ? (
+								<Redirect to="/socialposts"/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
 
-						<Route path="/advertisements/:endpoint-param">
-							<ConnectedIndividualAdvertisement/>
-						</Route>
-
-
-
-						<Route exact path="/pages">
-							<ConnectedPageContainer/>
-						</Route>
-
-
-
-						<Route path="/pages/:endpoint-param">
-							<ConnectedIndividualPage/>
-						</Route>
-
-
-
-						<Route exact path="/books">
-							<ConnectedBookContainer/>
-						</Route>
-
-
-
-						<Route path="/books/:endpoint-param">
-							<ConnectedIndividualBook/>
-						</Route>
-
-
-
-						<Route exact path="/sports">
-							<ConnectedSportContainer/>
-						</Route>
-
-
-
-						<Route path="/sports/:endpoint-param">
-							<ConnectedIndividualSport/>
-						</Route>
-
-
-						{/*<Route path="/home">
-							<HomeContainer/>
-						</Route>*/}
 					</Switch>
 				</div>
 			</Router>
@@ -158,6 +210,5 @@ class RootRouterContainer extends Component {
 	}
 }
 
-
-export default withResponsiveness(RootRouterContainer);
-// export default RootRouterContainer;
+// export default withResponsiveness(RootRouterContainer);
+export default RootRouterContainer;

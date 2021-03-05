@@ -25,7 +25,6 @@ const PrivilegeSchema = new mongoose.Schema({
 
 })
 
-mongoose.model('Privilege', PrivilegeSchema);
 	
 PrivilegeSchema.pre('save', function(next) {
 
@@ -33,3 +32,5 @@ PrivilegeSchema.pre('save', function(next) {
     next();
 
 });
+
+mongoose.model('Privilege', PrivilegeSchema);

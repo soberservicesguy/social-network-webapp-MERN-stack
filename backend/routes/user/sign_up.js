@@ -1,12 +1,12 @@
 // require('../../models/image');
 require('../../models/user');
 require('../../models/privilige');
-
+require('../../models/image');
 
 const mongoose = require('mongoose');
 const router = require('express').Router();   
 const User = mongoose.model('User');
-// const Image = mongoose.model('Image');
+const Image = mongoose.model('Image');
 const Privilege = mongoose.model('Privilege');
 
 const passport = require('passport');
@@ -137,24 +137,38 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 
 						privileges_list.push('allow_surfing')
 
-					} else if ( req.body.privileges_selected === 'Images control' ){
+					} else if ( req.body.privileges_selected === 'Posts Interaction' ){
 
-						privileges_list.push('is_allowed_image_upload')
+						privileges_list.push('allow_interacting_with_others_post')
 
-					} else if ( req.body.privileges_selected === 'Videos control' ){
+					} else if ( req.body.privileges_selected === 'Posts Creation' ){
 
-						privileges_list.push('is_allowed_video_upload')
+						privileges_list.push('allow_post_creating')
 
-					} else if ( req.body.privileges_selected === 'Blogposts control' ){
+					} else if ( req.body.privileges_selected === 'Ads Creation' ){
 
-						privileges_list.push('is_allowed_writing_blopost')
+						privileges_list.push('allow_ad_creating')
+
+					} else if ( req.body.privileges_selected === 'Books Creation' ){
+
+						privileges_list.push('allow_book_creating')
+
+					} else if ( req.body.privileges_selected === 'Pages Creation' ){
+
+						privileges_list.push('allow_page_creating')
+
+					} else if ( req.body.privileges_selected === 'Sports Creation' ){
+
+						privileges_list.push('allow_sport_creating')
 
 					} else if ( req.body.privileges_selected === 'Total control' ){
 
-						privileges_list.push('allow_surfing')
-						privileges_list.push('is_allowed_image_upload')
-						privileges_list.push('is_allowed_video_upload')
-						privileges_list.push('is_allowed_writing_blopost')
+						privileges_list.push('allow_interacting_with_others_post')
+						privileges_list.push('allow_post_creating')
+						privileges_list.push('allow_ad_creating')
+						privileges_list.push('allow_book_creating')
+						privileges_list.push('allow_page_creating')
+						privileges_list.push('allow_sport_creating')
 
 					} else {
 					}

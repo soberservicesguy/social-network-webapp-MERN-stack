@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 
+import {
+	Redirect
+} from "react-router-dom"
+
 // IMPORT connected components
 // import {ConnectedSomeComponent} from "../redux_stuff/connected_components";
 
@@ -26,6 +30,10 @@ class LoginContainer extends Component {
 
 			phone_number: '',
 			password:'',
+
+			redirectToRoute:false,
+
+			redirectToHome:false,
 
 		}
 	}
@@ -68,6 +76,8 @@ class LoginContainer extends Component {
 		let set_user_education_callback = (response) => this.props.set_user_education( response.data.user_education )
 		let set_user_contact_details_callback = (response) => this.props.set_user_contact_details( response.data.user_contact_details )
 
+		let redirectToHomeCallback = () => this.setState(prev => ({...prev, redirectToHome: true }))
+
 		axios.post(utils.baseUrl + '/users/login', 
 			{
 				phone_number:this.state.phone_number, 
@@ -93,6 +103,8 @@ class LoginContainer extends Component {
 				set_user_education_callback(response)
 				set_user_contact_details_callback(response)
 
+				redirectToHomeCallback()
+				
 			} else {
 				console.log('couldnt login')
 			}
@@ -189,105 +201,124 @@ class LoginContainer extends Component {
 		}
 
 
-		return(
-			<div style={styles.outerContainer}>
+		if ( this.state.redirectToRoute !== false ){
+
+			// switching it back to false
+			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
+
+			// redirecting
+			return <Redirect to = {{ pathname: "/signup" }} />
+
+		} else if ( this.state.redirectToHome !== false ) {
+
+			// switching it back to false
+			this.setState(prev => ({...prev, redirectToHome: (prev.redirectToHome === false) ? true : false }))
+
+			// redirecting
+			return <Redirect to = {{ pathname: "/socialposts" }} />
+
+		} else {
+
+			return(
+				<div style={styles.outerContainer}>
 
 
-				<div style={{...styles.formAndRounButtonContainer, width:'30%', margin:'auto', backgroundColor: '#3B5998'}}>
-					<button 
-						style={styles.roundButton}
-						onClick={ () => {}}
-					>
-						LOGIN WITH FACEBOOK
-					</button>
-				</div>				
+					<div style={{...styles.formAndRounButtonContainer, width:'30%', margin:'auto', backgroundColor: '#3B5998'}}>
+						<button 
+							style={styles.roundButton}
+							onClick={ () => {}}
+						>
+							LOGIN WITH FACEBOOK
+						</button>
+					</div>				
+					
+					<p style={{textAlign:'center', marginTop:20, fontSize:20, fontWeight:'bold'}}>
+						OR
+					</p>
+
+
+					<div style={{
+						width:'80%',
+						margin:'auto',
+						display:'flex',
+						flexDirection:'column',
+						justifyContent: 'space-around',
+						alignItems:'center',
+						// height:60,
+						marginBottom:20,
+					}}>
+
+						<div style={styles.roundTextInputContainer}>
+							<form>
+								<input 
+									placeholder="Type your Phone number" 
+									type="text" 
+									// name="post_text"
+									// multiline={true}
+									onChange={ (event) =>  this.setState(prev => ({...prev, phone_number: event.target.value})) }
+									style={styles.roundTextInput} 
+								/>
+							</form>
+						</div>
+
+						<div style={styles.roundTextInputContainer}>
+							<form>
+								<input 
+									placeholder="Type your password" 
+									type="password" 
+									// name="post_text"
+									// multiline={true}
+									onChange={ (event) =>  this.setState(prev => ({...prev, password: event.target.value})) }
+									style={styles.roundTextInput} 
+								/>
+							</form>
+						</div>
+
+					</div>
+
+					<div style={{
+						width:'90%',
+						margin:'auto',
+						display:'flex',
+						flexDirection:'row',
+						justifyContent: 'space-around',
+						alignItems:'center',
+						height:60,
+						marginBottom:20,
+					}}>
+						<div style={{...styles.formAndRounButtonContainer, marginRight:50, backgroundColor: '#3B5998'}}>
+							<button 
+								style={styles.roundButton}
+								onClick={ () => this.login_and_get_jwt_token_and_privileges()}
+							>
+								Sign In
+							</button>
+						</div>
+
+						{/*<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
+							<button 
+								style={styles.roundButton}
+								onClick={ () => this.make_request_to_protected_route() }
+							>
+								MAKE REQUEST AT PROTECTED ROUTE
+							</button>
+						</div>*/}
+
+
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
+							<button 
+								style={styles.roundButton}
+								onClick={ () => this.setState(prev => ({...prev, redirectToRoute: true })) }
+							>
+								Sign Up
+							</button>
+						</div>
+					</div>
 				
-				<p style={{textAlign:'center', marginTop:20, fontSize:20, fontWeight:'bold'}}>
-					OR
-				</p>
-
-
-				<div style={{
-					width:'80%',
-					margin:'auto',
-					display:'flex',
-					flexDirection:'column',
-					justifyContent: 'space-around',
-					alignItems:'center',
-					// height:60,
-					marginBottom:20,
-				}}>
-
-					<div style={styles.roundTextInputContainer}>
-						<form>
-							<input 
-								placeholder="Type your Phone number" 
-								type="text" 
-								// name="post_text"
-								// multiline={true}
-								onChange={ (event) =>  this.setState(prev => ({...prev, phone_number: event.target.value})) }
-								style={styles.roundTextInput} 
-							/>
-						</form>
-					</div>
-
-					<div style={styles.roundTextInputContainer}>
-						<form>
-							<input 
-								placeholder="Type your password" 
-								type="password" 
-								// name="post_text"
-								// multiline={true}
-								onChange={ (event) =>  this.setState(prev => ({...prev, password: event.target.value})) }
-								style={styles.roundTextInput} 
-							/>
-						</form>
-					</div>
-
 				</div>
 
-				<div style={{
-					width:'90%',
-					margin:'auto',
-					display:'flex',
-					flexDirection:'row',
-					justifyContent: 'space-around',
-					alignItems:'center',
-					height:60,
-					marginBottom:20,
-				}}>
-					<div style={{...styles.formAndRounButtonContainer, marginRight:50, backgroundColor: '#3B5998'}}>
-						<button 
-							style={styles.roundButton}
-							onClick={ () => this.login_and_get_jwt_token_and_privileges()}
-						>
-							Sign In
-						</button>
-					</div>
-
-					{/*<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
-						<button 
-							style={styles.roundButton}
-							onClick={ () => this.make_request_to_protected_route() }
-						>
-							MAKE REQUEST AT PROTECTED ROUTE
-						</button>
-					</div>*/}
-
-
-					<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
-						<button 
-							style={styles.roundButton}
-							onClick={ () => this.logout_and_remove_jwt_token() }
-						>
-							Logout
-						</button>
-					</div>
-				</div>
-			
-			</div>
-
-		);
+			);
+		}
 	}
 }
 

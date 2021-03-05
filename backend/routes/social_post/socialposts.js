@@ -520,6 +520,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 			let friends_user_avatar_image = user_avatar_image
 			let friend_endpoint = friend.endpoint
 
+			// we have reduced activities link for each user to last 50 in user model
 			let last_n_activities_of_friend
 
 			if ( req.query.request_number === 1 ){

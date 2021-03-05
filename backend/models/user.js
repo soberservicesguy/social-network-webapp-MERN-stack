@@ -90,6 +90,9 @@ UserSchema.post('save', function() {
 	// console.log('SAVED CONDITION')
     // console.log(this)
 
+    // only keep last 50 activities
+    this.activities = this.activities.slice(1).slice(-50)
+
 });
 
 mongoose.model('User', UserSchema);

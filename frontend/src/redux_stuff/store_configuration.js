@@ -27,8 +27,6 @@ import {
 	reducerForNotification,
 } from "./reducers"
 
-import { async_socialposts } from "./actions/async_socialposts";
-
 import { add_more_socialposts } from "./reducers/reducer_for_SocialPost"
 
 export const rootReducer = combineReducers({
@@ -150,7 +148,6 @@ export const mapDispatchToProps = dispatch => {
 
 // social posts
 		// append_fetched_socialposts: (socialpost_list) => dispatch( { type: "APPEND_FETCHED_SOCIALPOST", socialpost_list: socialpost_list } ),
-		append_fetched_socialposts: (socialpost_list) => dispatch( async_socialposts(socialpost_list) ),
 
 		async_append_fetched_socialposts:(socialpost_list) => dispatch( add_more_socialposts(socialpost_list) ),
 

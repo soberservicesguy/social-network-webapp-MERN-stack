@@ -11,6 +11,8 @@ const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
 const get_allowed_privileges_list = require("../../handy_functions/get_allowed_privileges_list")
 
+const base64_encode = require('../../lib/image_to_base64')
+
 router.post('/signup-with-facebook-and-get-permission', passport.authenticate('facebook', { scope: ['user_friends', 'manage_pages'] }))
 router.post('/signup-with-facebook-and-get-permission-again', passport.authenticate('facebook', { authType: 'reauthenticate', scope: ['user_friends', 'manage_pages'] }))
 router.post('/login-with-facebook', passport.authenticate('facebook', { 
@@ -121,7 +123,47 @@ router.post('/login', async function(req, res, next){
 
 });
 
+// 'facebook', 'google', 
+router.post('/update-settings', passport.authenticate(['jwt'], { session: false }), function(req, res, next){
 
+	console.log('incoming')
+
+
+	User.findOneAndUpdate({ phone_number: req.user.user_object.phone_number }, { 
+		$set:{ 
+			user_name_in_profile: req.body.user_name_in_profile,
+			user_cover_image: req.body.user_cover_image,
+			user_brief_intro: req.body.user_brief_intro,
+			user_about_me: req.body.user_about_me,
+			user_working_zone: req.body.user_working_zone,
+			user_education: req.body.user_education,
+			user_contact_details: req.body.user_contact_details,
+		}
+	}, { new: true }, (err, user) => {
+
+		let user_details = {
+			user_name_in_profile: user.user_name_in_profile,
+			user_cover_image: user.user_cover_image,
+			user_brief_intro: user.user_brief_intro,
+			user_about_me: user.user_about_me,
+			user_working_zone: user.user_working_zone,
+			user_education: user.user_education,
+			user_contact_details: user.user_contact_details,
+
+			user_avatar_image: base64_encode( user.user_avatar_image ),
+			user_cover_image: base64_encode( user.user_cover_image ),
+		}
+
+		res.status(200).json({ success: true, message: 'user_updated', user_details: user_details});
+
+	})
+	.catch((err1) => {
+
+		next(err1);
+
+	});
+
+});
 
 
 // Validate an existing user and issue a JWT

@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-router.use('/users', require('./user/users'));
+router.use('/users', require('./user/user_routes'));
 router.use('/users', require('./user/sign_up'));
 
 router.use('/video-stream', require('./video/video_stream'));

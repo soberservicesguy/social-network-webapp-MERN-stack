@@ -77,15 +77,7 @@ const reducerForSocialPost = (state = initialState, action) => {
 			break;
 
 
-		case 'todos/todosLoaded': {
-			// Replace the existing state entirely by returning the new value
-			return action.payload
-		}
-
 		case 'ADD_SOCIALPOSTS': {
-			// Replace the existing state entirely by returning the new value
-			// return action.new_state
-			// action.socialposts
 			return {...state, totalSocialPost:action.socialposts}
 		}
 
@@ -139,17 +131,19 @@ export function add_more_socialposts(socialpost_list) {
 		// console.log(current_state)
 		// let current_socialposts = current_state.totalSocialPost
 		let { socialposts } = current_state
-		console.log( Object.keys(current_state) )
+		// console.log( Object.keys(current_state) )
 		// console.log(socialposts.totalSocialPost)
 		socialposts = socialposts.totalSocialPost
 
-		let last_key = (socialposts.length > 0) ? socialposts[ socialposts.length - 1 ].key : 0
+		let last_key = (socialposts.length > 0) ? socialposts[ socialposts.length - 1 ].key  : 0
 		// console.log({last_key:last_key})
 		let list_with_key = [ ...socialposts ] // since previously we assigned keys
 
 		socialpost_list.map((item, index) => {
 			list_with_key.push( {key: last_key + index + 1, ...item} )
 		})
+
+		// console.log(list_with_key)
 
 		dispatch({type:'ADD_SOCIALPOSTS', socialposts: list_with_key })
 	}
