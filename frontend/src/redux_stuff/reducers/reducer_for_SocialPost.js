@@ -77,6 +77,19 @@ const reducerForSocialPost = (state = initialState, action) => {
 			break;
 
 
+		case 'todos/todosLoaded': {
+			// Replace the existing state entirely by returning the new value
+			return action.payload
+		}
+
+		case 'ADD_SOCIALPOSTS': {
+			// Replace the existing state entirely by returning the new value
+			// return action.new_state
+			// action.socialposts
+			return {...state, totalSocialPost:action.socialposts}
+		}
+
+
 		default:
 
 			return state
@@ -86,3 +99,61 @@ const reducerForSocialPost = (state = initialState, action) => {
 };
 
 export default reducerForSocialPost;
+
+
+// // a function which dispatches an action asynchronously
+// export async function fetchTodos(dispatch, getState) {
+// 	const stateBefore = getState()
+// 	console.log('Todos before dispatch: ', stateBefore.todos.length)
+
+// 	dispatch({ type: 'todos/todosLoaded', payload: response.todos })
+
+// 	const stateAfter = getState()
+// 	console.log('Todos after dispatch: ', stateAfter.todos.length)	
+// }
+
+
+// // Write a synchronous outer function that receives the `text` parameter:
+// export function saveNewTodo(text) {
+// 	// And then creates and returns the async thunk function:
+// 	return async function saveNewTodoThunk(dispatch, getState) {
+// 		// ✅ Now we can use the text value and send it to the server
+// 		const initialTodo = { text }
+// 		const response = await client.post('/fakeApi/todos', { todo: initialTodo })
+// 		dispatch({ type: 'todos/todoAdded', payload: response.todo })
+// 	}
+// }
+
+
+// dispatch( saveNewTodo(trimmedText) )
+
+
+
+// Write a synchronous outer function that receives the `text` parameter:
+export function add_more_socialposts(socialpost_list) {
+	// And then creates and returns the async thunk function:
+	return async function saveNewTodoThunk(dispatch, getState) {
+		// ✅ Now we can use the text value and send it to the server
+
+		let current_state = getState()
+		// console.log(current_state)
+		// let current_socialposts = current_state.totalSocialPost
+		let { socialposts } = current_state
+		console.log( Object.keys(current_state) )
+		// console.log(socialposts.totalSocialPost)
+		socialposts = socialposts.totalSocialPost
+
+		let last_key = (socialposts.length > 0) ? socialposts[ socialposts.length - 1 ].key : 0
+		// console.log({last_key:last_key})
+		let list_with_key = [ ...socialposts ] // since previously we assigned keys
+
+		socialpost_list.map((item, index) => {
+			list_with_key.push( {key: last_key + index + 1, ...item} )
+		})
+
+		dispatch({type:'ADD_SOCIALPOSTS', socialposts: list_with_key })
+	}
+}
+
+
+// store.dispatch( add_more_socialposts(socialpost_list) )

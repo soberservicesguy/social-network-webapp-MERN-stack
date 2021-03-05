@@ -6,6 +6,7 @@ import createSagaMiddleware from "redux-saga";
 import { connect } from "react-redux";
 import { combineReducers } from 'redux'; 
 
+import ReduxThunk from 'redux-thunk'
 
 // IMPORT rootSaga
 // import {rootSaga} from "../saga_stuff/saga_combined";
@@ -26,6 +27,10 @@ import {
 	reducerForNotification,
 } from "./reducers"
 
+import { async_socialposts } from "./actions/async_socialposts";
+
+import { add_more_socialposts } from "./reducers/reducer_for_SocialPost"
+
 export const rootReducer = combineReducers({
 	socialposts: reducerForSocialPost,
 	comments: reducerForComment,
@@ -40,7 +45,6 @@ export const rootReducer = combineReducers({
 	all_users: reducerForUser,
 	notifications:reducerForNotification,
 });
-
 
 
 export const mapStateToProps = state => {
@@ -145,7 +149,10 @@ export const mapDispatchToProps = dispatch => {
 		revoke_sports_creation_privilege: () => dispatch( { type:"REVOKE_SPORTS_CREATION" } ),
 
 // social posts
-		append_fetched_socialposts: (socialpost_list) => dispatch( { type: "APPEND_FETCHED_SOCIALPOST", socialpost_list: socialpost_list } ),
+		// append_fetched_socialposts: (socialpost_list) => dispatch( { type: "APPEND_FETCHED_SOCIALPOST", socialpost_list: socialpost_list } ),
+		append_fetched_socialposts: (socialpost_list) => dispatch( async_socialposts(socialpost_list) ),
+
+		async_append_fetched_socialposts:(socialpost_list) => dispatch( add_more_socialposts(socialpost_list) ),
 
 		set_current_socialpost: (current_socialpost) => dispatch( { type: "SET_CURRENT_SOCIALPOST", current_socialpost:current_socialpost } ),
 		set_fetched_socialposts: (socialpost_list) => dispatch( { type: "SET_FETCHED_SOCIALPOST", socialpost_list: socialpost_list } ),
@@ -190,6 +197,7 @@ const persistConfig = {
 	key: 'root',
 	storage,
 	blacklist: [
+		'totalSocialPost',
 		'total_socialposts',
 		'current_socialpost',
 		'total_advertisements',
@@ -207,7 +215,9 @@ const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = createStore(persistedReducer
 	// , applyMiddleware(sagaMiddleWare)
+	, applyMiddleware(ReduxThunk)
 );
+
 export const persistor = persistStore(store)
 
 // sagaMiddleWare.run(rootSaga);
