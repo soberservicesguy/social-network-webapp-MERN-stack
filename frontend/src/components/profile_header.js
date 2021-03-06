@@ -43,7 +43,7 @@ class ProfileHeader extends Component {
 
 			backgroundImage:{
 				height:200,				
-				backgroundImage: `url(${this.props.user_cover_image})`,
+				backgroundImage: `url("data:image/jpeg;base64,${this.props.user_cover_image}")`,
 				// backgroundColor: '#cccccc', // Used if the image is unavailable
 				backgroundPosition: 'center',
 				backgroundRepeat: 'no-repeat',
@@ -90,7 +90,7 @@ class ProfileHeader extends Component {
 		}
 
 		let data = this.props.user_avatar_image
-		var base64Image = "data:image/jpeg;base64," + this.props.current_image
+		var base64Image = "data:image/jpeg;base64," + data
 
 		return (
 

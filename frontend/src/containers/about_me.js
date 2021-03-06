@@ -264,7 +264,9 @@ class AboutMeContainer extends Component {
 
 		// var friends_list = this.props.all_friends
 
-		// var base64Image = "data:image/jpeg;base64," + this.props.current_image
+		var base64CoverImage = "data:image/jpeg;base64," + this.props.user_cover_image
+
+		var base64AvatarImage = "data:image/jpeg;base64," + this.props.user_avatar_image
 
 		// let all_friends = this.props.all_friends
 		let all_friends = [1,2,3,4,5,6,7,8,9,10]
@@ -279,8 +281,8 @@ class AboutMeContainer extends Component {
 						<div style={styles.imageContainer}>
 							<img 
 								alt="" 
-								// src={base64Image} 
-								src={utils.image}
+								src={base64CoverImage}
+								// src={utils.image}
 								style={styles.topBgImage}
 							/>
 						</div>
@@ -316,7 +318,7 @@ class AboutMeContainer extends Component {
 									</div>
 
 									<div style={styles.upperMenuButtonRoundButtonContainer}>
-										<Link to="/edit-profile">
+										<Link to="/settings">
 											<div style={styles.roundButtonWrapper}>
 												<p style={styles.menuRoundButtonText}>
 													Edit Profile
@@ -344,8 +346,8 @@ class AboutMeContainer extends Component {
 										ref={ (divElement) => { this.divElement1 = divElement } }
 									>
 										<img 
-											// src={base64Image}
-											src={utils.image} 
+											src={base64AvatarImage}
+											// src={utils.image} 
 											alt="" 
 											style={styles.avatarImage}
 										/>
@@ -430,10 +432,9 @@ class AboutMeContainer extends Component {
 														Something About Me
 													</p>
 													<div style={styles.shortBottomBorder}>
-														<p>{this.props.user_about_me}</p>
+														<p style={{paddingTop:20}}>{this.props.user_about_me}</p>
 													</div>
 
-													<p>lorem ipsum</p>
 												</div>
 
 											)
@@ -445,10 +446,9 @@ class AboutMeContainer extends Component {
 														Working Zone
 													</p>
 													<div style={styles.shortBottomBorder}>
-														<p>{this.props.user_working_zone}</p>
+														<p style={{paddingTop:20}}>{this.props.user_working_zone}</p>
 													</div>
 
-													<p>lorem ipsum</p>
 												</div>
 
 											)
@@ -460,10 +460,9 @@ class AboutMeContainer extends Component {
 														Educational Qualification
 													</p>
 													<div style={styles.shortBottomBorder}>
-														<p>{this.props.user_education}</p>
+														<p style={{paddingTop:20}}>{this.props.user_education}</p>
 													</div>
 
-													<p>lorem ipsum</p>
 												</div>
 
 											)
@@ -475,10 +474,9 @@ class AboutMeContainer extends Component {
 														Contact Details
 													</p>
 													<div style={styles.shortBottomBorder}>
-														<p>{this.props.user_contact_details}</p>
+														<p style={{paddingTop:20}}>{this.props.user_contact_details}</p>
 													</div>
 
-													<p>lorem ipsum</p>
 												</div>
 
 											)

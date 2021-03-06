@@ -80,7 +80,9 @@ class SettingsContainer extends Component {
 		.then(function (response) {
 
 			if (response.data.success === true){
-				// console.log('yes')
+				console.log('UPDATED SUCCESSFULLY')
+
+				console.log(response.data)
 
 				set_user_name_in_profile_callback(response)
 				set_user_avatar_image_callback(response)
@@ -96,7 +98,7 @@ class SettingsContainer extends Component {
 
 		})
 		.catch(function (error) {
-			// console.log(error);
+			console.log(error);
 		});	
 	}
 
@@ -243,7 +245,7 @@ class SettingsContainer extends Component {
 									type="text" 
 									// name="post_text"
 									// multiline={true}
-									onChange={ (event) =>  this.setState(prev => ({...prev, password: event.target.value})) }
+									onChange={ (event) =>  this.setState(prev => ({...prev, user_about_me: event.target.value})) }
 									style={styles.roundTextInput} 
 								/>
 							</form>

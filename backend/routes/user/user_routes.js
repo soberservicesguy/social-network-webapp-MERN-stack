@@ -11,6 +11,9 @@ const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
 const get_allowed_privileges_list = require("../../handy_functions/get_allowed_privileges_list")
 
+const multer = require('multer');
+const path = require('path');
+
 const base64_encode = require('../../lib/image_to_base64')
 
 router.post('/signup-with-facebook-and-get-permission', passport.authenticate('facebook', { scope: ['user_friends', 'manage_pages'] }))
@@ -106,7 +109,21 @@ router.post('/login', async function(req, res, next){
 
 			console.log(privileges_list)
 
-			res.status(200).json({ success: true, token: tokenObject.token, expiresIn: tokenObject.expires, privileges: privileges_list });
+			let user_details = {
+				user_name_in_profile: user.user_name_in_profile,
+				user_cover_image: user.user_cover_image,
+				user_brief_intro: user.user_brief_intro,
+				user_about_me: user.user_about_me,
+				user_working_zone: user.user_working_zone,
+				user_education: user.user_education,
+				user_contact_details: user.user_contact_details,
+
+				user_avatar_image: base64_encode( user.user_avatar_image ),
+				user_cover_image: base64_encode( user.user_cover_image ),
+			}
+
+
+			res.status(200).json({ success: true, token: tokenObject.token, expiresIn: tokenObject.expires, privileges: privileges_list, user_details: user_details });
 
 		} else {
 
@@ -123,46 +140,150 @@ router.post('/login', async function(req, res, next){
 
 });
 
+
+
+
+
+// Set The Storage Engine
+const cover_and_avatar_storage = multer.diskStorage({
+	// destination: path.join(__dirname , '../../assets/bulk_blogposts/'),
+	destination:function(req, file, cb){
+		// let file_path = `./uploads/${type}`;
+		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
+		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
+
+		if (file.fieldname === "avatar_image") {
+
+			let file_path = path.join(__dirname , '../../assets/images/uploads/avatar_image/')
+			console.log(file_path)
+			cb(null, file_path)	
+
+		} else {
+
+			
+			let file_path = path.join(__dirname , `../../assets/images/uploads/cover_image/`)
+			console.log(file_path)
+			cb(null, file_path)	
+
+		}
+
+	},
+	filename: function(req, file, cb){
+		// file name pattern fieldname-currentDate-fileformat
+		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+
+		filename_used_to_store_image_in_assets = file.originalname
+		cb(null, file.originalname);
+
+	}
+});
+
+// Check File Type
+function checkFileTypeForCoverAndAvatarImages(file, cb){
+
+	// Allowed ext
+	let filetypes_for_image = /jpeg|jpg|png|gif/
+
+	// Check ext
+	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
+
+	// Check mime
+	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
+
+	if (file.fieldname === "avatar_image") { // if uploading resume
+		
+		if (mimetype_for_image && extname_for_image) {
+			cb(null, true);
+		} else {
+			cb('Error: jpeg, jpg, png, gif Images Only!');
+		}
+
+	} else { // else uploading images
+
+		if (mimetype_for_image && extname_for_image) {
+			cb(null, true);
+		} else {
+			cb('Error: jpeg, jpg, png, gif Images Only!');
+		}
+
+	}
+
+}
+
+// Init Upload
+const avatar_and_cover_upload = multer({
+	storage: cover_and_avatar_storage,
+	limits:{fileSize: 200000000}, // 1 mb
+	fileFilter: function(req, file, cb){
+		checkFileTypeForCoverAndAvatarImages(file, cb);
+	}
+}).fields([
+	{ name: 'avatar_image', maxCount: 1 }, 
+	{ name: 'cover_image', maxCount: 1 }
+])  // these are the fields that will be dealt
+// .single('blogpost_image_main'); 
+// .array('photos', 12)
+
+
+
 // 'facebook', 'google', 
 router.post('/update-settings', passport.authenticate(['jwt'], { session: false }), function(req, res, next){
 
 	console.log('incoming')
 
+	avatar_and_cover_upload(req, res, (err) => {
 
-	User.findOneAndUpdate({ phone_number: req.user.user_object.phone_number }, { 
-		$set:{ 
-			user_name_in_profile: req.body.user_name_in_profile,
-			user_cover_image: req.body.user_cover_image,
-			user_brief_intro: req.body.user_brief_intro,
-			user_about_me: req.body.user_about_me,
-			user_working_zone: req.body.user_working_zone,
-			user_education: req.body.user_education,
-			user_contact_details: req.body.user_contact_details,
+		if(err){
+
+			console.log(err)
+
+		} else {
+
+			User.findOneAndUpdate({ phone_number: req.user.user_object.phone_number }, { 
+
+				$set:{ 
+					user_name_in_profile: req.body.user_name_in_profile,
+					user_cover_image: req.body.user_cover_image,
+					user_brief_intro: req.body.user_brief_intro,
+					user_about_me: req.body.user_about_me,
+					user_working_zone: req.body.user_working_zone,
+					user_education: req.body.user_education,
+					user_contact_details: req.body.user_contact_details,
+
+					user_avatar_image: `assets/images/uploads/avatar_image/${req.files['avatar_image'][0].filename}`,
+					user_cover_image: `assets/images/uploads/cover_image/${req.files['cover_image'][0].filename}`,
+				}
+
+			}, { new: true }, (err, user) => {
+
+				console.log('BELOW')
+				console.log( path.join(__dirname ,`../../assets/images/uploads/avatar_image/${req.files['avatar_image'][0].filename}`) )
+				console.log(user.user_avatar_image)
+
+				let user_details = {
+					user_name_in_profile: user.user_name_in_profile,
+					user_cover_image: user.user_cover_image,
+					user_brief_intro: user.user_brief_intro,
+					user_about_me: user.user_about_me,
+					user_working_zone: user.user_working_zone,
+					user_education: user.user_education,
+					user_contact_details: user.user_contact_details,
+
+					user_avatar_image: base64_encode( user.user_avatar_image ),
+					user_cover_image: base64_encode( user.user_cover_image ),
+				}
+
+				res.status(200).json({ success: true, message: 'user_updated', user_details: user_details});
+
+			})
+			.catch((err1) => {
+
+				next(err1);
+
+			});
 		}
-	}, { new: true }, (err, user) => {
-
-		let user_details = {
-			user_name_in_profile: user.user_name_in_profile,
-			user_cover_image: user.user_cover_image,
-			user_brief_intro: user.user_brief_intro,
-			user_about_me: user.user_about_me,
-			user_working_zone: user.user_working_zone,
-			user_education: user.user_education,
-			user_contact_details: user.user_contact_details,
-
-			user_avatar_image: base64_encode( user.user_avatar_image ),
-			user_cover_image: base64_encode( user.user_cover_image ),
-		}
-
-		res.status(200).json({ success: true, message: 'user_updated', user_details: user_details});
-
 	})
-	.catch((err1) => {
-
-		next(err1);
-
-	});
-
 });
 
 

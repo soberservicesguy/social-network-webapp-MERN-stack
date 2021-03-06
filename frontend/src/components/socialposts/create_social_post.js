@@ -42,6 +42,8 @@ class CreateSocialPost extends Component {
 			tracked_width2: 0,
 			tracked_height2: 0,
 
+			new_socialpost_id: null,
+
 		}
 		this.resizeHandler = this.resizeHandler.bind(this);
 	}
@@ -167,7 +169,7 @@ class CreateSocialPost extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-SocialPost" }} />
+			return <Redirect to = {{ pathname: `/socialposts/:id=${this.state.new_socialpost_id}` }} />
 
 		} else {
 			return (
@@ -214,9 +216,10 @@ class CreateSocialPost extends Component {
 										style={styles.roundButtonInsideTextInput}
 										onClick={ () => {
 
-											let setResponseInCurrentSocialPost = (arg) => this.props.set_current_socialpost(arg)
+											let setResponseInCurrentSocialPost = (response) => this.props.set_current_socialpost(response.data.new_socialpost)
 											let redirectToNewSocialPost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
-
+											let setNewSocialpostIDToState = (response) => this.setState(prev => ({...prev, new_socialpost_id: response.data.socialpost_endpoint }))	
+											
 											const formData = new FormData()
 
 											formData.append('post_text', this.state.post_text)
@@ -231,8 +234,9 @@ class CreateSocialPost extends Component {
 											.then(function (response) {
 												console.log(response.data) // current socialpost screen data
 												
+												setNewSocialpostIDToState(response)
 												// set to current parent object
-												setResponseInCurrentSocialPost(response.data)
+												setResponseInCurrentSocialPost(response)
 
 												// change route to current_socialpost
 												redirectToNewSocialPost()

@@ -26,6 +26,8 @@ import {
 	CompleteFriendsContainer,
 
 	TimelineContainer,
+
+	SettingsContainer,
 } from "../containers";
 
 
@@ -79,6 +81,11 @@ import {
 import {
 	CreateShareForSocialpost,
 } from "../components/shares"
+
+export const ConnectedSettingsContainer = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(SettingsContainer);
 
 
 export const ConnectedProfileHeader = connect(

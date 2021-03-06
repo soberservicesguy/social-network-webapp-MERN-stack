@@ -29,9 +29,10 @@ const path = require('path')
 
 var ffmpeg = require('fluent-ffmpeg') // for setting thumbnail of video upload using snapshot
 
-const images_upload_path = path.join(__dirname , '../../assets/images/uploads/social_images')
-const video_upload_path = path.join(__dirname , `../../assets/videos/uploads/social_videos`)
-const video_image_thumbnail_path = path.join(__dirname , `../../assets/videos/uploads/thumbnails_for_social_videos`)
+const images_upload_path = 'assets/images/uploads/social_post_images'
+const video_upload_path = `assets/videos/uploads/social_post_videos`
+const video_image_thumbnail_path = `assets/videos/uploads/thumbnails_for_social_videos`
+ 
 
 // Set The Storage Engine
 const image_and_video_storage = multer.diskStorage({
@@ -55,10 +56,13 @@ const image_and_video_storage = multer.diskStorage({
 	},
 	filename: function(req, file, cb){
 		// file name pattern fieldname-currentDate-fileformat
-		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+		filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+		filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
 
-		filename_used_to_store_image_in_assets = file.originalname
+
+		filename_used_to_store_video_in_assets_without_format = file.originalname.replace( path.extname(file.originalname), "");
+
+		// filename_used_to_store_image_in_assets = file.originalname
 		cb(null, file.originalname);
 
 	}
@@ -104,7 +108,7 @@ const upload_image_or_video_in_social_post = multer({
 	storage: image_and_video_storage,
 	limits:{fileSize: 200000000}, // 1 mb
 	fileFilter: function(req, file, cb){
-		checkFileTypeForImageAndExcelSheet(file, cb);
+		checkFileTypeForImageAndVideo(file, cb);
 	}
 }).fields([
 	{ name: 'image_upload', maxCount: 1 }, 
@@ -113,353 +117,445 @@ const upload_image_or_video_in_social_post = multer({
 // .single('blogpost_image_main'); 
 // .array('photos', 12)
 
-function create_snapshots_from_uploaded_video(video_file, snapshot_name){
+async function create_snapshots_from_uploaded_video(video_file, callback){
 // video is uploaded , NOW creating thumbnail from video using snapshot
 	ffmpeg(video_file)
 	.on('end', function() {
 		console.log('Screenshots taken');
+		callback()
 	})
 	.on('error', function(err) {
+		console.log('FFMOG')
 		console.error(err);
 	})
 	.on('filenames', function(filenames) {
 		console.log('screenshots are ' + filenames.join(', '));
 	})
 	.screenshots({
-		count: 4,
-		filenames: [
-			`${snapshot_name}1.png`, 
-			`${snapshot_name}2.png`, 
-			`${snapshot_name}3.png`, 
-			`${snapshot_name}4.png`,
-		],
+		filename: `${filename_used_to_store_video_in_assets_without_format}.png`, // if single snapshot is needed
 		size: '150x100', 
+		count: 4,
 		// folder: './assets/videos/uploads/upload_thumbnails/',
 		folder: video_image_thumbnail_path,
 	})
 }
 
 
-// create blogpost with undefined
-// USED IN CREATING BLOGPOST
-router.post('/create-socialpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedCreatingPosts, function(req, res, next){
-	
-	// console.log('OUTER LOG')
-	// console.log(req.body)
-	const social_post_id = ''
-	const social_post_type = ''
+function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id){
 
-	upload_image_or_video_in_social_post(req, res, (err) => {
-		if(err){
+	newSocialPost.save(function (err, newSocialPost) {
 
-			console.log(err)
+		if (err){
+			res.status(404).json({ success: false, msg: 'couldnt create socialpost database entry'})
+			return console.log(err)
+		}
+		// assign user object then save
+		User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+		.then((user) => {
+			if (user){
 
-		} else {
+				newSocialPost.user = user
+				newSocialPost.save()
 
-			if(req.file == undefined){
+				let new_socialpost = {}
+				let socialpost_endpoint = ''
 
-				res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
+				switch (social_post_type) {
+					case "text_post":
+
+						SocialPost.findOne({ _id: social_post_id })
+						.then((saved_socialpost) => {
+
+							socialpost_endpoint = saved_socialpost.endpoint
+
+							new_socialpost = {
+								type_of_post: newSocialPost.type_of_post,
+								post_text: newSocialPost.type_of_post,
+							}
+
+							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+						})
+
+						break
+
+					case "image_post":
+
+						SocialPost.findOne({ _id: social_post_id })
+						.then((saved_socialpost) => {
+
+							socialpost_endpoint = saved_socialpost.endpoint
+
+							new_socialpost = {
+								type_of_post: newSocialPost.type_of_post,
+								image_for_post: base64_encode(newSocialPost.image_for_post),
+							}
+
+							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+						})
+
+						break
+
+					case "text_with_image_post":
+
+						SocialPost.findOne({ _id: social_post_id })
+						.then((saved_socialpost) => {
+
+							socialpost_endpoint = saved_socialpost.endpoint
+
+							new_socialpost = {
+								type_of_post: newSocialPost.type_of_post,
+								image_for_post: base64_encode(newSocialPost.image_for_post),
+								post_text: newSocialPost.type_of_post,
+							}
+
+							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+						})
+
+						break
+
+					case "video_post":
+
+						SocialPost.findOne({ _id: social_post_id })
+						.then((saved_socialpost) => {
+
+							socialpost_endpoint = saved_socialpost.endpoint
+							new_socialpost = {
+								type_of_post: newSocialPost.type_of_post,
+								video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
+								video_for_post: newSocialPost.video_for_post,
+							}
+
+							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+						})
+
+						break
+
+
+					case "text_with_video_post":
+
+						SocialPost.findOne({ _id: social_post_id })
+						.then((saved_socialpost) => {
+
+							socialpost_endpoint = saved_socialpost.endpoint
+
+							new_socialpost = {
+								post_text: newSocialPost.type_of_post,
+								type_of_post: newSocialPost.type_of_post,
+								video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
+								video_for_post: newSocialPost.video_for_post,
+							}
+
+							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+						})
+						break
+
+
+					default:
+						null
+
+				}
+
+				console.log('TILL HERE1')
+
+				let newActivity = new Activity({
+					_id: new mongoose.Types.ObjectId(),
+					user: user,
+					activity_type: 'created_post',
+					post_created: newSocialPost,
+				})
+				newActivity.save()
+				user.activities.push(newActivity)
+				user.save()
+				
+				console.log('TILL HERE2')
 
 			} else {
-				// console.log('INNER LOG')
-				// console.log(req.body)
 
-			// image is uploaded , now saving image in db
-			// check whether image uploaded or video through their fields
-			
+				console.log('TILL HERE3')
+
+				res.status(200).json({ success: false, msg: "couldnt save social post" });
+
+			}
+		})
+		.catch((err) => {
+
+			next(err);
+
+		});
+
+	})
+
+}
+
+// USED IN CREATING BLOGPOST
+router.post('/create-socialpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedCreatingPosts, function(req, res, next){
+
+	let social_post_id = ''
+	let social_post_type = ''
+
+	upload_image_or_video_in_social_post(req, res, (err) => {
+
+		// {(async () => {
+
+			if(err){
+
+				console.log(err)
+
+			} else {
+
 				social_post_id = new mongoose.Types.ObjectId()
 				let image_path = ''
 				let video_path = ''
 
-				if (req.files['image_upload'][0] && req.body.parent.post_text){
+				let newSocialPost
+
+				console.log('HERE 1')
+
+				if (req.files['image_upload'] !== undefined && req.body.post_text){
 
 					social_post_type = 'text_with_image_post'
-					image_path = path.join(image_upload_path, `${req.files['image_upload'][0].filename}`)
-					const newSocialPost = new SocialPost({
+					image_path = path.join(images_upload_path, `${req.files['image_upload'][0].filename}`)
+					newSocialPost = new SocialPost({
 						_id: social_post_id,
 						type_of_post: social_post_type,
-						post_text: req.body.parent.post_text,
+						post_text: req.body.post_text,
 						image_for_post: image_path,
 					});
 
-				} else if (req.files['image_upload'][0] && !req.body.parent.post_text){
+					save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
+
+				} else if (req.files['image_upload'] !== undefined && !req.body.post_text){
 
 					social_post_type = 'image_post'
-					image_path = path.join(image_upload_path, `${req.files['image_upload'][0].filename}`)
-					const newSocialPost = new SocialPost({
+					console.log('image_path')
+					console.log(images_upload_path)
+					image_path = path.join(images_upload_path, `${req.files['image_upload'][0].filename}`)
+					newSocialPost = new SocialPost({
 
 						_id: social_post_id,
 						type_of_post: social_post_type,
 						image_for_post: image_path,
 					});
 
-				} else if (req.files['video_upload'][0] && req.body.parent.post_text){
+					save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
+
+				} else if (req.files['video_upload'] !== undefined && req.body.post_text){
 
 					video_path = path.join(video_upload_path, `${req.files['video_upload'][0].filename}`)
-					create_snapshots_from_uploaded_video(video_file_path, filename_used_to_store_video_in_assets_without_format)
-					social_post_type = 'text_with_video_post'
 
-					const newSocialPost = new SocialPost({
-						_id: social_post_id,
-						type_of_post: social_post_type,
-						post_text: req.body.parent.post_text,
-						video_for_post: video_path,
-						video_thumbnail_image: filename_used_to_store_video_in_assets_without_format,
-					});
 
-				} else if (req.files['video_upload'][0] && !req.body.parent.post_text){
+					function after_screenshot_callback(){
+
+						social_post_type = 'text_with_video_post'
+
+						newSocialPost = new SocialPost({
+							_id: social_post_id,
+							type_of_post: social_post_type,
+							post_text: req.body.post_text,
+							video_for_post: video_path,
+							video_thumbnail_image: `assets/videos/uploads/thumbnails_for_social_videos/${filename_used_to_store_video_in_assets_without_format}_1.png`,
+							
+						});
+
+						save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)						
+
+					}
+
+					create_snapshots_from_uploaded_video(video_path, after_screenshot_callback)
+
+				} else if (req.files['video_upload'] !== undefined && !req.body.post_text){
 					
 					video_path = path.join(video_upload_path, `${req.files['video_upload'][0].filename}`)
-					create_snapshots_from_uploaded_video(video_file_path, filename_used_to_store_video_in_assets_without_format)
-					social_post_type = 'video_post'
 
-					const newSocialPost = new SocialPost({
-						_id: social_post_id,
-						type_of_post: social_post_type,
-						video_for_post: video_path,
-						video_thumbnail_image: filename_used_to_store_video_in_assets_without_format,
-					});
+					function after_screenshot_callback(){
+
+						social_post_type = 'video_post'
+
+						newSocialPost = new SocialPost({
+							_id: social_post_id,
+							type_of_post: social_post_type,
+							video_for_post: video_path,
+							video_thumbnail_image: `assets/videos/uploads/thumbnails_for_social_videos/${filename_used_to_store_video_in_assets_without_format}_1.png`,
+						});
+
+						save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)
+					}
+
+					create_snapshots_from_uploaded_video(video_path, after_screenshot_callback)
 
 				} else {
 
 					social_post_type = 'text_post'
-					const newSocialPost = new SocialPost({
+					newSocialPost = new SocialPost({
 						_id: social_post_id,
 						type_of_post: social_post_type,
-						post_text: req.body.parent.post_text,
+						post_text: req.body.post_text,
 					});
+
+					save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)
 
 				}
 
+				// newSocialPost.save(function (err, newSocialPost) {
 
-// DONE ABOVE BETTER 
-				// if ( req.files['image_upload'][0] ){
-
-				// 	let image_path = path.join(image_upload_path, `${req.files['image_upload'][0].filename}`)
-
-				// 	if (req.body.parent.post_text ){
-
-				// 		social_post_type = 'text_with_image_post'
-
-				// 		const newSocialPost = new SocialPost({
-
-				// 			_id: social_post_id,
-				// 			type_of_post: social_post_type,
-				// 			post_text: req.body.parent.post_text,
-				// 			image_for_post: image_path,
-				// 			// image_for_post: `../../assets/images/uploads/social_images/${req.files['image_upload'][0].filename}`,
-				// 			// video_for_post: req.body.parent.video_for_post,
-				// 			// video_thumbnail_image: req.body.parent.video_thumbnail_image,
-				// 			// endpoint: req.body.parent.endpoint,
-				// 			// timestamp: req.body.parent.timestamp,
-
-				// 		});
-
-				// 	} else {
-
-				// 		social_post_type = 'image_post'
-
-				// 		const newSocialPost = new SocialPost({
-
-				// 			_id: social_post_id,
-				// 			type_of_post: social_post_type,
-				// 			// post_text: req.body.parent.post_text,
-				// 			image_for_post: image_path,
-				// 			// image_for_post: `../../assets/images/uploads/social_images/${req.files['image_upload'][0].filename}`,
-				// 			// video_for_post: req.body.parent.video_for_post,
-				// 			// video_thumbnail_image: req.body.parent.video_thumbnail_image,
-				// 			// endpoint: req.body.parent.endpoint,
-				// 			// timestamp: req.body.parent.timestamp,
-
-				// 		});
-
+				// 	if (err){
+				// 		res.status(404).json({ success: false, msg: 'couldnt create socialpost database entry'})
+				// 		return console.log(err)
 				// 	}
+				// 	// assign user object then save
+				// 	User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+				// 	.then((user) => {
+				// 		if (user){
+
+				// 			newSocialPost.user = user
+				// 			newSocialPost.save()
+
+				// 			let new_socialpost = {}
+				// 			let socialpost_endpoint = ''
+
+				// 			switch (social_post_type) {
+				// 				case "text_post":
+
+				// 					SocialPost.findOne({ _id: social_post_id })
+				// 					.then((saved_socialpost) => {
+
+				// 						socialpost_endpoint = saved_socialpost.endpoint
+
+				// 						new_socialpost = {
+				// 							type_of_post: newSocialPost.type_of_post,
+				// 							post_text: newSocialPost.type_of_post,
+				// 						}
+
+				// 						res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+				// 					})
+
+				// 					break
+
+				// 				case "image_post":
+
+				// 					SocialPost.findOne({ _id: social_post_id })
+				// 					.then((saved_socialpost) => {
+
+				// 						socialpost_endpoint = saved_socialpost.endpoint
+
+				// 						new_socialpost = {
+				// 							type_of_post: newSocialPost.type_of_post,
+				// 							image_for_post: base64_encode(newSocialPost.image_for_post),
+				// 						}
+
+				// 						res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+				// 					})
+
+				// 					break
+
+				// 				case "text_with_image_post":
+
+				// 					SocialPost.findOne({ _id: social_post_id })
+				// 					.then((saved_socialpost) => {
+
+				// 						socialpost_endpoint = saved_socialpost.endpoint
+
+				// 						new_socialpost = {
+				// 							type_of_post: newSocialPost.type_of_post,
+				// 							image_for_post: base64_encode(newSocialPost.image_for_post),
+				// 							post_text: newSocialPost.type_of_post,
+				// 						}
+
+				// 						res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+				// 					})
+
+				// 					break
+
+				// 				case "video_post":
+
+				// 					SocialPost.findOne({ _id: social_post_id })
+				// 					.then((saved_socialpost) => {
+
+				// 						socialpost_endpoint = saved_socialpost.endpoint
+				// 						new_socialpost = {
+				// 							type_of_post: newSocialPost.type_of_post,
+				// 							video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
+				// 							video_for_post: newSocialPost.video_for_post,
+				// 						}
+
+				// 						res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
+
+				// 					})
+
+				// 					break
 
 
+				// 				case "text_with_video_post":
 
-				// } else if ( req.files['video_upload'][0] ){
+				// 					SocialPost.findOne({ _id: social_post_id })
+				// 					.then((saved_socialpost) => {
 
-				// 	let video_path = path.join(video_upload_path, `${req.files['video_upload'][0].filename}`)
+				// 						socialpost_endpoint = saved_socialpost.endpoint
 
-				// 	create_snapshots_from_uploaded_video(video_file_path, filename_used_to_store_video_in_assets_without_format)
+				// 						new_socialpost = {
+				// 							post_text: newSocialPost.type_of_post,
+				// 							type_of_post: newSocialPost.type_of_post,
+				// 							video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
+				// 							video_for_post: newSocialPost.video_for_post,
+				// 						}
 
-				// 	if ( req.body.parent.post_text ){
+				// 						res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
 
-				// 		social_post_type = 'text_with_video_post'
+				// 					})
+				// 					break
 
-				// 		const newSocialPost = new SocialPost({
 
-				// 			_id: social_post_id,
-				// 			type_of_post: social_post_type,
-				// 			post_text: req.body.parent.post_text,
-				// 			// image_for_post: req.body.parent.image_for_post,
-				// 			video_for_post: video_path,
-				// 			// video_for_post: `../../assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`,
-				// 			video_thumbnail_image: filename_used_to_store_video_in_assets_without_format,
-				// 		});
+				// 				default:
+				// 					null
 
-				// 	} else {
+				// 			}
 
-				// 		social_post_type = 'video_post'
+				// 			console.log('TILL HERE1')
 
-				// 		const newSocialPost = new SocialPost({
+				// 			let newActivity = new Activity({
+				// 				_id: new mongoose.Types.ObjectId(),
+				// 				user: user,
+				// 				activity_type: 'created_post',
+				// 				post_created: newSocialPost,
+				// 			})
+				// 			newActivity.save()
+				// 			user.activities.push(newActivity)
+				// 			user.save()
+							
+				// 			console.log('TILL HERE2')
 
-				// 			_id: social_post_id,
-				// 			type_of_post: social_post_type,
-				// 			// post_text: req.body.parent.post_text,
-				// 			// image_for_post: req.body.parent.image_for_post,
-				// 			video_for_post: video_path,
-				// 			// video_for_post: `../../assets/images/uploads/social_images/${req.files['video_upload'][0].filename}`,
-				// 			video_thumbnail_image: filename_used_to_store_video_in_assets_without_format,
-						
-				// 		});
+				// 		} else {
 
-				// 	}
+				// 			console.log('TILL HERE3')
 
-				// } else {
+				// 			res.status(200).json({ success: false, msg: "couldnt save social post" });
 
-				// 	social_post_type = 'text_post'
+				// 		}
+				// 	})
+				// 	.catch((err) => {
 
-				// 	const newSocialPost = new SocialPost({
-
-				// 		_id: social_post_id,
-				// 		type_of_post: social_post_type,
-				// 		post_text: req.body.parent.post_text,
-				// 		// image_for_post: req.body.parent.image_for_post,
-				// 		// video_for_post: req.body.parent.video_for_post,
-				// 		// video_thumbnail_image: req.body.parent.video_thumbnail_image,
+				// 		next(err);
 
 				// 	});
 
+				// })
+
+					// not needed, this is used only in multer
+					// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
 				// }
-
-
-				newSocialPost.save(function (err, newSocialPost) {
-
-					if (err){
-						res.status(404).json({ success: false, msg: 'couldnt create socialpost database entry'})
-						return console.log(err)
-					}
-					// assign user object then save
-					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-					.then((user) => {
-						if (user){
-
-							newSocialPost.user = user
-							newSocialPost.save()
-
-							let new_socialpost = {}
-							let socialpost_endpoint = ''
-
-							switch (social_post_type) {
-								case "text_post":
-
-									new_socialpost = {
-										type_of_post: newSocialPost.type_of_post,
-										post_text: newSocialPost.type_of_post,
-									}
-
-									res.status(200).json({ success: true, msg: 'new social post saved', new_socialpost: new_socialpost});
-									break
-
-								case "image_post":
-
-									new_socialpost = {
-										type_of_post: newSocialPost.type_of_post,
-										image_for_post: base64_encode(newSocialPost.image_for_post),
-									}
-
-									res.status(200).json({ success: true, msg: 'new social post saved', new_socialpost: new_socialpost});	
-									break
-
-								case "text_with_image_post":
-
-									new_socialpost = {
-										type_of_post: newSocialPost.type_of_post,
-										image_for_post: base64_encode(newSocialPost.image_for_post),
-										post_text: newSocialPost.type_of_post,
-									}
-
-									res.status(200).json({ success: true, msg: 'new social post saved', new_socialpost: new_socialpost});	
-									break
-
-								case "video_post":
-
-									SocialPost.findOne({ _id: social_post_id })
-									.then((saved_socialpost) => {
-										socialpost_endpoint = saved_socialpost.endpoint
-									})
-									.then(() => {
-
-										new_socialpost = {
-											type_of_post: newSocialPost.type_of_post,
-											video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
-											video_for_post: newSocialPost.video_for_post,
-										}
-
-										res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
-
-									})
-
-									break
-
-
-								case "text_with_video_post":
-
-									SocialPost.findOne({ _id: social_post_id })
-									.then((saved_socialpost) => {
-										socialpost_endpoint = saved_socialpost.endpoint
-									})
-									.then(() => {
-
-										new_socialpost = {
-											post_text: newSocialPost.type_of_post,
-											type_of_post: newSocialPost.type_of_post,
-											video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
-											video_for_post: newSocialPost.video_for_post,
-										}
-
-										res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
-
-									})
-									break
-
-
-								default:
-									null
-
-							}
-
-							let newActivity = new Activity({
-								_id: new mongoose.Types.ObjectId(),
-								user: user,
-								activity_type: 'created_post',
-								post_created: newSocialPost,
-							})
-							newActivity.save()
-							user.activities.push(newActivity)
-							user.save()
-							
-
-						} else {
-
-							res.status(200).json({ success: false, msg: "couldnt save social post" });
-
-						}
-					})
-					.catch((err) => {
-
-						next(err);
-
-					});
-
-				})
-
-				// not needed, this is used only in multer
-				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
 			}
-		}
+		// })()}
+
 	})
+
 })
 
 

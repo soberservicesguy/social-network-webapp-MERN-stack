@@ -5,6 +5,9 @@ const path = require("path");
 // function to encode file data to base64 encoded string
 function base64_encode(file) {
 
+	console.log('DEFAULT')
+	console.log( path.join(__dirname, '..') )
+
     const bitmap = fs.readFileSync(path.join(__dirname, '..', file));
 
     // give file argument as /assets/images/samosa.jpeg

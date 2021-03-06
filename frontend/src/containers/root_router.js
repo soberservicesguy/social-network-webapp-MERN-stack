@@ -27,11 +27,11 @@ import {
 	ConnectedAboutMeContainer,
 	ConnectedCompleteFriendsContainer,
 	ConnectedTimelineContainer,
+	ConnectedSettingsContainer,
 } from "../redux_stuff/connected_components";
 
 import {
 	MyResponsiveNavigation,
-	SettingsContainer,
 } from "./"
 
 // IMPORT material-ui stuff
@@ -85,7 +85,7 @@ class RootRouterContainer extends Component {
 
 						<Route exact path="/settings" render={() => (
 							(this.props.isSignedIn) ? (
-								<SettingsContainer/>
+								<ConnectedSettingsContainer/>
 							) : (
 								<Redirect to="/login"/>
 							)
@@ -99,7 +99,7 @@ class RootRouterContainer extends Component {
 							)
 						)}/>
 
-						<Route exact path="/socialposts/:endpoint-param" render={() => (
+						<Route exact path="/socialposts/:id" render={() => (
 							(this.props.isSignedIn) ? (
 								<ConnectedIndividualSocialPost/>
 							) : (
@@ -139,7 +139,7 @@ class RootRouterContainer extends Component {
 							)
 						)}/>
 
-						<Route exact path="/advertisements/:endpoint-param" render={() => (
+						<Route exact path="/advertisements/:id" render={() => (
 							(this.props.isSignedIn) ? (
 								<ConnectedIndividualAdvertisement/>
 							) : (
@@ -155,7 +155,7 @@ class RootRouterContainer extends Component {
 							)
 						)}/>
 
-						<Route exact path="/pages/:endpoint-param" render={() => (
+						<Route exact path="/pages/:id" render={() => (
 							(this.props.isSignedIn) ? (
 								<ConnectedIndividualPage/>
 							) : (
@@ -171,7 +171,7 @@ class RootRouterContainer extends Component {
 							)
 						)}/>
 
-						<Route exact path="/books/:endpoint-param" render={() => (
+						<Route exact path="/books/:id" render={() => (
 							(this.props.isSignedIn) ? (
 								<ConnectedIndividualBook/>
 							) : (
@@ -187,7 +187,7 @@ class RootRouterContainer extends Component {
 							)
 						)}/>
 
-						<Route exact path="/sports/:endpoint-param" render={() => (
+						<Route exact path="/sports/:id" render={() => (
 							(this.props.isSignedIn) ? (
 								<ConnectedIndividualSport/>
 							) : (
