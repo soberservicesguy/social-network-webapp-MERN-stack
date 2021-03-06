@@ -115,6 +115,24 @@ class LoginContainer extends Component {
 		});	
 	}
 
+	delete_all_users(){
+		axios.get(utils.baseUrl + '/users/delete-all-users',)
+		.then(function (response) {
+			if (response.data.success === true){
+
+				console.log(response.data.message)
+				
+			} else {
+				console.log('couldnt delete all users')
+			}
+
+		})
+		.catch(function (error) {
+			// console.log(error);
+		});	
+
+	}
+
 	render() {
 
 		const styles = {
@@ -295,14 +313,14 @@ class LoginContainer extends Component {
 							</button>
 						</div>
 
-						{/*<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
 							<button 
-								style={styles.roundButton}
-								onClick={ () => this.make_request_to_protected_route() }
+								style={{...styles.roundButton, }}
+								onClick={ () => this.delete_all_users() }
 							>
-								MAKE REQUEST AT PROTECTED ROUTE
+								Delete All Users
 							</button>
-						</div>*/}
+						</div>
 
 
 						<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>

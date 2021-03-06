@@ -17,6 +17,8 @@ class ComponentForShowingFriend extends Component {
 		super(props);
 // STATE	
 		this.state = {
+			request_sent: false,
+			accepted_request: false,
 		}	
 
 	}
@@ -29,9 +31,27 @@ class ComponentForShowingFriend extends Component {
 
 	sendFriendRequest(endpoint){
 
-		axios.post(utils.baseUrl + '/books/books-list-with-children', {endpoint: endpoint})
+		axios.post(utils.baseUrl + '/users/send-friend-request', {endpoint: endpoint})
 		.then((response) => {
-			this.props.set_fetched_books(response.data)
+			if(response.data.success){
+				console.log('FRIEND REQUEST SENT')
+				this.setState(prev => ({...prev, request_sent: true }));
+			}
+		})
+		.catch((error) => {
+			console.log(error);
+		})
+
+	}
+
+	acceptFriendRequest(endpoint){
+
+		axios.post(utils.baseUrl + '/users/accept-friend-request', {endpoint: endpoint})
+		.then((response) => {
+			if(response.data.success){
+				console.log('FRIEND REQUEST SENT')
+				this.setState(prev => ({...prev, accepted_request: true }));
+			}
 		})
 		.catch((error) => {
 			console.log(error);
@@ -40,9 +60,6 @@ class ComponentForShowingFriend extends Component {
 	}
 
 	render() {
-
-		let data = this.props.dataPayloadFromParent
-		let base64Image = "data:image/jpeg;base64," + data.user_avatar_image
 		
 		const styles = {
 		// button
@@ -119,11 +136,14 @@ class ComponentForShowingFriend extends Component {
 			},
 			followingText:{
 				fontSize:12,
-				color:utils.dimWhite,
+				color:(this.state.request_sent || this.state.accepted_request) ? 'blue' : utils.dimWhite,
 				fontWeight:'bold',
 			},
 	
 		}
+
+		let data = this.props.dataPayloadFromParent
+		let base64Image = "data:image/jpeg;base64," + data.user_avatar_image
 
 		return (
 
@@ -137,20 +157,20 @@ class ComponentForShowingFriend extends Component {
 
 							<button 
 						  		style={styles.outerContainer} 
-						  		onPress={ () => this.sendFriendRequest(data.endpoint) } 
+						  		onClick={ () => this.sendFriendRequest(data.endpoint) } 
 					  		>
 								<div style={styles.innerContainer}>
 									<div style={styles.imageContainer}>
 										<img 
-											src={utils.image}
-											// src={{uri: base64Image}} 
+											// src={utils.image}
+											src={base64Image}
 											style={styles.imageStyle}
 										/>
 									</div>
 
 									<div style={styles.textContainer}>
 										<p style={{...styles.nameText, color:'black'}}>
-											arsalan {data.user_name_in_profile}
+											{data.user_name_in_profile}
 										</p>
 									</div>
 
@@ -159,15 +179,71 @@ class ComponentForShowingFriend extends Component {
 											<CheckCircleOutline style={{fontSize:20, color:utils.maroonColor}}/>
 										</div>
 										<div style={{flex:3}}>
-											<p style={{...styles.followingText, textAlign:'center'}}>
-												Send Friend Request
-											</p>
+											{(this.state.request_sent) ? (
+												<p style={{...styles.followingText, textAlign:'center',}}>
+													Sent
+												</p>
+
+											):(
+												<p style={{...styles.followingText, textAlign:'center',}}>
+													Send Friend Request
+												</p>
+											)}
+
 										</div>
 									</div>
 								</div>
 
 						  	</button>
 						) 
+
+					} else if (this.props.showFriendsRequestsInstead === true) {
+
+						return (
+
+							<button 
+						  		style={styles.outerContainer} 
+						  		onClick={ () => this.acceptFriendRequest(data.endpoint) } 
+					  		>
+								<div style={styles.innerContainer}>
+									<div style={styles.imageContainer}>
+										<img 
+											// src={utils.image}
+											src={base64Image}
+											style={styles.imageStyle}
+										/>
+									</div>
+
+									<div style={styles.textContainer}>
+										<p style={{...styles.nameText, color:'black'}}>
+											{data.user_name_in_profile}
+										</p>
+									</div>
+
+									<div style={{...styles.iconContainer, flex:3, height: '50%', backgroundColor: utils.darkBlue}}>
+										<div style={{flex:1}}>
+											<CheckCircleOutline style={{fontSize:20, color:utils.maroonColor}}/>
+										</div>
+										<div style={{flex:3}}>
+											{(this.state.accepted_request) ? (
+
+												<p style={{...styles.followingText, textAlign:'center',}}>
+													Accepted
+												</p>
+
+											):(
+												<p style={{...styles.followingText, textAlign:'center',}}>
+													Accept Friend Request
+												</p>
+											)}
+
+										</div>
+									</div>
+								</div>
+
+						  	</button>					
+						)
+
 					
 					} else {
 
@@ -176,7 +252,7 @@ class ComponentForShowingFriend extends Component {
 							<button 
 						  		activeOpacity={0.2}
 						  		style={styles.outerContainer} 
-						  		onPress={ () => this.props.navigation.navigate('SocialPost', {endpoint: data.endpoint}) } 
+						  		onClick={ () => this.props.navigation.navigate('SocialPost', {endpoint: data.endpoint}) } 
 					  		>
 								<div style={styles.innerContainer}>
 									<div style={styles.imageContainer}>
@@ -189,7 +265,7 @@ class ComponentForShowingFriend extends Component {
 
 									<div style={styles.textContainer}>
 										<p style={styles.nameText}>
-											arsalan {data.user_name_in_profile}
+											{data.user_name_in_profile}
 										</p>
 									</div>
 

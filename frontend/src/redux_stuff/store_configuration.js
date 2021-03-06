@@ -205,6 +205,8 @@ const persistConfig = {
 		'current_book',
 		'total_sports',
 		'current_sport',
+
+		
 	],
 }
 

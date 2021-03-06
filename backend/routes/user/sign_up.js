@@ -116,7 +116,8 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 								_id: new mongoose.Types.ObjectId(),
 								user_name: req.body.user_name,
 								phone_number: req.body.phone_number,
-								user_image: newImage,
+								user_image: `./assets/images/uploads/avatar_image/${filename_used_to_store_image_in_assets}`,
+								user_avatar_image: `./assets/images/uploads/avatar_image/${filename_used_to_store_image_in_assets}`,
 								hash: hash,
 								salt: salt,
 

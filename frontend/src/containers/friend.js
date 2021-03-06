@@ -27,14 +27,37 @@ class FriendsContainer extends Component {
 // COMPONENT DID MOUNT
 	componentDidMount() {
 
-// FETCHING DATA FOR COMPONENT
-		axios.get(utils.baseUrl + '/books/books-list-with-children',)
-		.then((response) => {
-			this.props.set_fetched_books(response.data)
-		})
-		.catch((error) => {
-			console.log(error);
-		})
+		let set_friends_suggestions = (response) => this.props.set_friends_suggestions(response.data.friend_suggestions)
+		
+		
+
+		if (this.props.showFriendsSuggestionsInstead){
+
+			axios.get(utils.baseUrl + '/users/friend-suggestions',)
+			.then((response) => {
+				console.log('GOT FRIEND SUGGESTIONS')
+				console.log(response.data.friend_suggestions)
+				set_friends_suggestions(response)
+			})
+			.catch((error) => {
+				console.log('ERROR FRIEND SUGGESTIONS')
+				console.log(error);
+			})
+
+		} else if (this.props.showFriendsRequestsInstead){
+
+			axios.get(utils.baseUrl + '/users/friend-requests',)
+			.then((response) => {
+				console.log('GOT FRIEND SUGGESTIONS')
+				console.log(response.data.friend_suggestions)
+				set_friends_suggestions(response)
+			})
+			.catch((error) => {
+				console.log('ERROR FRIEND SUGGESTIONS')
+				console.log(error);
+			})
+
+		}
 
 
 	}
@@ -80,12 +103,13 @@ class FriendsContainer extends Component {
 
 
 
-					{this.props.all_friends.map((item, index)=>(
+					{this.props.friend_suggestions.map((item, index)=>(
 
 						<Grid item>
 							<ConnectedComponentForShowingFriend
 								dataPayloadFromParent = { item }
-								// showFriendsSuggestionsInstead = {true}
+								showFriendsSuggestionsInstead = {this.props.showFriendsSuggestionsInstead}
+								showFriendsRequestsInstead = {this.props.showFriendsRequestsInstead} 
 							/>
 						</Grid>
 
@@ -101,7 +125,8 @@ class FriendsContainer extends Component {
 }
 
 FriendsContainer.defaultProps = {
-	// : ,
+	showFriendsSuggestionsInstead:true,
+	showFriendsRequestsInstead:false,
 };
 
 export default withResponsiveness(FriendsContainer);

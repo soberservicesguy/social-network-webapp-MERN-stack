@@ -149,7 +149,10 @@ class SocialPostContainer extends Component {
 						}}>
 							<ConnectedProfileHeader/>
 							<ConnectedPageContainer/>
-							<ConnectedFriendsContainer/>
+							<ConnectedFriendsContainer
+								showFriendsSuggestionsInstead = {false}
+								showFriendsAcceptInstead = {false}
+							/>
 						</div>
 					</Grid>
 
