@@ -672,6 +672,9 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 		user_checking_others_posts.last_timestamp_of_checking_notification = new Date()
 		await user_checking_others_posts.save()
 
+		console.log('activities_to_send')
+		console.log(activities_to_send)
+
 		res.status(200).json(activities_to_send)
 
 	} catch (err) {

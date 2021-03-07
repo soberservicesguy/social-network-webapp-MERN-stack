@@ -48,8 +48,10 @@ export const rootReducer = combineReducers({
 export const mapStateToProps = state => {
 	return {
 
-		all_friends: state.all_users.all_friends,
-		friend_suggestions: state.all_users.friend_suggestions,
+		list_of_friends: state.all_users.list_of_friends,
+		list_of_friend_suggestions: state.all_users.suggestions,
+		list_of_friend_requests: state.all_users.requests,
+
 
 		total_notifications:state.notifications.all_notifications,
 
@@ -100,7 +102,8 @@ export const mapStateToProps = state => {
 export const mapDispatchToProps = dispatch => {
 	return {
 		set_friends: (friends_list) => dispatch( { type: "SET_FRIENDS", friends_list: friends_list } ),
-		set_friends_suggestions: (friends_suggestions_list) => dispatch( { type: "SET_FRIENDS_SUGGESTIONS", friends_suggestions_list: friends_suggestions_list } ),
+		set_friends_suggestions: (args_list) => dispatch( { type: "SET_FRIENDS_SUGGESTIONS", args_list: args_list } ),
+		set_friends_requests: (args_list) => dispatch( { type: "SET_FRIENDS_REQUESTS", args_list: args_list } ),
 
 		set_fetched_notifications: (notifications_list) => dispatch( { type: "SET_FETCHED_NOTIFICATIONS", notifications_list: notifications_list } ),
 
@@ -206,6 +209,10 @@ const persistConfig = {
 		'total_sports',
 		'current_sport',
 
+
+		'list_of_friends',
+		'list_of_friend_suggestions',
+		'list_of_friend_requests',
 		
 	],
 }
@@ -217,6 +224,8 @@ export const store = createStore(persistedReducer
 	, applyMiddleware(ReduxThunk)
 );
 
-export const persistor = persistStore(store)
+
+// GIVING Error storing data DOMException: The quota has been exceeded
+// export const persistor = persistStore(store)
 
 // sagaMiddleWare.run(rootSaga);

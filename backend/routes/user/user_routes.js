@@ -228,6 +228,8 @@ const avatar_and_cover_upload = multer({
 
 router.post('/accept-friend-request', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
 
+	// REMOVE FROM FRIEND REQUESTS
+
 	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
 	let user_to_accept_request = await User.findOne({ endpoint: req.body.endpoint })
 
@@ -262,18 +264,88 @@ router.post('/send-friend-request', passport.authenticate(['jwt'], { session: fa
 
 
 
-router.get('/friends', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
+router.get('/friends-list', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
+	
 	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
-	user.friends
+
+	let friends_list = []
+	
+	await Promise.all( user.friends.map(async (friend_id) => {
+
+		let friend = await User.findOne({ _id: friend_id })
+		let {user_avatar_image, user_name_in_profile, endpoint} = friend
+
+		let image_64_encoded
+
+		try{
+
+			image_64_encoded = base64_encode(user_avatar_image)
+
+		} catch (err1){
+
+			console.log(err1)
+			image_64_encoded = ''
+
+		}
+
+		friends_list.push({
+			// user_avatar_image: base64_encode(user_avatar_image), 
+			user_avatar_image: image_64_encoded, 
+			user_name_in_profile, 
+			endpoint
+		})
+
+	}))
+
+	console.log('friends_list sent')
+	console.log(friends_list.length)
+	res.status(200).json({ success: true, friends_list: friends_list});
+
 })
 
 router.get('/friend-requests', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
+
+	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
+
+	let friends_requests = []
+	
+	await Promise.all( user.friend_requests.map(async (friend_id) => {
+
+		let friend_request = await User.findOne({ _id: friend_id })
+		let {user_avatar_image, user_name_in_profile, endpoint} = friend_request
+
+		let image_64_encoded
+
+		try{
+
+			image_64_encoded = base64_encode(user_avatar_image)
+
+		} catch (err1){
+
+			console.log(err1)
+			image_64_encoded = ''
+
+		}
+
+		friends_requests.push({
+			// user_avatar_image: base64_encode(user_avatar_image), 
+			user_avatar_image: image_64_encoded, 
+			user_name_in_profile, 
+			endpoint
+		})
+
+	}))
+
+	console.log('friends_requests sent')
+	console.log(friends_requests.length)
+	res.status(200).json({ success: true, friends_requests: friends_requests});
 
 })
 
 // 'facebook', 'google', 
 router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
 
+	console.log('CALLED')
 	let users_count_to_show_for_suggestion = 10
 	let list_of_promises = []
 
@@ -323,7 +395,8 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 
 	}))
 
-	// console.log(friend_suggestions)
+	console.log('friend_suggestions sent')
+	console.log(friend_suggestions.length)
 	res.status(200).json({ success: true, friend_suggestions: friend_suggestions});
 });
 

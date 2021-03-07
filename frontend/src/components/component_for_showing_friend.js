@@ -197,7 +197,7 @@ class ComponentForShowingFriend extends Component {
 						  	</button>
 						) 
 
-					} else if (this.props.showFriendsRequestsInstead === true) {
+					} else if (this.props.showFriendsRequestInstead === true) {
 
 						return (
 
@@ -245,7 +245,7 @@ class ComponentForShowingFriend extends Component {
 						)
 
 					
-					} else {
+					} else if (this.props.showFriendsSuggestionsInstead === false && this.props.showFriendsRequestInstead === false) {
 
 						return (
 
@@ -257,8 +257,8 @@ class ComponentForShowingFriend extends Component {
 								<div style={styles.innerContainer}>
 									<div style={styles.imageContainer}>
 										<img
-											src={utils.image}
-											// src={{uri: base64Image}} 
+											// src={utils.image}
+											src={base64Image} 
 											style={styles.imageStyle}
 										/>
 									</div>
@@ -279,6 +279,8 @@ class ComponentForShowingFriend extends Component {
 
 						  	</button>
 						)
+					} else {
+						return null
 					}
 				})()}
 
