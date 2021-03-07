@@ -119,19 +119,19 @@ class FriendsContainer extends Component {
 	  	// console.log('this.props.all_friend_requests')
 	  	// console.log(this.props)
 
-		if (this.props.showFriendsSuggestionsInstead){
+		if (this.props.showFriendsRequestInstead){
 
 			console.log('TRIED THIS')
-			data_to_use = this.props.list_of_friend_suggestions
-			heading = 'Friend Suggestions'
+			data_to_use = this.props.list_of_friend_requests
+			heading = 'Friend Requests'
 
 		}
 
-		if (this.props.showFriendsSuggestionsInstead === false && this.props.showFriendsRequestInstead){
+		if (this.props.showFriendsSuggestionsInstead){
 
 			console.log('TRIED THIS1')
-			data_to_use = this.props.list_of_friend_requests
-			heading = 'Friend Requests'
+			data_to_use = this.props.list_of_friend_suggestions
+			heading = 'Friend Suggestions'
 
 
 		}

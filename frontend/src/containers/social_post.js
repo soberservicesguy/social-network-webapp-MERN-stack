@@ -46,7 +46,9 @@ class SocialPostContainer extends Component {
 	componentDidMount() {
 		let backend_requests_made = this.state.backend_requests_made
 
-		let append_fetched_socialposts_callback = (response) => this.props.async_append_fetched_socialposts(response.data)
+		this.props.set_fetched_socialposts([])
+
+		let set_fetched_socialposts_callback = (response) => this.props.set_fetched_socialposts(response.data)
 		let addEventListenerCallback = () => window.addEventListener("scroll", this.onScroll, false);
 		let set_state_for_requests_made = () => {
 			this.setState(prev => ({...prev, 
@@ -66,7 +68,7 @@ class SocialPostContainer extends Component {
 			console.log('response.data')
 			console.log(response.data)
 
-			append_fetched_socialposts_callback(response)
+			set_fetched_socialposts_callback(response)
 			set_state_for_requests_made()
 			addEventListenerCallback()
 			
@@ -75,7 +77,7 @@ class SocialPostContainer extends Component {
 			console.log(error);
 		})
 
-
+	// dummy objects as fetched socialposts
 		// this.props.set_fetched_socialposts([
 		// 	{ type_of_post:'dummy1', post_text:'dummy1', image_for_post:'dummy1', video_for_post:'dummy1', video_thumbnail_image:'dummy1', total_likes:'dummy1', total_shares:'dummy1', endpoint:'dummy1', date_of_publishing:'dummy1',},
 		// 	{ type_of_post:'dummy2', post_text:'dummy2', image_for_post:'dummy2', video_for_post:'dummy2', video_thumbnail_image:'dummy2', total_likes:'dummy2', total_shares:'dummy2', endpoint:'dummy2', date_of_publishing:'dummy2',},
@@ -112,6 +114,7 @@ class SocialPostContainer extends Component {
 
 			window.removeEventListener("scroll", this.onScroll);
 
+	// dummy objects as fetched socialposts
 		// 	this.props.async_append_fetched_socialposts([
 		// 		{ type_of_post:'dummy1', post_text:'dummy1', image_for_post:'dummy1', video_for_post:'dummy1', video_thumbnail_image:'dummy1', total_likes:'dummy1', total_shares:'dummy1', endpoint:'dummy1', date_of_publishing:'dummy1',},
 		// 		{ type_of_post:'dummy2', post_text:'dummy2', image_for_post:'dummy2', video_for_post:'dummy2', video_thumbnail_image:'dummy2', total_likes:'dummy2', total_shares:'dummy2', endpoint:'dummy2', date_of_publishing:'dummy2',},

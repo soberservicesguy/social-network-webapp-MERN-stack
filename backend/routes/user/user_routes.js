@@ -229,6 +229,8 @@ const avatar_and_cover_upload = multer({
 router.post('/accept-friend-request', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
 
 	// REMOVE FROM FRIEND REQUESTS
+	// console.log('req.body.endpoint')
+	// console.log(req.body.endpoint)
 
 	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
 	let user_to_accept_request = await User.findOne({ endpoint: req.body.endpoint })
@@ -237,10 +239,22 @@ router.post('/accept-friend-request', passport.authenticate(['jwt'], { session: 
 
 	user_to_accept_request.friends.push(user)
 
+	let index1 = user.friend_requests.indexOf( user_to_accept_request._id );
+
+	if (index1 > -1) {
+		user.friend_requests.splice(index1, 1);
+	}
+
+	let index2= user_to_accept_request.friend_requests_sent.indexOf( user._id );
+
+	if (index2 > -1) {
+		user_to_accept_request.friend_requests_sent.splice(index2, 1);
+	}
+
 	await user.save()
 	await user_to_accept_request.save()
 
-	res.status(200).json({ success: true });
+	res.status(200).json({ success: true, });
 
 });
 
@@ -291,14 +305,14 @@ router.get('/friends-list', passport.authenticate(['jwt'], { session: false }), 
 		friends_list.push({
 			// user_avatar_image: base64_encode(user_avatar_image), 
 			user_avatar_image: image_64_encoded, 
-			user_name_in_profile, 
-			endpoint
+			endpoint: endpoint,
+			user_name_in_profile: user_name_in_profile, 
 		})
 
 	}))
 
-	console.log('friends_list sent')
-	console.log(friends_list.length)
+	// console.log('friends_list sent')
+	// console.log(friends_list.length)
 	res.status(200).json({ success: true, friends_list: friends_list});
 
 })
@@ -330,8 +344,8 @@ router.get('/friend-requests', passport.authenticate(['jwt'], { session: false }
 		friends_requests.push({
 			// user_avatar_image: base64_encode(user_avatar_image), 
 			user_avatar_image: image_64_encoded, 
-			user_name_in_profile, 
-			endpoint
+			endpoint: endpoint,
+			user_name_in_profile: user_name_in_profile, 
 		})
 
 	}))
@@ -345,7 +359,7 @@ router.get('/friend-requests', passport.authenticate(['jwt'], { session: false }
 // 'facebook', 'google', 
 router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
 
-	console.log('CALLED')
+	// console.log('CALLED')
 	let users_count_to_show_for_suggestion = 10
 	let list_of_promises = []
 
@@ -371,7 +385,14 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 	await Promise.all( non_friends_ids.map(async (non_friend_id) => {
 
 		let non_friend = await User.findOne({ _id: non_friend_id })
+
+		// console.log('non_friend')
+		// console.log(non_friend)
+
 		let {user_avatar_image, user_name_in_profile, endpoint} = non_friend
+
+		// console.log('endpoint')
+		// console.log(endpoint)
 
 		let image_64_encoded
 
@@ -389,14 +410,18 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 		friend_suggestions.push({
 			// user_avatar_image: base64_encode(user_avatar_image), 
 			user_avatar_image: image_64_encoded, 
-			user_name_in_profile, 
-			endpoint
+			endpoint: endpoint,
+			user_name_in_profile: user_name_in_profile, 
 		})
 
 	}))
 
-	console.log('friend_suggestions sent')
-	console.log(friend_suggestions.length)
+	// console.log('friend_suggestions sent')
+	// console.log(friend_suggestions.length)
+	// friend_suggestions.map((sug) => {
+		// console.log('sug.endpoint')
+		// console.log(sug.endpoint)
+	// })
 	res.status(200).json({ success: true, friend_suggestions: friend_suggestions});
 });
 

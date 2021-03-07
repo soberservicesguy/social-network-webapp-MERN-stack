@@ -139,7 +139,7 @@ class CreateCommentForSocialpost extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Socialpost" }} />
+			return <Redirect to = {{ pathname: `/socialposts/id=${this.props.parentDetailsPayload.endpoint}` }} />
 
 		} else {
 
@@ -179,6 +179,7 @@ class CreateCommentForSocialpost extends Component {
 											socialpost_endpoint: this.props.parentDetailsPayload.endpoint,
 										})
 									.then(function (response) {
+										console.log('COMMENTED')
 										console.log(response.data) // current image screen data
 										
 										// set to current parent object

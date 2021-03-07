@@ -151,7 +151,7 @@ class ComponentForShowingFriend extends Component {
 		
 				{(() => {
 
-					if (this.props.showFriendsSuggestionsInstead === true){
+					if (this.props.showFriendsSuggestionsInstead){
 					
 						return (
 

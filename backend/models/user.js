@@ -30,9 +30,22 @@ const UserSchema = new mongoose.Schema({
 
 // other model links
 	socialposts:[{ type: Schema.Types.ObjectId, ref: 'Social_Post'  }],
-	comments:[{ type: Schema.Types.ObjectId, ref: 'Comment'  }],
-	likes:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],
-	shares:[{ type: Schema.Types.ObjectId, ref: 'Share'  }],
+	
+	socialpost_comments:[{ type: Schema.Types.ObjectId, ref: 'Comment'  }],
+	socialpost_likes:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],
+	socialpost_shares:[{ type: Schema.Types.ObjectId, ref: 'Share'  }],
+
+	books_created:[{ type: Schema.Types.ObjectId, ref: 'Book'  }],
+	books_liked:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],
+
+	pages_created:[{ type: Schema.Types.ObjectId, ref: 'Page'  }],
+	pages_liked:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],
+
+	ad_created:[{ type: Schema.Types.ObjectId, ref: 'Advertisement' }],
+	ad_liked:[{ type: Schema.Types.ObjectId, ref: 'Like'  }],
+
+	sport_created:[{ type: Schema.Types.ObjectId, ref: 'Sport' }],
+	sport_liked:[{ type: Schema.Types.ObjectId, ref: 'Like' }],
 	
 	privileges: [{ type: Schema.Types.ObjectId, ref: 'Privilege'  }],
 
@@ -65,9 +78,9 @@ const UserSchema = new mongoose.Schema({
 	
 UserSchema.pre('save', function(next) {
 	this.total_socialposts = this.socialposts.length
-	this.total_comments = this.comments.length
-	this.total_likes = this.likes.length
-	this.total_shares = this.shares.length
+	this.total_comments = this.socialpost_comments.length
+	this.total_likes = this.socialpost_likes.length
+	this.total_shares = this.socialpost_shares.length
 
 	this.total_friends = this.friends.length
 	this.total_friend_requests = this.friend_requests.length

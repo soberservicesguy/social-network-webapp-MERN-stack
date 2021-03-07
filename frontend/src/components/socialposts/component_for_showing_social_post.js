@@ -93,9 +93,9 @@ class ComponentForShowingSocialPost extends Component {
 		}
 
 
-		const data = {type_of_post:'text_post', notification_type:'created_page'} 
+		// const data = {type_of_post:'text_post', notification_type:'created_page'} 
 
-		// const data = this.props.dataPayloadFromParent
+		const data = this.props.dataPayloadFromParent
 
 		// var base64Image = "data:image/jpeg;base64," + data.image_for_post
 

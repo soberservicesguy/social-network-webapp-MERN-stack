@@ -68,73 +68,6 @@ class SocialPostCard extends Component {
 
 	}
 
-	fetchAllComment(endpoint) {
-
-		axios.get(utils.baseUrl + '/sports/get-all-comments-of-sport', 
-			{
-			    params: {
-					endpoint: endpoint,
-					child_count: 3,
-			    }
-			})
-		.then((response) => {
-			// console.log(response.data);
-			this.setState( prev => ({...prev, comments: ( prev.comments.length === 0 ) ? response.data : [] }) )
-			
-		})
-		.catch((error) => {
-			console.log(error);
-		})
-
-		this.setState( prev => ({...prev, showOnlyQuantityForComment: false}) )		
-	}
-
-
-	fetchAllLike(endpoint) {
-
-		axios.get(utils.baseUrl + '/sports/get-all-likes-of-sport', 
-			{
-			    params: {
-					endpoint: endpoint,
-					child_count: 3,
-			    }
-			})
-		.then((response) => {
-			// console.log(response.data);
-			this.setState( prev => ({...prev, likes: ( prev.likes.length === 0 ) ? response.data : [] }) )
-			
-		})
-		.catch((error) => {
-			console.log(error);
-		})
-
-		this.setState( prev => ({...prev, showOnlyQuantityForLike: false}) )		
-	}
-
-
-	fetchAllShare(endpoint) {
-
-		axios.get(utils.baseUrl + '/sports/get-all-shares-of-sport', 
-			{
-			    params: {
-					endpoint: endpoint,
-					child_count: 3,
-			    }
-			})
-		.then((response) => {
-			// console.log(response.data);
-			this.setState( prev => ({...prev, shares: ( prev.shares.length === 0 ) ? response.data : [] }) )
-			
-		})
-		.catch((error) => {
-			console.log(error);
-		})
-
-		this.setState( prev => ({...prev, showOnlyQuantityForShare: false}) )		
-	}
-
-
-
 // COMPONENT DID MOUNT
 	componentDidMount() {
 		this.setState( prev => ({...prev, showOnlyQuantityForComment: true}) )
@@ -193,48 +126,19 @@ class SocialPostCard extends Component {
 			  		/>
 		  		</div>
 
+
 				<div style={styles.showSocialsContainer}>
-					{/* 2nd show individual summary of childs */}
-
-					<div>
-						<button 
-							style={styles.showSocialsButton}
-							onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
-						>
-							<ThumbUp style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.likes_quantity} likes							
-						</button>
-					</div>
-
-					<div>
-						<button 
-							style={styles.showSocialsButton}
-							onClick={ () => this.fetchAllComment( this.props.dataPayloadFromParent.endpoint ) }
-						>
-							<Comment style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.comments_quantity} likes
-						</button>
-					</div>
-
-					<div>
-						<button 
-							style={styles.showSocialsButton}
-							onClick={ () => this.fetchAllShare( this.props.dataPayloadFromParent.endpoint ) }
-						>
-							<Share style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.shares_quantity} likes
-						</button>
-					</div>
-				</div>
-
-				<div style={{
-					marginBottom: 25,
-				}}>
 					<ShowLikesOfSocialPost
-						dataPayloadFromParent = { this.props.likes }
+						dataPayloadFromParent = { this.props.dataPayloadFromParent }
+						likes_quantity = { this.props.likes_quantity }
 					/>
 					<ShowCommentsOfSocialPost
-						dataPayloadFromParent = { this.props.comments }
+						dataPayloadFromParent = { this.props.dataPayloadFromParent }
+						comments_quantity = { this.props.comments_quantity }
 					/>
 					<ShowSharesOfSocialPost
-						dataPayloadFromParent = { this.props.shares }
+						dataPayloadFromParent = { this.props.dataPayloadFromParent }
+						shares_quantity = { this.props.shares_quantity }
 					/>
 				</div>
 
@@ -243,12 +147,15 @@ class SocialPostCard extends Component {
 					{/* 4th create individual child options like comment / like */}					
 					<ConnectedCreateLikeForSocialpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
+	  					redirectToNew = { true }
 					/>					
 					<ConnectedCreateCommentForSocialpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
+	  					redirectToNew = { true }
 					/>					
 					<ConnectedCreateShareForSocialpost
 						parentDetailsPayload = { this.props.dataPayloadFromParent }
+	  					redirectToNew = { true }
 					/>
 				</div>
 
