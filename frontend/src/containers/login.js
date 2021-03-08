@@ -133,6 +133,97 @@ class LoginContainer extends Component {
 
 	}
 
+	delete_all_sports(){
+		axios.get(utils.baseUrl + '/users/delete-all-sports',)
+		.then(function (response) {
+			if (response.data.success === true){
+
+				console.log(response.data.message)
+				
+			} else {
+				console.log('couldnt delete all sports')
+			}
+
+		})
+		.catch(function (error) {
+			// console.log(error);
+		});	
+
+	}
+
+	delete_all_socialposts(){
+		axios.get(utils.baseUrl + '/users/delete-all-socialposts',)
+		.then(function (response) {
+			if (response.data.success === true){
+
+				console.log(response.data.message)
+				
+			} else {
+				console.log('couldnt delete all socialposts')
+			}
+
+		})
+		.catch(function (error) {
+			// console.log(error);
+		});	
+
+	}
+
+	delete_all_books(){
+		axios.get(utils.baseUrl + '/users/delete-all-books',)
+		.then(function (response) {
+			if (response.data.success === true){
+
+				console.log(response.data.message)
+				
+			} else {
+				console.log('couldnt delete all books')
+			}
+
+		})
+		.catch(function (error) {
+			// console.log(error);
+		});	
+
+	}
+
+	delete_all_pages(){
+		axios.get(utils.baseUrl + '/users/delete-all-pages',)
+		.then(function (response) {
+			if (response.data.success === true){
+
+				console.log(response.data.message)
+				
+			} else {
+				console.log('couldnt delete all pages')
+			}
+
+		})
+		.catch(function (error) {
+			// console.log(error);
+		});	
+
+	}
+
+	delete_all_ads(){
+		axios.get(utils.baseUrl + '/users/delete-all-ads',)
+		.then(function (response) {
+			if (response.data.success === true){
+
+				console.log(response.data.message)
+				
+			} else {
+				console.log('couldnt delete all ads')
+			}
+
+		})
+		.catch(function (error) {
+			// console.log(error);
+		});	
+
+	}
+
+
 	render() {
 
 		const styles = {
@@ -313,6 +404,27 @@ class LoginContainer extends Component {
 							</button>
 						</div>
 
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
+							<button 
+								style={styles.roundButton}
+								onClick={ () => this.setState(prev => ({...prev, redirectToRoute: true })) }
+							>
+								Sign Up
+							</button>
+						</div>
+					</div>
+
+
+					<div style={{
+						width:'90%',
+						margin:'auto',
+						display:'flex',
+						flexDirection:'row',
+						justifyContent: 'space-around',
+						alignItems:'center',
+						height:60,
+						marginBottom:20,
+					}}>
 						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
 							<button 
 								style={{...styles.roundButton, }}
@@ -322,15 +434,51 @@ class LoginContainer extends Component {
 							</button>
 						</div>
 
-
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
 							<button 
-								style={styles.roundButton}
-								onClick={ () => this.setState(prev => ({...prev, redirectToRoute: true })) }
+								style={{...styles.roundButton, }}
+								onClick={ () => this.delete_all_socialposts() }
 							>
-								Sign Up
+								Delete All Socialposts
 							</button>
 						</div>
+
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+							<button 
+								style={{...styles.roundButton, }}
+								onClick={ () => this.delete_all_books() }
+							>
+								Delete All Books
+							</button>
+						</div>
+
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+							<button 
+								style={{...styles.roundButton, }}
+								onClick={ () => this.delete_all_sports() }
+							>
+								Delete All Sports
+							</button>
+						</div>
+
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+							<button 
+								style={{...styles.roundButton, }}
+								onClick={ () => this.delete_all_pages() }
+							>
+								Delete All Pages
+							</button>
+						</div>
+
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+							<button 
+								style={{...styles.roundButton, }}
+								onClick={ () => this.delete_all_ads() }
+							>
+								Delete All Ads
+							</button>
+						</div>
+
 					</div>
 				
 				</div>

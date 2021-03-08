@@ -149,12 +149,18 @@ class SocialPostContainer extends Component {
 			})
 			.then((response) => {
 
-				console.log('response.data')
-				console.log(response.data)
+				// console.log('response.data')
+				// console.log(response.data)
 
 				append_fetched_socialposts_callback(response)
 				set_state_for_requests_made()
 				addEventListenerCallback()
+
+			// if no new posts being given, remove the onScroll function for making requests
+				if(response.data.length === 0){
+					console.log('no new posts recieved')
+					window.removeEventListener("scroll", this.onScroll);
+				}
 
 			})
 			.catch((error) => {

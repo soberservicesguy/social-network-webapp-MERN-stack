@@ -465,7 +465,14 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 		// console.log('friends')
 		// console.log(friends)
 
-		let all_friends = await Promise.all(friends.map(async (friend) => {
+
+		let send_posts = true
+
+		// let all_friends = await Promise.all(friends.map(async (friend) => {
+		{(async () => {
+			for (let i = 0; i < friends.length; i++) {
+				let friend = friends[i]
+
 
 			// var friend = await User.findOne({_id: friend_id})
 
@@ -496,6 +503,28 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 			}
 
+			console.log('req.query.request_number')
+			console.log(req.query.request_number)
+
+			let activities_for_first_request = last_n_activities_of_friend.slice(1).slice(-posts_to_show_per_friend)
+			let activities_for_subsequent_request = last_n_activities_of_friend.slice(1).slice( -posts_to_show_per_friend * req.query.request_number, -posts_to_show_per_friend * (req.query.request_number-1)  )
+
+			let new_activities = activities_for_subsequent_request.filter(
+				function(item){
+					return !activities_for_first_request.includes(item)
+				}
+			)
+
+
+			if (req.query.request_number > 1 && new_activities.length === 0){
+
+				console.log('SAME ACTIVITIES TO SEND, THEREFORE NOT SENDING')
+				res.status(200).json([])
+				send_posts = false
+				break
+			}
+
+
 			// console.log('last_n_activities_of_friend')
 			// console.log(last_n_activities_of_friend)
 
@@ -504,14 +533,16 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 				activity = await Activity.findOne({_id: activity})
 
-				// console.log('activity')
-				// console.log(activity)
+				console.log('activity.timestamp')
+				console.log(activity.timestamp)
+
+				console.log({last_timestamp_of_checking_notification})
 
 				let post_details = {}
 				post_details = { friends_user_name, friends_user_avatar_image: base64_encode(friends_user_avatar_image), friend_endpoint }
 
-				// if ( last_timestamp_of_checking_notification !== null && activity.timestamp > last_timestamp_of_checking_notification ){
-
+				if ( last_timestamp_of_checking_notification !== null && Number(activity.timestamp) < Number(last_timestamp_of_checking_notification) ){
+					console.log('INNER TRIGGERED')
 					let { activity_type } = activity
 					let user_owning_post
 
@@ -686,17 +717,23 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 						default:
 							null
 					}
-				// }
+				}
 			}))
-		}))
 
-		user_checking_others_posts.last_timestamp_of_checking_notification = new Date()
-		await user_checking_others_posts.save()
+		// })) of .map
+			}
+		})()}
 
-		// console.log('activities_to_send')
-		// console.log(activities_to_send)
 
-		res.status(200).json(activities_to_send)
+		if(send_posts){
+			user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
+			await user_checking_others_posts.save()
+
+			// console.log('activities_to_send')
+			// console.log(activities_to_send)
+
+			res.status(200).json(activities_to_send)
+		}
 
 	} catch (err) {
 

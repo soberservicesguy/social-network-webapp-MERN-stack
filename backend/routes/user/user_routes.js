@@ -11,6 +11,18 @@ const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
 const get_allowed_privileges_list = require("../../handy_functions/get_allowed_privileges_list")
 
+require('../../models/socialpost');
+require('../../models/advertisement');
+require('../../models/book');
+require('../../models/page');
+require('../../models/sport');
+const SocialPost = mongoose.model('SocialPost');
+const Advertisement = mongoose.model('Advertisement');
+const Book = mongoose.model('Book');
+const Page = mongoose.model('Page');
+const Sport = mongoose.model('Sport');
+
+
 const multer = require('multer');
 const path = require('path');
 
@@ -429,6 +441,41 @@ router.get('/delete-all-users', async (req, res, next) => {
 
 	await User.deleteMany({}, ()=>null)
 	res.status(200).json({ success: true, message: 'all users deleted'});
+
+});
+
+router.get('/delete-all-socialposts', async (req, res, next) => {
+
+	await SocialPost.deleteMany({}, ()=>null)
+	res.status(200).json({ success: true, message: 'all soocialposts deleted'});
+
+});
+
+router.get('/delete-all-books', async (req, res, next) => {
+
+	await Book.deleteMany({}, ()=>null)
+	res.status(200).json({ success: true, message: 'all books deleted'});
+
+});
+
+router.get('/delete-all-pages', async (req, res, next) => {
+
+	await Page.deleteMany({}, ()=>null)
+	res.status(200).json({ success: true, message: 'all pages deleted'});
+
+});
+
+router.get('/delete-all-sports', async (req, res, next) => {
+
+	await Sport.deleteMany({}, ()=>null)
+	res.status(200).json({ success: true, message: 'all sports deleted'});
+
+});
+
+router.get('/delete-all-ads', async (req, res, next) => {
+
+	await Advertisement.deleteMany({}, ()=>null)
+	res.status(200).json({ success: true, message: 'all ads deleted'});
 
 });
 
