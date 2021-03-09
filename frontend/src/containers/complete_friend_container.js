@@ -19,6 +19,9 @@ import {
 	Link,
 } from "react-router-dom";
 
+import {
+	InnerNavigation,
+} from "./"
 
 class CompleteFriendsContainer extends Component {
 	constructor(props) {
@@ -54,25 +57,62 @@ class CompleteFriendsContainer extends Component {
 		this.resizeHandler();
 		window.addEventListener('resize', this.resizeHandler);
 
+		let set_friends_suggestions_callback = (response) => this.props.set_friends_suggestions(response.data.friend_suggestions)
+		let set_friends_list_callback = (response) => this.props.set_friends(response.data.friends_list)
+		let set_friends_requests_callback = (response) => this.props.set_friends_requests(response.data.friends_requests)
+
 // FETCHING DATA FOR COMPONENT
-		axios.get(utils.baseUrl + '/books/books-list-with-children',)
+		axios.get(utils.baseUrl + '/users/friend-suggestions',)
 		.then((response) => {
-			this.props.set_fetched_books(response.data)
+			if (response.data.success){
+				console.log('GOT FRIEND SUGGESTIONS')
+				console.log(response.data.friend_suggestions)
+				set_friends_suggestions_callback(response)
+
+				console.log('this.props.list_of_friend_suggestions')
+				console.log(this.props.list_of_friend_suggestions)
+
+			}
 		})
 		.catch((error) => {
+			console.log('ERROR FRIEND SUGGESTIONS')
 			console.log(error);
 		})
 
-
-	}
-	get_10_more_items() {
-		axios.get(utils.baseUrl + `/books/books-list-next-10-with-children`)
+		axios.get(utils.baseUrl + '/users/friend-requests',)
 		.then((response) => {
-			this.props.set_fetched_10_more_book(response.data)
+			if (response.data.success){
+				console.log('GOT FRIEND REQUESTS')
+				console.log(response.data.friends_requests)
+				set_friends_requests_callback(response)
+
+				console.log('this.props.list_of_friend_requests')
+				console.log(this.props.list_of_friend_requests)
+
+			}
 		})
 		.catch((error) => {
+			console.log('ERROR FRIEND REQUESTS')
 			console.log(error);
-		})		
+		})
+
+		axios.get(utils.baseUrl + '/users/friends-list',)
+		.then((response) => {
+			if (response.data.success){				
+				console.log('GOT FRIEND LIST')
+				console.log(response.data.friends_list)
+				set_friends_list_callback(response)
+
+				console.log('this.props.list_of_friends')
+				console.log(this.props.list_of_friends)
+
+			}
+		})
+		.catch((error) => {
+			console.log('ERROR FRIEND LIST')
+			console.log(error);
+		})
+
 	}
 
 // RENDER METHOD
@@ -221,16 +261,14 @@ class CompleteFriendsContainer extends Component {
 
 		}			
 
-		// var friends_list = this.props.all_friends
+		var all_friends = this.props.list_of_friends
+		var friend_suggestions = this.props.list_of_friend_suggestions
+		var friend_requests = this.props.list_of_friend_requests
 
 		// var base64Image = "data:image/jpeg;base64," + this.props.current_image
 
-		// let all_friends = this.props.all_friends
-		let all_friends = [1,2,3,4,5,6,7,8,9,10]
 		// let total_books = this.props.total_books
 		let total_books = [1,2,3,4,5,6,7,8,9,10]
-		// let friend_suggestions = this.props.friend_suggestions
-		let friend_suggestions = [1,2,3,4,5,6,7,8,9,10]
 
 		return (
 
@@ -247,51 +285,7 @@ class CompleteFriendsContainer extends Component {
 						</div>
 					</Grid>
 
-
-					<Grid item xs={12}>
-						<div>
-							<div style={{backgroundColor: 'white'}}>
-								<div style={styles.upperMenu}>
-									<div style={styles.upperMenuButtonContainer}>
-										<Link to="/timeline">
-											<p style={styles.menuText}>
-												Timeline
-											</p>
-										</Link>
-									</div>
-
-									<div style={styles.upperMenuButtonContainer}>
-										<Link to="/about-me">
-											<p style={styles.menuText}>
-												About
-											</p>
-										</Link>
-									</div>
-
-									<div style={styles.upperMenuButtonContainer}>
-										<Link to="/friends">
-											<p style={{...styles.menuText, color:utils.maroonColor}}>
-												Friends
-											</p>
-										</Link>
-									</div>
-
-									<div style={styles.upperMenuButtonRoundButtonContainer}>
-										<Link to="/edit-profile">
-											<div style={styles.roundButtonWrapper}>
-												<p style={styles.menuRoundButtonText}>
-													Edit Profile
-												</p>
-											</div>
-										</Link>
-									</div>
-
-								</div>
-							</div>
-						</div>
-					</Grid>
-
-
+					<InnerNavigation/>
 
 					<div style={{
 						width:'85%',
@@ -330,7 +324,6 @@ class CompleteFriendsContainer extends Component {
 					</div>
 
 
-
 				{/*Friends Section starts here*/}
 					<div style={{
 						paddingTop:20,
@@ -355,7 +348,8 @@ class CompleteFriendsContainer extends Component {
 											<div style={{...styles.blockChildrenInnerContainer, paddingLeft:20}}>
 												<ConnectedComponentForShowingFriend
 													dataPayloadFromParent = { item }
-													// showFriendsSuggestionsInstead = {true}
+													showFriendsSuggestionsInstead = {false}
+													showFriendsRequestInstead = {false}
 												/>
 											</div>
 										</Grid>
@@ -403,6 +397,7 @@ class CompleteFriendsContainer extends Component {
 												<ConnectedComponentForShowingFriend
 													dataPayloadFromParent = { item }
 													showFriendsSuggestionsInstead = {true}
+													showFriendsRequestInstead = {false}
 												/>
 											</div>
 										</Grid>
@@ -421,6 +416,52 @@ class CompleteFriendsContainer extends Component {
 						</Grid>
 					</div>
 				{/*Friends suggestions Section ends here*/}
+
+
+				{/*Friends Requests section starts here*/}
+					<div style={{
+						paddingTop:20,
+						width:'85%',
+						margin:'auto',
+						marginTop:20,
+						backgroundColor: 'white',
+					}}>
+						<Grid container direction="column">
+							<Grid item xs={12}>
+								<div style={styles.headingForBlockContainer}>
+									<p style={styles.headingForBlockText}>
+										Friends Requests
+									</p>
+								</div>
+							</Grid>
+
+							<Grid container direction="row">
+								{friend_requests.map((item, index) => {
+									return (
+										<Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
+											<div style={{...styles.blockChildrenInnerContainer, paddingLeft:20}}>
+												<ConnectedComponentForShowingFriend
+													dataPayloadFromParent = { item }
+													showFriendsSuggestionsInstead = {false}
+													showFriendsRequestInstead = {true}
+												/>
+											</div>
+										</Grid>
+									)
+								})}
+							</Grid>
+
+							<Grid item xs={12}>
+								<button style={styles.blockBottomButton}>
+									<p style={styles.blockBottomButtonText}>
+										Load More
+									</p>
+								</button>
+							</Grid>
+
+						</Grid>
+					</div>
+				{/*Friends Requests section ends here*/}
 
 
 				</div>

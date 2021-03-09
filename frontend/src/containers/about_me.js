@@ -21,6 +21,9 @@ import {
 	Link,
 } from "react-router-dom";
 
+import {
+	InnerNavigation,
+} from "./"
 
 class AboutMeContainer extends Component {
 	constructor(props) {
@@ -262,14 +265,14 @@ class AboutMeContainer extends Component {
 
 		}			
 
-		// var friends_list = this.props.all_friends
+		var all_friends = this.props.list_of_friends
 
 		var base64CoverImage = "data:image/jpeg;base64," + this.props.user_cover_image
 
 		var base64AvatarImage = "data:image/jpeg;base64," + this.props.user_avatar_image
 
 		// let all_friends = this.props.all_friends
-		let all_friends = [1,2,3,4,5,6,7,8,9,10]
+		// let all_friends = [1,2,3,4,5,6,7,8,9,10]
 		// let total_books = this.props.total_books
 		let total_books = [1,2,3,4,5,6,7,8,9,10]
 
@@ -288,51 +291,7 @@ class AboutMeContainer extends Component {
 						</div>
 					</Grid>
 
-
-					<Grid item xs={12}>
-						<div>
-							<div style={{backgroundColor: 'white'}}>
-								<div style={styles.upperMenu}>
-									<div style={styles.upperMenuButtonContainer}>
-										<Link to="/timeline">
-											<p style={styles.menuText}>
-												Timeline
-											</p>
-										</Link>
-									</div>
-
-									<div style={styles.upperMenuButtonContainer}>
-										<Link to="/about-me">
-											<p style={{...styles.menuText, color:utils.maroonColor}}>
-												About
-											</p>
-										</Link>
-									</div>
-
-									<div style={styles.upperMenuButtonContainer}>
-										<Link to="/friends">
-											<p style={styles.menuText}>
-												Friends
-											</p>
-										</Link>
-									</div>
-
-									<div style={styles.upperMenuButtonRoundButtonContainer}>
-										<Link to="/settings">
-											<div style={styles.roundButtonWrapper}>
-												<p style={styles.menuRoundButtonText}>
-													Edit Profile
-												</p>
-											</div>
-										</Link>
-									</div>
-
-								</div>
-							</div>
-						</div>
-					</Grid>
-
-
+					<InnerNavigation/>
 
 					<div style={{
 						width:'85%',
@@ -517,6 +476,8 @@ class AboutMeContainer extends Component {
 												<ConnectedComponentForShowingFriend
 													dataPayloadFromParent = { item }
 													// showFriendsSuggestionsInstead = {true}
+													showFriendsSuggestionsInstead = {false}
+													showFriendsRequestInstead = {false}
 												/>
 											</div>
 										</Grid>

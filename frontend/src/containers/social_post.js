@@ -209,9 +209,9 @@ class SocialPostContainer extends Component {
 
 							return(
 								<Grid item key={String(item.key)}>
-									<div>
+									{/*<div>
 										{item.key}
-									</div>
+									</div>*/}
 									<ConnectedSocialPostCard
 										dataPayloadFromParent = { item }
 

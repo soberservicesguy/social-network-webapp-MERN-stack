@@ -64,6 +64,8 @@ class NotificationsContainer extends Component {
 
 				} else {
 
+					console.log('Notifications recieved')
+					console.log(response.data.length)
 					append_fetched_notifications_callback(response)
 					set_state_for_requests_made()
 
@@ -79,8 +81,9 @@ class NotificationsContainer extends Component {
 	}
 
 	componentDidMount() {
-		this.getNotifications()
 		this.props.set_fetched_notifications([])
+		this.setState(prev => ({...prev, no_more_notifications_from_backend: false }))
+		this.getNotifications()
 	}
 
 	toggle_notification_modal(){
@@ -125,7 +128,7 @@ class NotificationsContainer extends Component {
 
 			<Grid container direction="column">
 
-				<div style={{backgroundColor: 'white', paddingLeft:20, paddingRight:20}}>
+				<div style={{backgroundColor: 'white', paddingLeft:20, paddingRight:20, margin:'auto'}}>
 
 					<button onClick={() => this.toggle_notification_modal()}
 						style={{
@@ -135,8 +138,9 @@ class NotificationsContainer extends Component {
 						}}
 					>
 						<div style={{
-							width:'8%', 
-							margin:'auto',
+							// width:'8%', 
+							// margin:'auto',
+							textAlign:'center'
 
 						}}>
 							<img src={utils.image} alt="" 
@@ -155,7 +159,7 @@ class NotificationsContainer extends Component {
 					<div style={{
 						position:'absolute',
 						backgroundColor: 'white',
-						width:'15%',
+						width:(_xs || _sm ) ? '30%' : '15%',
 						opacity: (this.state.show_notifications_modal) ? 1 : 0,
 						borderWidth:1,
 						borderColor:'#eee',

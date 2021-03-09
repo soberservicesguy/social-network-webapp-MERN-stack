@@ -22,6 +22,9 @@ import {
 	Link,
 } from "react-router-dom";
 
+import {
+	InnerNavigation,
+} from "./"
 
 class TimelineContainer extends Component {
 	constructor(props) {
@@ -252,51 +255,7 @@ class TimelineContainer extends Component {
 						</div>
 					</Grid>
 
-
-					<Grid item xs={12}>
-						<div>
-							<div style={{backgroundColor: 'white'}}>
-								<div style={styles.upperMenu}>
-									<div style={styles.upperMenuButtonContainer}>
-										<Link to="/timeline">
-											<p style={{...styles.menuText, color:utils.maroonColor}}>
-												Timeline
-											</p>
-										</Link>
-									</div>
-
-									<div style={styles.upperMenuButtonContainer}>
-										<Link to="/about-me">
-											<p style={styles.menuText}>
-												About
-											</p>
-										</Link>
-									</div>
-
-									<div style={styles.upperMenuButtonContainer}>
-										<Link to="/friends">
-											<p style={styles.menuText}>
-												Friends
-											</p>
-										</Link>
-									</div>
-
-									<div style={styles.upperMenuButtonRoundButtonContainer}>
-										<Link to="/edit-profile">
-											<div style={styles.roundButtonWrapper}>
-												<p style={styles.menuRoundButtonText}>
-													Edit Profile
-												</p>
-											</div>
-										</Link>
-									</div>
-
-								</div>
-							</div>
-						</div>
-					</Grid>
-
-
+					<InnerNavigation/>
 
 					<div style={{
 						width:'85%',

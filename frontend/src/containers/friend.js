@@ -94,15 +94,6 @@ class FriendsContainer extends Component {
 
 
 	}
-	get_10_more_items() {
-		axios.get(utils.baseUrl + `/books/books-list-next-10-with-children`)
-		.then((response) => {
-			this.props.set_fetched_10_more_book(response.data)
-		})
-		.catch((error) => {
-			console.log(error);
-		})		
-	}
 
 // RENDER METHOD
 	render() {
@@ -188,7 +179,7 @@ class FriendsContainer extends Component {
 }
 
 FriendsContainer.defaultProps = {
-	showFriendsSuggestionsInstead:true,
+	showFriendsSuggestionsInstead:false,
 	showFriendsRequestInstead:false,
 };
 

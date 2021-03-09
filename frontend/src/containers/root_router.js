@@ -62,7 +62,7 @@ class RootRouterContainer extends Component {
 			<Router>
 				<div>
 
-					<MyResponsiveNavigation/>
+					{/*<MyResponsiveNavigation/>*/}
 
 					<Switch>
 
@@ -76,6 +76,7 @@ class RootRouterContainer extends Component {
 						</Route>
 
 						<Route exact path="/" render={() => (
+
 							(this.props.isSignedIn) ? (
 								<Redirect to="/socialposts"/>
 							) : (
@@ -84,112 +85,168 @@ class RootRouterContainer extends Component {
 						)}/>
 
 						<Route exact path="/settings" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedSettingsContainer/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedSettingsContainer/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/socialposts" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedSocialPostContainer/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedSocialPostContainer/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/socialposts/:id" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedIndividualSocialPost/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedIndividualSocialPost/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/about-me" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedAboutMeContainer/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedAboutMeContainer/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/friends" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedCompleteFriendsContainer/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedCompleteFriendsContainer/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/timeline" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedTimelineContainer/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedTimelineContainer/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/advertisements" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedAdvertisementContainer/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedAdvertisementContainer/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/advertisements/:id" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedIndividualAdvertisement/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedIndividualAdvertisement/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/pages" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedPageContainer/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedPageContainer/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/pages/:id" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedIndividualPage/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedIndividualPage/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/books" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedBookContainer/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedBookContainer/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/books/:id" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedIndividualBook/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedIndividualBook/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/sports" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedSportContainer/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedSportContainer/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)
 						)}/>
 
 						<Route exact path="/sports/:id" render={() => (
+
 							(this.props.isSignedIn) ? (
-								<ConnectedIndividualSport/>
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedIndividualSport/>
+								</React.Fragment>
 							) : (
 								<Redirect to="/login"/>
 							)

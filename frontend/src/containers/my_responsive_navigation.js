@@ -70,27 +70,12 @@ class MyResponsiveNavigation extends Component {
 	  		</div>
   		)
 
-  // 		let notification_logo = (
-  // 			<div style={{width:'8%', margin:'auto'}}>
-  // 				<img src={utils.image} alt="" 
-  // 					style={{
-  // 						width:70, 
-  // 						height:70, 
-  // 						resizeMode: "stretch",
-  // 						borderRadius: 70/2,
-  // 						marginBottom:20,
-  // 					}}
-  // 				/>
-  // 			</div>
-		// )
-
 		return (
 
 			<div style={{
-				// backgroundColor: 'blue',
 				paddingTop:20,
 				paddingBottom:20,
-				opacity:(pathname === '/login' || pathname === '/signup') ? 0 : 1
+				// opacity:(pathname === '/login' || pathname === '/signup') ? 0 : 1 // NOT NEEDED SINCE ITS ASSIGNED TO EACH ROUTE SEPARATELY
 			}}>			
 				<Grid container direction="row" alignItems="center">
 					
@@ -120,7 +105,7 @@ class MyResponsiveNavigation extends Component {
 						
 									} else if (item.option_name === 'Notifications'){
 
-										return(										
+										return(
 											<ConnectedNotificationsContainer/>
 										)
 										
