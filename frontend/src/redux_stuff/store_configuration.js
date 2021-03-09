@@ -53,7 +53,7 @@ export const mapStateToProps = state => {
 		list_of_friend_requests: state.all_users.requests,
 
 
-		total_notifications:state.notifications.all_notifications,
+		notifications_list:state.notifications.all_notifications,
 
 		show_socialpost_comments:state.socialposts.showOnlyCommentsQuantityForSocialPost,
 
@@ -106,7 +106,7 @@ export const mapDispatchToProps = dispatch => {
 		set_friends_requests: (args_list) => dispatch( { type: "SET_FRIENDS_REQUESTS", args_list: args_list } ),
 
 		set_fetched_notifications: (notifications_list) => dispatch( { type: "SET_FETCHED_NOTIFICATIONS", notifications_list: notifications_list } ),
-
+		append_fetched_notifications: (notifications_list) => dispatch( { type: "APPEND_FETCHED_NOTIFICATIONS", notifications_list: notifications_list } ),
 // user
 		set_is_signed_in: (booleon) => dispatch( { type:"SET_IS_SIGNED_IN", booleon: booleon } ),
 		set_user_token: (token) => dispatch( { type:"SET_USER_TOKEN", token: token } ),

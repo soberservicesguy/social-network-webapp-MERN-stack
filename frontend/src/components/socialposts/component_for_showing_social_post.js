@@ -563,8 +563,19 @@ class ComponentForShowingSocialPost extends Component {
 				{(() => {
 
 				// created_post section
+					if (data.message){
 
-					if (data.notification_type === 'created_post' && data.type_of_post === 'text_post'){
+						return (
+							<div style={{
+								margin:'auto', 
+								width:'50%',
+								marginTop:50,
+							}}>
+								<p style={{fontSize:20, fontStyle:'italic', fontWeight:'bold' }}>There are no new posts to show</p>
+							</div>
+						)
+
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'text_post'){
 
 						return (
 							<div style={styles.outerContainer}>

@@ -28,6 +28,7 @@ const initialState = {
 	}
 
 const reducerForSocialPost = (state = initialState, action) => {
+
 	let list_with_key = []
 	let last_key
 

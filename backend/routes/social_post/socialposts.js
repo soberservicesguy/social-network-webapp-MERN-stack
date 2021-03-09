@@ -468,8 +468,12 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 		let send_posts = true
 
+		let list_of_promises = []
+
 		// let all_friends = await Promise.all(friends.map(async (friend) => {
-		{(async () => {
+		list_of_promises.push((async () => {
+
+
 			for (let i = 0; i < friends.length; i++) {
 				let friend = friends[i]
 
@@ -533,17 +537,18 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 				activity = await Activity.findOne({_id: activity})
 
-				console.log('activity.timestamp')
-				console.log(activity.timestamp)
+				// console.log('activity.timestamp')
+				// console.log(activity.timestamp)
 
-				console.log({last_timestamp_of_checking_notification})
+				// console.log({last_timestamp_of_checking_notification})
 
 				let post_details = {}
-				post_details = { friends_user_name, friends_user_avatar_image: base64_encode(friends_user_avatar_image), friend_endpoint }
+				post_details = { friends_user_name, friends_user_avatar_image: base64_encode(friends_user_avatar_image), friend_endpoint, timestamp:activity.timestamp }
 
 				if ( last_timestamp_of_checking_notification !== null && Number(activity.timestamp) < Number(last_timestamp_of_checking_notification) ){
-					console.log('INNER TRIGGERED')
+					// console.log('INNER TRIGGERED')
 					let { activity_type } = activity
+					console.log({activity_type})
 					let user_owning_post
 
 					switch (activity_type) {
@@ -583,13 +588,17 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							post_details = await get_post_details(type_of_post, post_created, post_details)
 							// console.log('post_details')
 							// console.log(post_details)
+							console.log('PUSHED')
 							activities_to_send.push(post_details)
 							break
 
 						case "liked_post":
 
 							var { post_liked } = activity
+							console.log('post_liked')
+							console.log(post_liked)
 							post_liked = await SocialPost.findOne({_id: post_liked})
+							console.log(post_liked)
 							var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_liked
 							// incorporating notification_type
 							post_details = { ...post_details, notification_type:'liked_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
@@ -722,18 +731,30 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 		// })) of .map
 			}
-		})()}
+		})())
 
 
-		if(send_posts){
-			user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
-			await user_checking_others_posts.save()
+	// sort activities with time as latest
+		activities_to_send = activities_to_send.sort(function sortActivitiesByTimestamp(a, b) {
+			a = Number(a.timestamp)
+			b = Number(b.timestamp)
+			return b - a
+		});
 
-			// console.log('activities_to_send')
-			// console.log(activities_to_send)
+		Promise.all(list_of_promises)
+		.then(async () => {
 
-			res.status(200).json(activities_to_send)
-		}
+			if(send_posts){
+				user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
+				await user_checking_others_posts.save()
+
+				console.log('activities_to_send')
+				console.log(activities_to_send.length)
+
+				res.status(200).json(activities_to_send)
+			}
+
+		})
 
 	} catch (err) {
 
@@ -741,6 +762,263 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 	}
 })
+
+
+
+// USED 
+// get posts from friends for wall
+router.get('/get-notifications-from-friends', passport.authenticate('jwt', { session: false }), async function(req, res, next){
+
+	let posts_to_show_per_friend = 5
+
+	try{
+
+		let user_checking_others_posts = await User.findOne({ phone_number: req.user.user_object.phone_number }).populate('friends') // using req.user from passport js middleware
+		let { friends, last_timestamp_of_checking_notification } =  user_checking_others_posts
+
+		let activities_to_send = []
+
+		// console.log('friends')
+		// console.log(friends)
+
+
+		let send_posts = true
+
+		let list_of_promises = []
+
+		// let all_friends = await Promise.all(friends.map(async (friend) => {
+		list_of_promises.push((async () => {
+			for (let i = 0; i < friends.length; i++) {
+				let friend = friends[i]
+
+
+			// var friend = await User.findOne({_id: friend_id})
+
+			// access friend data here
+			var { user_name, user_avatar_image } = friend
+			let friends_user_name = user_name
+			let friends_user_avatar_image = user_avatar_image
+			let friend_endpoint = friend.endpoint
+
+			// we have reduced activities link for each user to last 50 in user model
+			let last_n_activities_of_friend = friend.activities
+
+			// console.log('req.query.request_number')
+			// console.log(req.query.request_number)
+
+			// console.log('friend.activities')
+			// console.log(friend.activities)
+
+			if ( req.query.request_number === 1 ){
+				
+				// last_n_activities_of_friend = friend.activities.slice(1).slice(-posts_to_show_per_friend)
+				last_n_activities_of_friend.slice(1).slice(-posts_to_show_per_friend)
+
+			} else {
+
+				// last_n_activities_of_friend = friend.activities.slice(1).slice( -posts_to_show_per_friend * req.query.request_number, -posts_to_show_per_friend * (req.query.request_number-1)  )
+				last_n_activities_of_friend.slice(1).slice( -posts_to_show_per_friend * req.query.request_number, -posts_to_show_per_friend * (req.query.request_number-1)  )
+
+			}
+
+			console.log('req.query.request_number')
+			console.log(req.query.request_number)
+
+			let activities_for_first_request = last_n_activities_of_friend.slice(1).slice(-posts_to_show_per_friend)
+			let activities_for_subsequent_request = last_n_activities_of_friend.slice(1).slice( -posts_to_show_per_friend * req.query.request_number, -posts_to_show_per_friend * (req.query.request_number-1)  )
+
+			let new_activities = activities_for_subsequent_request.filter(
+				function(item){
+					return !activities_for_first_request.includes(item)
+				}
+			)
+
+
+			if (req.query.request_number > 1 && new_activities.length === 0){
+
+				console.log('SAME ACTIVITIES TO SEND, THEREFORE NOT SENDING')
+				res.status(200).json([])
+				send_posts = false
+				break
+			}
+
+
+			// console.log('last_n_activities_of_friend')
+			// console.log(last_n_activities_of_friend)
+
+			// let all_activities = await Promise.all(friend.activities.map(async (activity) => {
+			let all_activities = await Promise.all(last_n_activities_of_friend.map(async (activity) => {
+
+				activity = await Activity.findOne({_id: activity})
+
+				console.log('activity.timestamp')
+				console.log(activity.timestamp)
+
+				console.log({last_timestamp_of_checking_notification})
+
+				let post_details = {}
+				post_details = { friends_user_name, friends_user_avatar_image: base64_encode(friends_user_avatar_image), friend_endpoint, timestamp:activity.timestamp }
+
+				if ( last_timestamp_of_checking_notification !== null && Number(activity.timestamp) < Number(last_timestamp_of_checking_notification) ){
+					console.log('INNER TRIGGERED')
+					let { activity_type } = activity
+					let user_owning_post
+
+					switch (activity_type) {
+
+						case "created_post":
+
+							var { post_created } = activity
+							post_created = await SocialPost.findOne({_id: post_created})
+							var { type_of_post, endpoint } = post_created
+							post_details = { ...post_details, notification_type:'created_post', activity_type, type_of_post, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "liked_post":
+
+							var { post_liked } = activity
+							post_liked = await SocialPost.findOne({_id: post_liked})
+							var { type_of_post, endpoint } = post_liked
+							post_details = { ...post_details, notification_type:'liked_post', activity_type, type_of_post, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "shared_post":
+
+							var { post_share } = activity
+							post_share = await SocialPost.findOne({_id: post_share})
+							var { type_of_post, endpoint } = post_share
+							post_details = { ...post_details, notification_type:'shared_post', activity_type, type_of_post, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "commented_on_post":
+
+							var { post_commented } = activity
+							let original_post = post_commented.socialpost
+							original_post = await SocialPost.findOne({_id: original_post})
+							var { type_of_post, endpoint } = original_post
+							post_details = { ...post_details, notification_type:'commented_on_post', activity_type, comment_text, type_of_post, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "created_book":
+
+							let { book_created } = activity
+							book_created = await Book.findOne({_id: book_created})
+							var { endpoint } = book_created
+							post_details = { ...post_details, notification_type:'created_book', activity_type, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "got_interested_in_book":
+
+							let { book_liked } = activity
+							book_liked = await Book.findOne({_id: book_liked})
+							var { endpoint } = book_liked
+							post_details = { ...post_details, notification_type:'got_interested_in_book', activity_type, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "created_page":
+
+							let { page_created } = activity
+							page_created = await Page.findOne({_id: page_created})
+							var { endpoint } = page_created
+							post_details = { ...post_details, notification_type:'created_page', activity_type, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "got_interested_in_page":
+
+							let { page_liked } = activity
+							page_liked = await Page.findOne({_id: page_liked})
+							var { endpoint } = page_liked
+							post_details = { ...post_details, notification_type:'got_interested_in_page', activity_type, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "created_sport":
+
+							let { sport_created } = activity
+							sport_created = await Sport.findOne({_id: sport_created})
+							var { endpoint } = sport_created
+							post_details = { ...post_details, notification_type:'created_sport', activity_type, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "got_interested_in_sport":
+
+							let { sport_liked } = activity
+							sport_liked = await Sport.findOne({_id: sport_liked})
+							var { endpoint } = sport_created
+							post_details = { ...post_details, notification_type:'got_interested_in_sport', activity_type, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "created_advertisement":
+
+							let { ad_created } = activity
+							ad_created = await Advertisement.findOne({_id: ad_created})
+							var { endpoint } = ad_created
+							post_details = { ...post_details, notification_type:'created_advertisement', activity_type, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						case "got_interested_in_advertisement":
+
+							let { ad_liked } = activity
+							ad_liked = await Advertisement.findOne({_id: ad_liked})
+							var { endpoint } = ad_liked
+							post_details = { ...post_details, notification_type:'got_interested_in_advertisement', activity_type, endpoint }
+							activities_to_send.push(post_details)
+							break
+
+						default:
+							null
+					}
+				}
+			}))
+
+		// })) of .map
+			}
+		})())
+
+
+	// sort activities with time as latest
+		activities_to_send = activities_to_send.sort(function sortActivitiesByTimestamp(a, b) {
+			a = Number(a.timestamp)
+			b = Number(b.timestamp)
+			return b - a
+		});
+
+		Promise.all(list_of_promises)
+		.then(async () => {
+
+			if(send_posts){
+				user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
+				await user_checking_others_posts.save()
+
+				console.log('activities_to_send')
+				console.log(activities_to_send.length)
+
+				res.status(200).json(activities_to_send)
+			}
+
+		})
+
+	} catch (err) {
+
+		console.log(err)
+
+	}
+})
+
+
+
+
+
 
 // get socialposts_list_with_children
 // USED
@@ -905,7 +1183,8 @@ router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { ses
 				_id: new mongoose.Types.ObjectId(),
 				user: user,
 				activity_type: 'commented_on_post',
-				post_commented: newComment,
+				post_commented: socialpost,
+				comment_link: newComment,
 			})
 			newActivity.save()
 			user.activities.push(newActivity)
@@ -1022,7 +1301,8 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 				_id: new mongoose.Types.ObjectId(),
 				user: user,
 				activity_type: 'liked_post',
-				post_liked: newLike,
+				post_liked: socialpost,
+				like_link: newLike,
 			})
 			newActivity.save()
 			user.activities.push(newActivity)
@@ -1140,7 +1420,8 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 				_id: new mongoose.Types.ObjectId(),
 				user: user,
 				activity_type: 'shared_post',
-				post_share: newShare,
+				post_share: socialpost,
+				share_link: newShare,
 			})
 			newActivity.save()
 			user.activities.push(newActivity)

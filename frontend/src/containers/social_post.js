@@ -20,7 +20,7 @@ import {
 	ConnectedAdvertisementContainer,
 	ConnectedPageContainer,
 
-	ConnectedNotificationsContainer,
+	// ConnectedNotificationsContainer,
 
 	ConnectedFriendsContainer,
 	ConnectedProfileHeader,
@@ -43,12 +43,10 @@ class SocialPostContainer extends Component {
 		}	
 	}
 
-	componentDidMount() {
+	getSocialposts(){
+
 		let backend_requests_made = this.state.backend_requests_made
-
-		this.props.set_fetched_socialposts([])
-
-		let set_fetched_socialposts_callback = (response) => this.props.set_fetched_socialposts(response.data)
+		let append_socialposts_callback = (response) => this.props.async_append_fetched_socialposts(response.data)
 		let addEventListenerCallback = () => window.addEventListener("scroll", this.onScroll, false);
 		let set_state_for_requests_made = () => {
 			this.setState(prev => ({...prev, 
@@ -64,19 +62,35 @@ class SocialPostContainer extends Component {
 		    }
 		})
 		.then((response) => {
-			
-			console.log('response.data')
-			console.log(response.data)
 
-			set_fetched_socialposts_callback(response)
-			set_state_for_requests_made()
-			addEventListenerCallback()
+			if(response.data.length === 0){
+
+				console.log('no more posts to show')
+				window.removeEventListener("scroll", this.onScroll);
+				append_socialposts_callback({data: [{message:'no more posts to show'}]})
+
+			} else {
+				console.log('posts recieved')
+				console.log(response.data)
+				append_socialposts_callback(response)
+				set_state_for_requests_made()
+				addEventListenerCallback()
+
+			}
 			
 		})
 		.catch((error) => {
 			console.log(error);
 		})
 
+	}
+
+	componentDidMount() {
+
+	// REMOVE BELOW LINE ONCE FIXED
+		this.props.set_fetched_socialposts([])
+		window.addEventListener("scroll", this.onScroll, false);
+		this.getSocialposts()
 	// dummy objects as fetched socialposts
 		// this.props.set_fetched_socialposts([
 		// 	{ type_of_post:'dummy1', post_text:'dummy1', image_for_post:'dummy1', video_for_post:'dummy1', video_thumbnail_image:'dummy1', total_likes:'dummy1', total_shares:'dummy1', endpoint:'dummy1', date_of_publishing:'dummy1',},
@@ -90,8 +104,6 @@ class SocialPostContainer extends Component {
 		// 	{ type_of_post:'dummy9', post_text:'dummy9', image_for_post:'dummy9', video_for_post:'dummy9', video_thumbnail_image:'dummy9', total_likes:'dummy9', total_shares:'dummy9', endpoint:'dummy9', date_of_publishing:'dummy9',},
 		// 	{  type_of_post:'dummy10', post_text:'dummy10', image_for_post:'dummy10', video_for_post:'dummy10', video_thumbnail_image:'dummy10', total_likes:'dummy10', total_shares:'dummy10', endpoint:'dummy10', date_of_publishing:'dummy10',},
 		// ]) // loading with empty since it was storing all objects reaching to 200
-
-		window.addEventListener("scroll", this.onScroll, false);
 	}
 
 	componentWillUnmount(){
@@ -130,43 +142,7 @@ class SocialPostContainer extends Component {
 		// }
 
 		// real social posts addition
-			let backend_requests_made = this.state.backend_requests_made
-
-			let append_fetched_socialposts_callback = (response) => this.props.async_append_fetched_socialposts(response.data)
-			let addEventListenerCallback = () => window.addEventListener("scroll", this.onScroll, false);
-			let set_state_for_requests_made = () => {
-				this.setState(prev => ({...prev, 
-					backend_requests_made: prev.backend_requests_made + 1,
-					tracked_container_height:this.social_posts_container.clientHeight,
-				}));
-			}
-
-			axios.get(utils.baseUrl + '/socialposts/get-socialposts-from-friends',
-			{
-			    params: {
-					request_number: backend_requests_made,
-			    }
-			})
-			.then((response) => {
-
-				// console.log('response.data')
-				// console.log(response.data)
-
-				append_fetched_socialposts_callback(response)
-				set_state_for_requests_made()
-				addEventListenerCallback()
-
-			// if no new posts being given, remove the onScroll function for making requests
-				if(response.data.length === 0){
-					console.log('no new posts recieved')
-					window.removeEventListener("scroll", this.onScroll);
-				}
-
-			})
-			.catch((error) => {
-				console.log(error);
-			})
-
+			this.getSocialposts()
 		}
 	}
 
@@ -265,7 +241,6 @@ class SocialPostContainer extends Component {
 							marginLeft:(_md || _lg || _xl) ? 30 : 0, 
 							marginRight:(_md || _lg || _xl) ? 30 : 0,
 						}}>
-							<ConnectedNotificationsContainer/>
 							<ConnectedAdvertisementContainer/>
 						</div>					
 					</Grid>

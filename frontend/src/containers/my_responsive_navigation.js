@@ -16,12 +16,16 @@ import {
 	Link,
 } from "react-router-dom";
 
+import {
+	ConnectedNotificationsContainer,
+} from "../redux_stuff/connected_components"
 
 class MyResponsiveNavigation extends Component {
 	constructor(props) {
 		super(props);
 // STATE	
 		this.state = {
+			backend_requests_made:1,
 		}	
 	}
 
@@ -50,7 +54,7 @@ class MyResponsiveNavigation extends Component {
 
 	  	]
 
-	  	const {pathname} = this.props.location;
+	  	const { pathname } = this.props.location;
 
 	  	let settings_logo = (
 	  		<div style={{width:'8%', margin:'auto'}}>
@@ -66,19 +70,19 @@ class MyResponsiveNavigation extends Component {
 	  		</div>
   		)
 
-  		let notification_logo = (
-  			<div style={{width:'8%', margin:'auto'}}>
-  				<img src={utils.image} alt="" 
-  					style={{
-  						width:70, 
-  						height:70, 
-  						resizeMode: "stretch",
-  						borderRadius: 70/2,
-  						marginBottom:20,
-  					}}
-  				/>
-  			</div>
-		)
+  // 		let notification_logo = (
+  // 			<div style={{width:'8%', margin:'auto'}}>
+  // 				<img src={utils.image} alt="" 
+  // 					style={{
+  // 						width:70, 
+  // 						height:70, 
+  // 						resizeMode: "stretch",
+  // 						borderRadius: 70/2,
+  // 						marginBottom:20,
+  // 					}}
+  // 				/>
+  // 			</div>
+		// )
 
 		return (
 
@@ -86,6 +90,7 @@ class MyResponsiveNavigation extends Component {
 				// backgroundColor: 'blue',
 				paddingTop:20,
 				paddingBottom:20,
+				opacity:(pathname === '/login' || pathname === '/signup') ? 0 : 1
 			}}>			
 				<Grid container direction="row" alignItems="center">
 					
@@ -116,7 +121,7 @@ class MyResponsiveNavigation extends Component {
 									} else if (item.option_name === 'Notifications'){
 
 										return(										
-											notification_logo
+											<ConnectedNotificationsContainer/>
 										)
 										
 									} else {

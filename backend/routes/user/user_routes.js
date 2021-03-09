@@ -16,6 +16,8 @@ require('../../models/advertisement');
 require('../../models/book');
 require('../../models/page');
 require('../../models/sport');
+require('../../models/activity');
+const Activity = mongoose.model('Activity');
 const SocialPost = mongoose.model('SocialPost');
 const Advertisement = mongoose.model('Advertisement');
 const Book = mongoose.model('Book');
@@ -275,7 +277,10 @@ router.post('/send-friend-request', passport.authenticate(['jwt'], { session: fa
 	console.log('INCOMING')
 
 	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
+	console.log({user})
 	let user_to_send_request = await User.findOne({ endpoint: req.body.endpoint })
+	console.log(req.body.endpoint)
+	console.log({user_to_send_request})
 
 	user.friend_requests_sent.push(user_to_send_request)
 
@@ -362,8 +367,8 @@ router.get('/friend-requests', passport.authenticate(['jwt'], { session: false }
 
 	}))
 
-	console.log('friends_requests sent')
-	console.log(friends_requests.length)
+	// console.log('friends_requests sent')
+	// console.log(friends_requests.length)
 	res.status(200).json({ success: true, friends_requests: friends_requests});
 
 })
@@ -428,6 +433,7 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 
 	}))
 
+
 	// console.log('friend_suggestions sent')
 	// console.log(friend_suggestions.length)
 	// friend_suggestions.map((sug) => {
@@ -436,6 +442,14 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 	// })
 	res.status(200).json({ success: true, friend_suggestions: friend_suggestions});
 });
+
+router.get('/delete-all-activities', async (req, res, next) => {
+
+	await Activity.deleteMany({}, ()=>null)
+	res.status(200).json({ success: true, message: 'all activities deleted'});
+
+});
+
 
 router.get('/delete-all-users', async (req, res, next) => {
 

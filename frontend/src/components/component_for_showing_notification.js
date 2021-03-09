@@ -1,3 +1,8 @@
+import { 
+	// withRouter,
+	Link,
+} from "react-router-dom";
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 					
@@ -34,939 +39,708 @@ class ComponentForShowingNotification extends Component {
 
 	}
 
-	switchToProperScreen(notification_type) {
-
-		let data = this.props.dataPayloadFromParent
-
-		let screen_name
-		let payload
-		
-		switch(notification_type){
-
-			case "created_post":
-
-				screen_name = 'Individual_SocialPost'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					type_of_post: data.type_of_post,
-					total_likes: data.total_likes,
-					total_shares: data.total_shares,
-					total_comments: data.total_comments,
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					post_text: data.post_text,
-				}
-
-				break
-
-			case "liked_post":
-
-				screen_name = 'Individual_SocialPost'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					type_of_post: data.type_of_post,
-					total_likes: data.total_likes,
-					total_shares: data.total_shares,
-					total_comments: data.total_comments,
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					post_text: data.post_text,
-				}
-
-				break
-
-			case "shared_post":
-				screen_name = 'Individual_SocialPost'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					type_of_post: data.type_of_post,
-					total_likes: data.total_likes,
-					total_shares: data.total_shares,
-					total_comments: data.total_comments,
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					post_text: data.post_text,
-				}
-
-				break
-
-			case "commented_on_post":
-
-				screen_name = 'Individual_SocialPost'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					type_of_post: data.type_of_post,
-					total_likes: data.total_likes,
-					total_shares: data.total_shares,
-					total_comments: data.total_comments,
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					post_text: data.post_text,
-				}
-
-				break
-
-			case "accepted_friend_request":
-
-				screen_name = 'SocialPost'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					type_of_post: data.type_of_post,
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					new_friend_endpoint: data.new_friend_endpoint, // this will be used to get his wall posts
-					new_friends_user_name: data.new_friends_user_name, // this will be used to generate his wall header
-					new_friends_avatar: data.new_friends_avatar, // this will be used to generate his wall header
-				}
-
-				break
-
-			case "created_book":
-
-				screen_name = 'Individual_Book'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					interested_users: data.interested_users, 
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					book_name: data.book_name, 
-					book_description: data.book_description, 
-					book_image: data.book_image, 
-				}
-
-				break
-
-			case "got_interested_in_book":
-
-				screen_name = 'Individual_Book'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					interested_users: data.interested_users, 
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					book_name: data.book_name, 
-					book_description: data.book_description, 
-					book_image: data.book_image, 
-				}
-
-			case "created_page":
-
-				screen_name = 'Individual_Page'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					interested_users: data.interested_users, 
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					page_name: data.page_name, 
-					page_description: data.page_description, 
-					page_image: data.page_image, 
-				}
-
-				break
-
-			case "got_interested_in_page":
-
-				screen_name = 'Individual_Page'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					interested_users: data.interested_users, 
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					page_name: data.page_name, 
-					page_description: data.page_description, 
-					page_image: data.page_image, 
-				}
-
-				break
-
-			case "created_sport":
-
-				screen_name = 'Individual_Sport'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					interested_users: data.interested_users, 
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					sport_name: data.sport_name, 
-					sport_description: data.sport_description, 
-					sport_image: data.sport_image, 
-				}
-
-				break
-
-			case "got_interested_in_sport":
-
-				screen_name = 'Individual_Sport'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					interested_users: data.interested_users, 
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					sport_name: data.sport_name, 
-					sport_description: data.sport_description, 
-					sport_image: data.sport_image, 
-				}
-
-				break
-
-			case "created_advertisement":
-
-				screen_name = 'Individual_Ad'
-
-				payload = {
-
-				// users data
-					user_name: data.user_name,
-					user_avatar_image: data.user_avatar_image,
-
-				// social stats
-					endpoint: data.endpoint,
-					// activity_type: activity_type,
-
-				// content to show
-					ad_name: data.ad_name, 
-					ad_description: data.ad_description, 
-					ad_image: data.ad_image, 
-				}
-
-				break
-
-			default:
-				// screen_name = 'Home'
-				// payload = {}
-		}
-		
-		this.props.navigation.navigate( screen_name, payload )		
-
-	}
-
 
 	render() {
 		const styles = {
-		// button
 			outerContainer:{
-				// flexDirection:'row',
-				justifyContent: 'center',
-				alignItems:'center',
-				height: 100,
-				width: '100%',
-				marginTop:10,
-				// marginBottom:10,
-				// borderBottomWidth: 1,
-				// borderBottomColor: utils.dimWhite,
-
+				width:'100%',
+				width:'95%',
+				margin:'auto',
+				marginTop:30,
+				paddingTop:30,
 			},
-
-			buttonWrapper:{
-	  			background:'none',
-	  			outline:'none',
-	  			border:'none',
-	  			width:'100%',
-	  		},
-
-			innerContainer:{
-				width: '100%',
-				alignSelf:'center',
+		// user name and avatar
+			avatarAndUsernameContainer:{
 				display:'flex',
-				flexDirection: 'row',
-				// backgroundColor: '#000000',
-				justifyContent: 'center',
-				alignItems:'center', 
+				flexDirection:'row',
+				alignItems:'flex-end',
 			},
-
-
-		// image
-			imageContainer:{
-				justifyContent: 'center', // vertically centered
-				alignSelf: 'center', // horizontally centered
-				// backgroundColor: '#eee',
+			avatarContainer:{
 				flex:1,
 			},
-			imageStyle:{
+			usernameContainer:{
+				flex:5,
+			},
+			avatarImage:{
+				width:80, 
+				height:80, 
 				resizeMode: "stretch",
-				height: 50,
-				width: 50,
-				borderRadius: 50/2,
+				borderRadius: 80/2,
+				// marginLeft:20,
 			},
-
-		// text
-			textContainer:{
-				flex:4,
-				marginLeft:15,
-				alignSelf:'center',
-				alignItems:'center',
-				justifyContent: 'center', 
-				// backgroundColor: '#000000',
-
-			},
-			nameText:{
-				fontSize:20,
+			usernameText:{
 				fontWeight:'bold',
-				textAlign:'left',
-				marginBottom:0,
+				fontSize:18,
+				paddingBottom:0,
+				marginBottom: 0,
 			},
-			activityText:{
-				fontSize:15,
-				fontStyle: 'italic', 
-				color:utils.darkBlue,
-				textAlign:'left',
-			},
-			newFriendsName:{
-				fontSize:20,
-				fontStyle: 'italic', 
-				color:utils.orange
-			},
-		// icon
-			iconContainer:{
-				flex:1,
-				// margin:'auto',
-				// backgroundColor: '#000000'
-			}
 
+		// post text
+			postTextContainer:{
+				marginTop:20,
+			},
+			postText:{
+				color:'dark-grey',
+			},
+
+		// post image
+			postImageContainer:{
+				marginTop:20,
+			},
+			postImage:{
+				width:'100%', 
+				height:300, 
+				resizeMode: "stretch"
+			},
+			postVideoContainer:{
+				marginTop:20,
+			}
 		}
+
 
 		let data = this.props.dataPayloadFromParent
 
-		let types = [
-			'created_post', 'liked_post', 'shared_post', 'commented_on_post', 
-			'sent_friend_request', // STOP BACKEND TO SEND THIS 
-			'accepted_friend_request',
-			'created_book', 'got_interested_in_book',
-			'created_page', 'got_interested_in_page',
-			'created_sport', 'got_interested_in_sport',
-			'created_advertisement',
-			 // 'got_interested_in_advertisement', STOP BACKEND TO SEND THIS
-		]
-
-		let componentToShow 
-
-		// switch(data.activity_type){
-		switch("created_post"){
-
-			case "created_post":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			created a post
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-					  		<Create style={{fontSize:30, color:'#f50'}}/>
-					  	</div>
-					  	
+	/* activity headers start here */
+		let user_activity_header_for_post_create = (
+	  		<Link 
+	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, }}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
 					</div>
-				)
-
-				break
-
-			case "liked_post":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			liked a post
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-							<ThumbUp style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created a<span style={{fontWeight:'normal', color:utils.maroonColor}}> post!</span>
+						</p>
 					</div>
-				)
+				</div>
+			</Link>
+		)
 
-				break
 
-			case "shared_post":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			shared a post
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<Share style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+		let user_activity_header_for_like = (
+	  		<Link 
+	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
 					</div>
-				)
-
-				break
-
-			case "commented_on_post":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			commented on a post
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<Comment style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked a<span style={{fontWeight:'normal', color:utils.maroonColor}}> post!</span>
+						</p>
 					</div>
-				)
+				</div>
+			</Link>
+		)
 
-				break
-
-			case "accepted_friend_request":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-				var base64ImageNewFriend = "data:image/jpeg;base64," + data.new_friends_avatar
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64ImageNewFriend}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			became friends with 
-			  		  		</p>
-	  		  				<p style={styles.newFriendsName}>
-				  		  		panda{data.new_friends_user_name}
-	  		  		  		</p>
-
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<FavoriteBorder style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+		let user_activity_header_for_share = (
+	  		<Link 
+	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
 					</div>
-				)
-
-				break
-
-			case "created_book":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-				var base64Book = "data:image/jpeg;base64," + data.book_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Book}} 
-								style={{...styles.imageStyle, borderRadius:0, width: 100}}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			created a book {data.book_name}
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<Book style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} shared a<span style={{fontWeight:'normal', color:utils.maroonColor}}> post!</span>
+						</p>
 					</div>
-				)
+				</div>
+			</Link>
+		)
 
-				break
-
-			case "got_interested_in_book":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-				var base64Book = "data:image/jpeg;base64," + data.book_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Book}} 
-								style={{...styles.imageStyle, borderRadius:0, width: 100}}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			likes book {data.book_name}
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<ThumbUp style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+		let user_activity_header_for_comment = (
+	  		<Link 
+	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
 					</div>
-				)
-
-				break
-
-			case "created_page":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-				var base64Page = "data:image/jpeg;base64," + data.page_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Page}} 
-								style={{...styles.imageStyle, borderRadius:0, width: 100}}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			created a page {data.page_name}
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<Pageview style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} commented on a<span style={{fontWeight:'normal', color:utils.maroonColor}}> post!</span>
+						</p>
 					</div>
-				)
+				</div>
+			</Link>
+		)
 
-				break
-
-			case "got_interested_in_page":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-				var base64Page = "data:image/jpeg;base64," + data.page_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Page}} 
-								style={{...styles.imageStyle, borderRadius:0, width: 100}}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			likes page {data.page_name}
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<ThumbUp style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+		let user_activity_header_for_book_creating = (
+	  		<Link 
+	  			to={`/books/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
 					</div>
-				)
-
-				break
-
-			case "created_sport":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-				var base64Sport = "data:image/jpeg;base64," + data.sport_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Sport}} 
-								style={{...styles.imageStyle, borderRadius:0, width: 100}}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			created sport {data.sport_name}
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<SportsFootball style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created a<span style={{fontWeight:'normal', color:utils.maroonColor}}> book title!</span>
+						</p>
 					</div>
-				)
+				</div>
+			</Link>
+		)
 
-				break
-
-			case "got_interested_in_sport":
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-				var base64Sport = "data:image/jpeg;base64," + data.sport_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Sport}} 
-								style={{...styles.imageStyle, borderRadius:0, width: 100}}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			likes sport {data.sport_name}
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<ThumbUp style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+		let user_activity_header_for_book_liking = (
+	  		<Link 
+	  			to={`/books/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
 					</div>
-				)
-
-				break
-
-			case "created_advertisement":
-
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-				var base64Ad = "data:image/jpeg;base64," + data.ad_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Ad}} 
-								style={{...styles.imageStyle, borderRadius:0, width: 100}}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			created advertisement
-			  		  		</p>
-						</div>
-					  	
-					  	<div style={styles.iconContainer}>
-
-					  		<FeaturedVideo style={{fontSize:30, color:'#f50'}}/>
-
-					  	</div>
-					  	
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked a<span style={{fontWeight:'normal', color:utils.maroonColor}}> book!</span>
+						</p>
 					</div>
-				)
+				</div>
+			</Link>
+		)
 
-				break
-
-			default:
-
-				var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
-
-				componentToShow = (
-
-					<div style={styles.innerContainer}>
-						<div style={styles.imageContainer}>
-							<img 
-								src={utils.image}
-								// src={{uri: base64Image}} 
-								style={styles.imageStyle}
-							/>
-						</div>
-
-						<div style={styles.textContainer}>
-							<p style={styles.nameText}>
-								arsalan {data.user_name} 
-					  		</p>
-			  				<p style={styles.activityText}>
-			  		  			{data.activity_type}
-			  		  		</p>
-						</div>
-					  	
-					  	
+		let user_activity_header_for_page_creating = (
+	  		<Link 
+	  			to={`/pages/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
 					</div>
-				)
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created a<span style={{fontWeight:'normal', color:utils.maroonColor}}> page!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
 
-		}
+		let user_activity_header_for_page_liking = (
+	  		<Link 
+	  			to={`/pages/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked a <span style={{fontWeight:'normal', color:utils.maroonColor}}> page!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_sport_creating = (
+	  		<Link 
+	  			to={`/sports/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created a<span style={{fontWeight:'normal', color:utils.maroonColor}}> sport activity!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_sport_liking = (
+	  		<Link 
+	  			to={`/sports/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked a<span style={{fontWeight:'normal', color:utils.maroonColor}}> sport!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_ad_creating = (
+	  		<Link 
+	  			to={`/ads/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} created an<span style={{fontWeight:'normal', color:utils.maroonColor}}> ad!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+
+		let user_activity_header_for_ad_liking = (
+	  		<Link 
+	  			to={`/ads/:id=${data.endpoint}`} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
+					<div style={{...styles.avatarContainer}}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={{...styles.avatarImage, width:40, height:40,}}
+						/>
+					</div>
+					<div style={{...styles.usernameContainer, flex:10}}>
+						<p style={{...styles.usernameText, fontSize:15, marginLeft:20, fontWeight:'normal'}}>
+							{data.friends_user_name} liked an<span style={{fontWeight:'normal', color:utils.maroonColor}}> ad!</span>
+						</p>
+					</div>
+				</div>
+			</Link>
+		)
+	/* activity headers end here */
+
 
 		return (
+			<div>
 
-			<div style={styles.outerContainer}>
-			  	<button
-			  		style={styles.buttonWrapper}
-			  		onPress={() => this.switchToProperScreen(data.activity_type)} 
-		  		>
-		  			{componentToShow}
-			  	</button>
+				{(() => {
+
+				// created_post section
+					if (data.message){
+
+						return (
+							<div style={{
+								margin:'auto', 
+								width:'50%',
+								marginTop:50,
+							}}>
+								<p style={{fontSize:20, fontStyle:'italic', fontWeight:'bold' }}>Nothing New</p>
+							</div>
+						)
+
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'text_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'text_with_image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'created_post' && data.type_of_post === 'text_with_video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_post_create}
+
+							</div>
+						)
+
+				// liked_post section
+
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'text_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'text_with_image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'text_with_video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_like}
+
+							</div>
+						)
+
+				// shared_post section
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'text_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'text_with_image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'shared_post' && data.type_of_post === 'text_with_video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_share}
+
+							</div>
+						)
+
+				// commented_on_post section
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'text_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+
+							</div>
+						)
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'text_with_image_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+								
+							</div>
+						)
+
+					} else if (data.notification_type === 'commented_on_post' && data.type_of_post === 'text_with_video_post'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_comment}
+
+							</div>
+						)
+
+				// created_book
+
+					} else if (data.notification_type === 'created_book'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_book_creating}
+
+							</div>
+						)
+
+
+				// got_interested_in_book
+
+					} else if (data.notification_type === 'got_interested_in_book'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_book_liking}
+
+							</div>
+						)
+
+				// created_page
+
+					} else if (data.notification_type === 'created_page'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_page_creating}
+
+							</div>
+						)
+
+				// got_interested_in_page
+
+					} else if (data.notification_type === 'got_interested_in_page'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_page_liking}
+
+							</div>
+						)
+
+				// created_sport
+
+					} else if (data.notification_type === 'created_sport'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_sport_creating}
+
+							</div>
+						)
+
+				// got_interested_in_sport
+
+					} else if (data.notification_type === 'got_interested_in_sport'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_sport_liking}
+
+							</div>
+						)
+
+				// got_interested_in_advertisement
+
+					} else if (data.notification_type === 'created_advertisement'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_ad_creating}
+
+							</div>
+						)
+
+				// 'got_interested_in_advertisement'
+
+					} else if (data.notification_type === 'got_interested_in_advertisement'){
+
+						return (
+							<div style={styles.outerContainer}>
+
+							{/* incorporating top line saying some user did this */}
+								{user_activity_header_for_ad_liking}
+
+							</div>
+						)
+
+					} else {
+						return (
+							null
+						)
+					}
+
+				})()}
+
+
 			</div>
-			  	
-		);
+		)
+
 	}
 }
 	

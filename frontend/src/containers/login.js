@@ -223,6 +223,23 @@ class LoginContainer extends Component {
 
 	}
 
+	delete_all_activities(){
+		axios.get(utils.baseUrl + '/users/delete-all-activities',)
+		.then(function (response) {
+			if (response.data.success === true){
+
+				console.log(response.data.message)
+				
+			} else {
+				console.log('couldnt delete all ads')
+			}
+
+		})
+		.catch(function (error) {
+			// console.log(error);
+		});	
+
+	}
 
 	render() {
 
@@ -476,6 +493,15 @@ class LoginContainer extends Component {
 								onClick={ () => this.delete_all_ads() }
 							>
 								Delete All Ads
+							</button>
+						</div>
+
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+							<button 
+								style={{...styles.roundButton, }}
+								onClick={ () => this.delete_all_activities() }
+							>
+								Delete All Activities
 							</button>
 						</div>
 

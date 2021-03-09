@@ -127,37 +127,44 @@ class SocialPostCard extends Component {
 		  		</div>
 
 
-				<div style={styles.showSocialsContainer}>
-					<ShowLikesOfSocialPost
-						dataPayloadFromParent = { this.props.dataPayloadFromParent }
-						likes_quantity = { this.props.likes_quantity }
-					/>
-					<ShowCommentsOfSocialPost
-						dataPayloadFromParent = { this.props.dataPayloadFromParent }
-						comments_quantity = { this.props.comments_quantity }
-					/>
-					<ShowSharesOfSocialPost
-						dataPayloadFromParent = { this.props.dataPayloadFromParent }
-						shares_quantity = { this.props.shares_quantity }
-					/>
-				</div>
+		  		{(this.props.dataPayloadFromParent.message !== 'no more posts to show') ? (
+		  			<React.Fragment>
+						<div style={styles.showSocialsContainer}>
+							<ShowLikesOfSocialPost
+								dataPayloadFromParent = { this.props.dataPayloadFromParent }
+								likes_quantity = { this.props.likes_quantity }
+							/>
+							<ShowCommentsOfSocialPost
+								dataPayloadFromParent = { this.props.dataPayloadFromParent }
+								comments_quantity = { this.props.comments_quantity }
+							/>
+							<ShowSharesOfSocialPost
+								dataPayloadFromParent = { this.props.dataPayloadFromParent }
+								shares_quantity = { this.props.shares_quantity }
+							/>
+						</div>
 
 
-				<div style={styles.createSocialObjectsContainer}>
-					{/* 4th create individual child options like comment / like */}					
-					<ConnectedCreateLikeForSocialpost
-						parentDetailsPayload = { this.props.dataPayloadFromParent }
-	  					redirectToNew = { true }
-					/>					
-					<ConnectedCreateCommentForSocialpost
-						parentDetailsPayload = { this.props.dataPayloadFromParent }
-	  					redirectToNew = { true }
-					/>					
-					<ConnectedCreateShareForSocialpost
-						parentDetailsPayload = { this.props.dataPayloadFromParent }
-	  					redirectToNew = { true }
-					/>
-				</div>
+						<div style={styles.createSocialObjectsContainer}>
+							{/* 4th create individual child options like comment / like */}					
+							<ConnectedCreateLikeForSocialpost
+								parentDetailsPayload = { this.props.dataPayloadFromParent }
+			  					redirectToNew = { true }
+							/>					
+							<ConnectedCreateCommentForSocialpost
+								parentDetailsPayload = { this.props.dataPayloadFromParent }
+			  					redirectToNew = { true }
+							/>					
+							<ConnectedCreateShareForSocialpost
+								parentDetailsPayload = { this.props.dataPayloadFromParent }
+			  					redirectToNew = { true }
+							/>
+						</div>
+					</React.Fragment>
+
+	  			) : (
+	  				null
+	  			)}
 
 		  	</div>
 		);

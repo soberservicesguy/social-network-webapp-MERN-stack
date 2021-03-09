@@ -16,10 +16,15 @@ const ActivitySchema = new mongoose.Schema({
 		'created_advertisement', 'got_interested_in_advertisement',
 	]},
 //
-	post_created: { type: Schema.Types.ObjectId, ref: 'Social_Post', default:null },
-	post_liked: { type: Schema.Types.ObjectId, ref: 'Like', default:null },
-	post_share: { type: Schema.Types.ObjectId, ref: 'Share', default:null },
-	post_commented: { type: Schema.Types.ObjectId, ref: 'Comment', default:null },
+	post_created: { type: Schema.Types.ObjectId, ref: 'SocialPost', default:null },
+
+	post_liked: { type: Schema.Types.ObjectId, ref: 'SocialPost', default:null },
+	post_share: { type: Schema.Types.ObjectId, ref: 'SocialPost', default:null },
+	post_commented: { type: Schema.Types.ObjectId, ref: 'SocialPost', default:null },
+
+	like_link: { type: Schema.Types.ObjectId, ref: 'Like', default:null },
+	share_link: { type: Schema.Types.ObjectId, ref: 'Share', default:null },
+	comment_link: { type: Schema.Types.ObjectId, ref: 'Comment', default:null },
 
 	sent_friend_request: { type: Schema.Types.ObjectId, ref: 'User', default:null },
 	accepted_friend_request: { type: Schema.Types.ObjectId, ref: 'User', default:null },
