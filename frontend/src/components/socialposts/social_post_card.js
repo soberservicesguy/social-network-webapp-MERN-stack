@@ -127,8 +127,8 @@ class SocialPostCard extends Component {
 			  		/>
 		  		</div>
 
-
-		  		{(this.props.dataPayloadFromParent.message !== 'no more posts to show') ? (
+		  		{( !['no more posts to show', 'no posts to show'].includes(this.props.dataPayloadFromParent.message) ) ? (
+		  		// {(this.props.dataPayloadFromParent.message !== 'no more posts to show' || this.props.dataPayloadFromParent.message !== 'no posts to show'  ) ? (
 		  			<React.Fragment>
 						<div style={styles.showSocialsContainer}>
 							<ShowLikesOfSocialPost

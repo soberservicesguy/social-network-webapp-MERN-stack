@@ -28,6 +28,7 @@ import {
 	TimelineContainer,
 
 	SettingsContainer,
+	IndividualFriend,
 } from "../containers";
 
 
@@ -81,6 +82,11 @@ import {
 import {
 	CreateShareForSocialpost,
 } from "../components/shares"
+
+export const ConnectedIndividualFriend = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(IndividualFriend);
 
 export const ConnectedSettingsContainer = connect(
 	mapStateToProps,

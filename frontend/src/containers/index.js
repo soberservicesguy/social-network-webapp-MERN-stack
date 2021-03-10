@@ -24,3 +24,5 @@ export {default as MyResponsiveNavigation} from "./my_responsive_navigation"
 export {default as SettingsContainer} from "./settings"
 
 export {default as InnerNavigation} from "./inner_navigation"
+
+export {default as IndividualFriend} from "./individual_friend"

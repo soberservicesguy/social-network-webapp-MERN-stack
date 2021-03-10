@@ -28,6 +28,7 @@ import {
 	ConnectedCompleteFriendsContainer,
 	ConnectedTimelineContainer,
 	ConnectedSettingsContainer,
+	ConnectedIndividualFriend,
 } from "../redux_stuff/connected_components";
 
 import {
@@ -143,6 +144,19 @@ class RootRouterContainer extends Component {
 								<Redirect to="/login"/>
 							)
 						)}/>
+
+						<Route exact path="/friends/:id" render={() => (
+
+							(this.props.isSignedIn) ? (
+								<React.Fragment>
+									<MyResponsiveNavigation/>
+									<ConnectedIndividualFriend/>
+								</React.Fragment>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
+
 
 						<Route exact path="/timeline" render={() => (
 

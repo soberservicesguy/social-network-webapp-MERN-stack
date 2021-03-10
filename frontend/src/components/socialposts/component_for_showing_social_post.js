@@ -396,39 +396,49 @@ class ComponentForShowingSocialPost extends Component {
 	/* username and avatar start here */
 
 		let username_avatar_in_created_post_type = (
-			<div style={styles.avatarAndUsernameContainer}>
-				<div style={styles.avatarContainer}>
-					<img 
-						alt="" 
-						src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
-						// src={utils.image}
-						style={styles.avatarImage}
-					/>
+	  		<Link 
+	  			to={{pathname:`/friends/:id=${data.friend_endpoint}`, state:{id: data.friend_endpoint}}} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={styles.avatarAndUsernameContainer}>
+					<div style={styles.avatarContainer}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							// src={utils.image}
+							style={styles.avatarImage}
+						/>
+					</div>
+					<div style={styles.usernameContainer}>
+						<p style={styles.usernameText}>
+							{data.friends_user_name}
+						</p>
+					</div>
 				</div>
-				<div style={styles.usernameContainer}>
-					<p style={styles.usernameText}>
-						{data.friends_user_name}
-					</p>
-				</div>
-			</div>
+			</Link>
 		)
 
 		let username_avatar_in_rest_cases = (
-			<div style={styles.avatarAndUsernameContainer}>
-				<div style={styles.avatarContainer}>
-					<img 
-						alt="" 
-						src={"data:image/jpeg;base64," + data.user_avatar_image} 
-						// src={utils.image}
-						style={styles.avatarImage}
-					/>
+	  		<Link 
+	  			to={{pathname:`/friends/:id=${data.friend_endpoint}`, state:{id: data.friend_endpoint}}} 
+	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+			>
+				<div style={styles.avatarAndUsernameContainer}>
+					<div style={styles.avatarContainer}>
+						<img 
+							alt="" 
+							src={"data:image/jpeg;base64," + data.user_avatar_image} 
+							// src={utils.image}
+							style={styles.avatarImage}
+						/>
+					</div>
+					<div style={styles.usernameContainer}>
+						<p style={styles.usernameText}>
+							{data.user_name}
+						</p>
+					</div>
 				</div>
-				<div style={styles.usernameContainer}>
-					<p style={styles.usernameText}>
-						{data.user_name}
-					</p>
-				</div>
-			</div>
+			</Link>
 		)
 
 	/* username and avatar end here */
@@ -580,10 +590,10 @@ class ComponentForShowingSocialPost extends Component {
 						return (
 							<div style={{
 								margin:'auto', 
-								width:'50%',
+								width:'30%',
 								marginTop:50,
 							}}>
-								<p style={{fontSize:20, fontStyle:'italic', fontWeight:'bold' }}>There are no new posts to show</p>
+								<p style={{fontSize:20, fontStyle:'italic', fontWeight:'bold' }}>{data.message}</p>
 							</div>
 						)
 

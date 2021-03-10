@@ -54,6 +54,18 @@ router.get('/protected', passport.authenticate(['facebook', 'google', 'jwt'], { 
 	res.status(200).json({ success: true, msg: "You are successfully authenticated to this route!", privileges: req.user.privileges});
 });
 
+router.get('/user-details', async function(req, res, next){
+	
+	let user = await User.findOne({ endpoint: req.query.user_id })
+	res.status(200).json({
+		user_name_in_profile: user.user_name_in_profile,
+		user_avatar_image: base64_encode(user.user_avatar_image),
+		user_cover_image: base64_encode(user.user_cover_image),
+	});
+
+})
+
+
 
 
 // Validate an existing user and issue a JWT

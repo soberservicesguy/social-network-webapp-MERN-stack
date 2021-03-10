@@ -11,35 +11,40 @@ import {
 // IMPORT responsiveness hook
 import withResponsiveness from "../responsiveness_hook";
 
+import { withRouter } from "react-router-dom";
+
 import {
-	ConnectedComponentForShowingFriend,
-	// ConnectedSocialPostContainer,
-	ConnectedCreateSocialPost,
 	ConnectedSocialPostCard,
+	// ConnectedCreateSocialPost,
+
+	// ConnectedAdvertisementContainer,
+	// ConnectedPageContainer,
+
+	// // ConnectedNotificationsContainer,
+
+	ConnectedFriendsContainer,
+	ConnectedProfileHeader,
 } from '../redux_stuff/connected_components';
 
-import {
-	Link,
-} from "react-router-dom";
 
-import {
-	InnerNavigation,
-} from "./"
-
-class TimelineContainer extends Component {
+class IndividualFriend extends Component {
 	constructor(props) {
 		super(props);
 // STATE	
 		this.state = {
-			sectionToShow:'something_about_me',
-
 			backend_requests_made:1,
 			tracked_container_height: 0,
-		}
 
+			user_cover_image:'',
+			user_avatar_image:'',
+			user_name_in_profile:'',
+		}
 	}
 
 	getSocialposts(){
+
+		// let { id } = this.props.match.params.state // use in render method
+		let { id } = this.props.location.state // use in render method to access param
 
 		let backend_requests_made = this.state.backend_requests_made
 		let append_socialposts_callback = (response) => this.props.async_append_fetched_socialposts(response.data)
@@ -55,6 +60,7 @@ class TimelineContainer extends Component {
 		{
 		    params: {
 				request_number: backend_requests_made,
+				user_id: id,
 		    }
 		})
 		.then((response) => {
@@ -82,9 +88,37 @@ class TimelineContainer extends Component {
 
 	}
 
+	getUserDetails(){
+	
+		let { id } = this.props.location.state // use in render method to access param
+		let set_state_callback = (response) => {
+			this.setState(prev => ({...prev, 
+				user_cover_image: response.data.user_cover_image,
+				user_avatar_image: response.data.user_avatar_image,
+				user_name_in_profile: response.data.user_name_in_profile,
+			}));
+		}
+
+		axios.get(utils.baseUrl + '/users/user-details',
+		{
+		    params: {
+				user_id: id,
+		    }
+		})
+		.then((response) => {
+
+			set_state_callback(response)
+
+		})
+		.catch((error) => {
+			console.log(error);
+		})
+	}
+
 	componentDidMount() {
 
 	// REMOVE BELOW LINE ONCE FIXED
+		this.getUserDetails()
 		this.props.set_fetched_socialposts([])
 		window.addEventListener("scroll", this.onScroll, false);
 		this.getSocialposts()
@@ -143,10 +177,9 @@ class TimelineContainer extends Component {
 		}
 	}
 
-
-
 // RENDER METHOD
 	render() {
+			
 
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
 
@@ -291,191 +324,97 @@ class TimelineContainer extends Component {
 
 		}			
 
-		// var friends_list = this.props.all_friends
-
-		// var base64Image = "data:image/jpeg;base64," + this.props.current_image
-
-		// let all_friends = this.props.all_friends
-		let all_friends = [1,2,3,4,5,6,7,8,9,10]
-		// let total_books = this.props.total_books
-		let total_books = [1,2,3,4,5,6,7,8,9,10]
-		// let friend_suggestions = this.props.friend_suggestions
-		let friend_suggestions = [1,2,3,4,5,6,7,8,9,10]
-
 		const total_socialposts = this.props.total_socialposts
+		var base64CoverImage = "data:image/jpeg;base64," + this.state.user_cover_image
+		var base64AvatarImage = "data:image/jpeg;base64," + this.state.user_avatar_image
+
 
 		return (
+
 			<div ref={ (divElement) => { this.social_posts_container = divElement } }>
-				<Grid container direction="column">
-					<div style={{backgroundColor: '#eee'}}>
-						<Grid item xs={12}>
-							<div style={styles.imageContainer}>
-								<img 
-									alt="" 
-									// src={base64Image} 
-									src={utils.image}
-									style={styles.topBgImage}
-								/>
-							</div>
+
+				<div style={{backgroundColor: '#eee'}}>
+					<Grid item xs={12}>
+						<div style={styles.imageContainer}>
+							<img 
+								alt="" 
+								src={base64CoverImage}
+								// src={utils.image}
+								style={styles.topBgImage}
+							/>
+						</div>
+					</Grid>
+
+					<div style={{
+						width:'85%',
+						margin:'auto'
+					}}>
+						<Grid container>
+							<Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+								<div style={styles.avatarContainer}>
+									<div 
+										style={styles.avatarWrapper}
+										ref={ (divElement) => { this.divElement1 = divElement } }
+									>
+										<img 
+											src={base64AvatarImage}
+											// src={utils.image} 
+											alt="" 
+											style={styles.avatarImage}
+										/>
+									</div>
+								</div>
+							</Grid>						
+
+							<Grid item xs={12} sm={12} md={6} lg={9} xl={9}>
+								<div style={styles.lowerTopBand}>
+									<div style={{
+										marginLeft:20,
+									}}>
+										<p style={styles.currentSectionHeading}>
+											{this.state.user_name_in_profile}
+										</p>
+									</div>
+								</div>
+							</Grid>
 						</Grid>
 
-						<InnerNavigation/>
-
-						<div style={{
-							width:'85%',
-							margin:'auto'
-						}}>
-							<Grid container>
-								<Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
-									<div style={styles.avatarContainer}>
-										<div 
-											style={styles.avatarWrapper}
-											ref={ (divElement) => { this.divElement1 = divElement } }
-										>
-											<img 
-												// src={base64Image}
-												src={utils.image} 
-												alt="" 
-												style={styles.avatarImage}
-											/>
-										</div>
-									</div>
-								</Grid>						
-
-								<Grid item xs={12} sm={12} md={6} lg={9} xl={9}>
-									<div style={styles.lowerTopBand}>
-										<div style={{
-											marginLeft:20,
-										}}>
-											<p style={styles.currentSectionHeading}>
-												Friends
-											</p>
-										</div>
-									</div>
-								</Grid>
-							</Grid>
-
-						</div>
-
-
-
-					{/*Friends Section starts here*/}
-						<div style={{
-							paddingTop:20,
-							width:'85%',
-							margin:'auto',
-							marginTop:20,
-							backgroundColor: 'white',
-						}}>
-							<Grid container direction="column">
-								<Grid item xs={12}>
-									<div style={styles.headingForBlockContainer}>
-										<p style={styles.headingForBlockText}>
-											Personal Wall
-										</p>
-									</div>
-								</Grid>
-
-								<Grid container direction="row">
-
-									<Grid item xs={0} sm={0} md={2} lg={2} xl={2}>
-									</Grid>
-
-									<Grid container direction="column" xs={12} sm={12} md={8} lg={8} xl={8}>
-
-										<Grid item>
-											<div>
-									  			<ConnectedCreateSocialPost/>
-											</div>
-								  		</Grid>
-
-										{total_socialposts.map((item, index)=>(
-
-											<Grid item key={String(item.key)}>
-												<ConnectedSocialPostCard
-													dataPayloadFromParent = { item }
-
-													comments_quantity = { item.total_comments }
-													comments = { item.comments || [] }
-
-													likes_quantity = { item.total_likes }
-													likes = { item.likes || [] }
-
-													shares_quantity = { item.total_shares }
-													shares = { item.shares || [] }
-
-												/>
-											</Grid>
-
-										))}
-										
-									</Grid>
-
-									<Grid item xs={0} sm={0} md={2} lg={2} xl={2}></Grid>
-
-								</Grid>
-
-								<Grid item xs={12}>
-									<button style={styles.blockBottomButton}>
-										<p style={styles.blockBottomButtonText}>
-											Load More
-										</p>
-									</button>
-								</Grid>
-
-							</Grid>
-						</div>
-					{/*Friends Section ends here*/}
-
-
-
-
-					{/*Friends suggestions Section starts here*/}
-						<div style={{
-							paddingTop:20,
-							width:'85%',
-							margin:'auto',
-							marginTop:20,
-							backgroundColor: 'white',
-						}}>
-							<Grid container direction="column">
-								<Grid item xs={12}>
-									<div style={styles.headingForBlockContainer}>
-										<p style={styles.headingForBlockText}>
-											Friends Suggestions
-										</p>
-									</div>
-								</Grid>
-
-								<Grid container direction="row">
-									{friend_suggestions.map((item, index) => {
-										return (
-											<Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
-												<div style={{...styles.blockChildrenInnerContainer, paddingLeft:20}}>
-													<ConnectedComponentForShowingFriend
-														dataPayloadFromParent = { item }
-														showFriendsSuggestionsInstead = {true}
-													/>
-												</div>
-											</Grid>
-										)
-									})}
-								</Grid>
-
-								<Grid item xs={12}>
-									<button style={styles.blockBottomButton}>
-										<p style={styles.blockBottomButtonText}>
-											Load More
-										</p>
-									</button>
-								</Grid>
-
-							</Grid>
-						</div>
-					{/*Friends suggestions Section ends here*/}
-
-
 					</div>
+				</div>
+
+
+				<Grid container direction="column">
+
+					{total_socialposts.map((item) => {
+
+						return(
+							<Grid item key={String(item.key)}>
+								{/*<div>
+									{item.key}
+								</div>*/}
+								<div style={{width:'70%', margin:'auto'}}>
+									<ConnectedSocialPostCard
+										dataPayloadFromParent = { item }
+
+										comments_quantity = { item.total_comments }
+										comments = { item.comments || [] }
+
+										likes_quantity = { item.total_likes }
+										likes = { item.likes || [] }
+
+										shares_quantity = { item.total_shares }
+										shares = { item.shares || [] }
+
+										// user_quantity = { item.user_quantity }
+										// user = { item.user || [] }
+									
+									/>									
+								</div>
+							</Grid>
+						)
+
+					})}
+
 				</Grid>
 			</div>
 
@@ -483,8 +422,9 @@ class TimelineContainer extends Component {
 	}
 }
 
-TimelineContainer.defaultProps = {
-	// : ,
+IndividualFriend.defaultProps = {
+	showFriendsSuggestionsInstead:false,
+	showFriendsRequestInstead:false,
 };
 
-export default withResponsiveness(TimelineContainer);
+export default withRouter(withResponsiveness(IndividualFriend));
