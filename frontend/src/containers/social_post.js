@@ -215,13 +215,13 @@ class SocialPostContainer extends Component {
 									<ConnectedSocialPostCard
 										dataPayloadFromParent = { item }
 
-										comments_quantity = { item.comments_quantity }
+										comments_quantity = { item.total_comments }
 										comments = { item.comments || [] }
 
-										likes_quantity = { item.likes_quantity }
+										likes_quantity = { item.total_likes }
 										likes = { item.likes || [] }
 
-										shares_quantity = { item.shares_quantity }
+										shares_quantity = { item.total_shares }
 										shares = { item.shares || [] }
 
 										// user_quantity = { item.user_quantity }

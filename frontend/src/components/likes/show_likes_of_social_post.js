@@ -30,6 +30,7 @@ class ShowLikesOfSocialPost extends Component {
 // STATE	
 		this.state = {
 			show_like_modal: false,
+			showOnlyQuantityForLike: true,
 
 			likes: [],
 		}
@@ -65,7 +66,7 @@ class ShowLikesOfSocialPost extends Component {
 			console.log(error);
 		})
 
-		this.setState( prev => ({...prev, showOnlyQuantityForLike: false}) )		
+		this.setState( prev => ({...prev, show_like_modal: true}) )		
 	}
 
 // COMPONENT DID MOUNT
@@ -133,7 +134,7 @@ class ShowLikesOfSocialPost extends Component {
 							Close Likes
 						</button>
 
-						<Grid container direction="column" style={{backgroundColor: '#eee'}}>
+						<Grid container direction="column" style={{backgroundColor: '#eee', paddingTop:20, }}>
 
 							{ this.state.likes.map((item, index) => (
 

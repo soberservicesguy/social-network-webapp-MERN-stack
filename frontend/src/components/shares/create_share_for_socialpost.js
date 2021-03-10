@@ -60,7 +60,7 @@ class CreateShareForSocialpost extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Socialpost" }} />
+			return <Redirect to = {{ pathname: `/socialposts/:id=${this.props.parentDetailsPayload.endpoint}` }} />
 
 		} else {
 
@@ -76,7 +76,7 @@ class CreateShareForSocialpost extends Component {
 
 							axios.post(utils.baseUrl + '/socialposts/create-share-for-socialpost', 
 								{
-									sport_endpoint: this.props.parentDetailsPayload.endpoint,
+									socialpost_endpoint: this.props.parentDetailsPayload.endpoint,
 								})
 							.then(function (response) {
 								console.log(response.data) // current socialpost screen data

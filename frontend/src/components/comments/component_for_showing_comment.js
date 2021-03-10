@@ -10,11 +10,6 @@ import utils from "../../utilities";
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
-const styles = theme => ({
-	outerContainer:{
-		
-	}
-});
 
 class ComponentForShowingComment extends Component {
 	constructor(props) {
@@ -33,19 +28,73 @@ class ComponentForShowingComment extends Component {
 
 	render() {
 
-		const data = this.props.componentData // data being plugged from parent flatlist
+		const styles = {
+			outerContainer:{
+				width:'70%',
+				margin:'auto',
+				display:'flex',
+				flexDirection:'row',
+				alignItems:'center',
+				backgroundColor: '#eee',
+				borderBottomWidth:1,
+				borderBottomColor:'black',
+				borderBottomStyle:'solid',
+				paddingBottom:20,
+				marginBottom:20,
+			},
 
+			usernameText:{
+				fontSize:20,
+				fontWeight:'bold',
+			},
+			commentText:{
+				fontSize:20,
+				color:'grey'
+			},
+
+			imageContainer:{
+				flex:1
+			},
+			commentContainer:{
+				flex:5
+			},
+		}
+
+		const data = this.props.componentData // data being plugged from parent flatlist
+		// console.log('COMMENT')
+		// console.log(Object.keys(data))
+
+		var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
 		return (
 			<div style={styles.outerContainer}>
-				<p>
-					{ data.comment_text }
-				</p>
-				<p>
-					{ data.date_of_publishing }
-				</p>
+				<div style={styles.imageContainer}>
+					<img src={base64Image} alt="" 
+						style={{
+							width:100, 
+							height:100, 
+							resizeMode: "contain",
+							borderRadius: 100/2,
+						}}
+					/>
+				</div>
+			
+			
+				<div style={styles.commentContainer}>
+					<p style={styles.usernameText}>
+						{data.user_name}
+					</p>					
+
+					<p style={styles.commentText}>
+						{data.comment_text}
+					</p>
+				</div>
+			
 			</div>
 		);
 	}
+				// <p>
+				// 	{ data.commenting_timestamp }
+				// </p>
 }
 	
 ComponentForShowingComment.defaultProps = {
@@ -53,4 +102,4 @@ ComponentForShowingComment.defaultProps = {
 };
 
 // export default ComponentForShowingComment; // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(withStyles(styles)(ComponentForShowingComment))
+export default withResponsiveness(ComponentForShowingComment)

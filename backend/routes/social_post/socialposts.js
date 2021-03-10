@@ -1090,7 +1090,7 @@ router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { ses
 
 	var newComment = new Comment({
 		_id: new mongoose.Types.ObjectId(),
-		text:comment_text,
+		comment_text:comment_text,
 	})
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
@@ -1336,7 +1336,7 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 	.then((user) => {
 					
 		newShare.user = user
-		user.socialpost_shares.push(newLike)
+		user.socialpost_shares.push(newShare)
 
 	// finding BlogPost object
 		SocialPost.findOne({endpoint: socialpost_endpoint})
@@ -1452,7 +1452,7 @@ router.get('/get-all-comments-of-socialpost', async function(req, res, next){
 		return {
 			user_name:user_object.user_name,
 			user_avatar_image:base64_encode( user_object.user_avatar_image ),
-			text:comment_object.text
+			comment_text:comment_object.comment_text
 		}
 	}))
 

@@ -106,6 +106,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/socialposts/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_socialpost(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -130,6 +131,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/socialposts/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_socialpost(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -153,6 +155,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/socialposts/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_socialpost(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -176,6 +179,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/socialposts/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_socialpost(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -199,6 +203,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/books/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_book(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -222,6 +227,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/books/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_book(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -245,6 +251,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/pages/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_page(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -268,6 +275,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/pages/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_page(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -291,6 +299,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/sports/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_sport(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -314,6 +323,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/sports/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_sport(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -337,6 +347,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/ads/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_advertisement(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -360,6 +371,7 @@ class ComponentForShowingSocialPost extends Component {
 	  		<Link 
 	  			to={`/ads/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
+	  			onClick={() => this.props.set_current_advertisement(data)}
 			>
 				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'40%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
@@ -581,7 +593,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_post_create}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_post_create : null}
 
 								{username_avatar_in_created_post_type}
 
@@ -596,7 +608,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_post_create}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_post_create : null}
 
 								{username_avatar_in_created_post_type}
 
@@ -611,7 +623,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_post_create}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_post_create : null}
 
 								{username_avatar_in_created_post_type}
 
@@ -626,7 +638,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_post_create}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_post_create : null}
 
 								{username_avatar_in_created_post_type}
 
@@ -643,7 +655,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_post_create}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_post_create : null}
 
 								{username_avatar_in_created_post_type}
 
@@ -662,7 +674,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_like}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_like : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -677,7 +689,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_like}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_like : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -692,7 +704,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_like}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_like : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -707,7 +719,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_like}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_like : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -724,7 +736,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_like}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_like : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -743,7 +755,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_share}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_share : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -758,7 +770,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_share}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_share : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -773,7 +785,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_share}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_share : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -788,7 +800,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_share}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_share : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -805,7 +817,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_share}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_share : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -824,7 +836,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_comment}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_comment : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -839,7 +851,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_comment}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_comment : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -854,7 +866,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_comment}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_comment : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -869,7 +881,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_comment}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_comment : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -886,7 +898,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_comment}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_comment : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -905,7 +917,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_book_creating}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_book_creating : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -923,7 +935,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_book_liking}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_book_liking : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -940,7 +952,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_page_creating}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_page_creating : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -957,7 +969,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_page_liking}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_page_liking : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -974,7 +986,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_sport_creating}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_sport_creating : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -991,7 +1003,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_sport_liking}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_sport_liking : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -1008,7 +1020,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_ad_creating}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_ad_creating : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -1025,7 +1037,7 @@ class ComponentForShowingSocialPost extends Component {
 							<div style={styles.outerContainer}>
 
 							{/* incorporating top line saying some user did this */}
-								{user_activity_header_for_ad_liking}
+								{(!this.props.hideActivityHeader) ? user_activity_header_for_ad_liking : null}
 
 								{username_avatar_in_rest_cases}
 
@@ -1049,7 +1061,7 @@ class ComponentForShowingSocialPost extends Component {
 }
 	
 ComponentForShowingSocialPost.defaultProps = {
-
+	hideActivityHeader: false,
 };
 
 // export default ComponentForShowingSocialPost;  // REMOVE withResponsiveness and withStyles as much as possible

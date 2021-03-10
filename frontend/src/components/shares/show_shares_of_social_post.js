@@ -46,7 +46,6 @@ class ShowSharesOfSocialPost extends Component {
 			{
 			    params: {
 					endpoint: endpoint,
-					child_count: 3,
 			    }
 			})
 		.then((response) => {
@@ -58,7 +57,7 @@ class ShowSharesOfSocialPost extends Component {
 			console.log(error);
 		})
 
-		this.setState( prev => ({...prev, showOnlyQuantityForShare: false}) )		
+		this.setState( prev => ({...prev, show_share_modal: true}) )		
 	}
 
 	toggle_share_modal(){
@@ -66,7 +65,7 @@ class ShowSharesOfSocialPost extends Component {
 			prev => (
 				{
 					...prev,
-					show_comment_modal: (prev.show_comment_modal === false) ? true : false 
+					show_share_modal: (prev.show_share_modal === false) ? true : false 
 				}
 			)
 		)

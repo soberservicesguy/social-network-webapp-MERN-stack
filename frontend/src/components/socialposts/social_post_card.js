@@ -11,7 +11,7 @@ import axios from 'axios';
 import firebase from 'firebase';
 
 import {
-	ComponentForShowingSocialPost
+	// ComponentForShowingSocialPost
 } from "."
 
 import utils from "../../utilities";
@@ -34,6 +34,7 @@ import {
 
 import {
 	ConnectedCreateLikeForSocialpost,
+	ConnectedComponentForShowingSocialPost,
 } from "../../redux_stuff/connected_components"
 
 
@@ -121,7 +122,7 @@ class SocialPostCard extends Component {
 
 		  		<div>
 					{/* first the parent / card component */}
-			  		<ComponentForShowingSocialPost
+			  		<ConnectedComponentForShowingSocialPost
 						dataPayloadFromParent = { this.props.dataPayloadFromParent }
 			  		/>
 		  		</div>
