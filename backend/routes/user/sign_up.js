@@ -75,7 +75,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 			} else {
 
 				if(req.file == undefined){
-
+					console.log('nothing')
 					res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
 
 				} else {

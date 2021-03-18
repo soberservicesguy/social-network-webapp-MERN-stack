@@ -61,6 +61,7 @@ router.get('/user-details', async function(req, res, next){
 		user_name_in_profile: user.user_name_in_profile,
 		user_avatar_image: base64_encode(user.user_avatar_image),
 		user_cover_image: base64_encode(user.user_cover_image),
+		total_friends: user.total_friends,
 	});
 
 })
@@ -70,6 +71,8 @@ router.get('/user-details', async function(req, res, next){
 
 // Validate an existing user and issue a JWT
 router.post('/login', async function(req, res, next){
+
+	console.log('INCOMING')
 
 	User.findOneAndUpdate({ phone_number: req.body.phone_number }, { $set:{ isLoggedIn:true } }, { new: true }, async (err, user) => {
 	    if (err) {
@@ -137,13 +140,15 @@ router.post('/login', async function(req, res, next){
 
 			let user_details = {
 				user_name_in_profile: user.user_name_in_profile,
-				user_cover_image: user.user_cover_image,
+				user_cover_image: base64_encode(user.user_cover_image),
 				user_brief_intro: user.user_brief_intro,
 				user_about_me: user.user_about_me,
 				user_working_zone: user.user_working_zone,
 				user_education: user.user_education,
 				user_contact_details: user.user_contact_details,
 
+				total_friends: user.total_friends,
+		
 				user_avatar_image: base64_encode( user.user_avatar_image ),
 				endpoint: user.endpoint,
 				// user_cover_image: base64_encode( user.user_cover_image ),

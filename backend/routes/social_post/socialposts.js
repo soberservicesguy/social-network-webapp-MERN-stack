@@ -413,7 +413,6 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 })
 
-
 async function get_post_details(type_of_post, post_created, post_details){
 
 	switch (type_of_post) {
@@ -746,12 +745,17 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 			if(send_posts){
 				user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
-				await user_checking_others_posts.save()
 
 				console.log('activities_to_send')
 				console.log(activities_to_send.length)
 
-				res.status(200).json(activities_to_send)
+				// res.status(200).json(activities_to_send)
+				activities_to_send.map((act) => {
+					res.write([act])
+				})
+				res.end();
+
+				await user_checking_others_posts.save()
 			}
 
 		})
@@ -886,7 +890,7 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 					user_owning_post = await User.findOne({_id: post_liked.user})
 					var { user_name, user_avatar_image } = user_owning_post
 					post_details = {...post_details, user_name, user_avatar_image: base64_encode(user_avatar_image)}
-					post_details = await get_post_details(type_of_post, post_created, post_details)
+					post_details = await get_post_details(type_of_post, post_liked, post_details)
 					activities_to_send.push(post_details)
 					break
 
@@ -901,25 +905,24 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 					user_owning_post = await User.findOne({_id: post_share.user})
 					var { user_name, user_avatar_image } = user_owning_post
 					post_details = {...post_details, user_name, user_avatar_image: base64_encode(user_avatar_image)}
-					post_details = await get_post_details(type_of_post, post_created, post_details)
+					post_details = await get_post_details(type_of_post, post_share, post_details)
 					activities_to_send.push(post_details)
 					break
 
 				case "commented_on_post":
 
-					var { post_commented } = activity
-					post_commented = await Comment.findOne({_id: post_commented})
-					let original_post = post_commented.socialpost
-					original_post = await SocialPost.findOne({_id: original_post})
-					var { comment_text } = post_commented
+					var { post_commented, comment_link } = activity
+					let original_post = await SocialPost.findOne({_id: post_commented})
+					let comment_object = await Comment.findOne({_id: comment_link})
+					var { comment_text } = comment_object
 					var { type_of_post, total_likes, total_shares, total_comments, endpoint } = original_post
 					// incorporating notification_type
 					post_details = { ...post_details, notification_type:'commented_on_post', activity_type, comment_text, type_of_post, total_likes, total_shares, total_comments, endpoint }
 					// incorporating user_owning_post user_name and user_avatar_image
-					user_owning_post = await User.findOne({_id: post_commented.user})
+					user_owning_post = await User.findOne({_id: original_post.user})
 					var { user_name, user_avatar_image } = user_owning_post
 					post_details = {...post_details, user_name, user_avatar_image: base64_encode(user_avatar_image)}
-					post_details = await get_post_details(type_of_post, post_created, post_details)
+					post_details = await get_post_details(type_of_post, post_commented, post_details)
 					activities_to_send.push(post_details)
 					break
 
@@ -1006,7 +1009,9 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 				default:
 					null
 			}
+
 		}))
+
 
 	// sort activities with time as latest
 		activities_to_send = activities_to_send.sort(function sortActivitiesByTimestamp(a, b) {
@@ -1018,7 +1023,13 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 		console.log('activities_to_send')
 		console.log(activities_to_send.length)
 
-		res.status(200).json(activities_to_send)
+		// res.status(200).json(activities_to_send)
+
+		activities_to_send.map((act) => {
+			res.write([act])
+		})
+		res.end();
+
 
 	} catch (err) {
 
@@ -1264,12 +1275,18 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 
 			if(send_posts){
 				user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
-				await user_checking_others_posts.save()
 
 				console.log('activities_to_send')
 				console.log(activities_to_send.length)
 
-				res.status(200).json(activities_to_send)
+				// res.status(200).json(activities_to_send)
+
+				activities_to_send.map((act) => {
+					res.write([act])
+				})
+				res.end();
+
+				await user_checking_others_posts.save()
 			}
 
 		})
