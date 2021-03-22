@@ -6,6 +6,9 @@ var endpoint_number = 393893
 const UserSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
+	
+	images_hosted_location: {type:String, enum:['gcp_storage', 'aws_s3', 'disk_storage',]},
+
 	hash:String,
 	salt:String,
 	isLoggedIn: Boolean,

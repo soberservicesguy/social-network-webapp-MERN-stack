@@ -68,22 +68,26 @@ class SignUpContainer extends Component {
 			}
 		})
 		.then(function (response) {
+
 			console.log(`POST rest call response is${JSON.stringify(response.data, null, 1)}`);
+
 			if (response.data.success === true){
+
+				// REDIRECT TO LOGIN
+				this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 				// console.log('yes')
-			}
 
-			return response
-		})
-		.then((response) => {
-			if (response.data.success === true){
+			} else if (response.data.msg === 'user already exists, try another'){
 
-			// REDIRECT TO LOGIN
+				console.log('ID already exists, just sign in')
 				this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			} else {
+
 				console.log('user sign up failed, try again')
+
 			}
+
 		})
 		.catch(function (error) {
 			// console.log(error);
