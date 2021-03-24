@@ -21,60 +21,41 @@ const {
 	get_multer_storage_to_use, 
 	get_file_storage_venue, 
 	get_file_path_to_use,
+
 	use_gcp_storage, 
 	use_aws_s3_storage, 
+
 	save_file_to_gcp,
 	gcp_bucket,
+
+	checkFileTypeForImages,
 } = require('../../config/storage/storage_settings')
 
-// Set The Storage Engine
-const image_storage = multer.diskStorage({
-	destination: path.join(__dirname , '../../assets/images/uploads/advertisement_images'),
-	filename: function(req, file, cb){
-		// file name pattern fieldname-currentDate-fileformat
-		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+let timestamp
 
-		filename_used_to_store_image_in_assets = file.originalname
-		cb(null, file.originalname);
-
-	}
-});
-
-// Check File Type
-function checkFileTypeForImage(file, cb){
-	// Allowed ext
-	let filetypes = /jpeg|jpg|png|gif/;
-	// Check ext
-	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-	// Check mime
-	let mimetype = filetypes.test(file.mimetype);
-
-	if(mimetype && extname){
-		return cb(null,true);
-	} else {
-		cb('Error: jpeg, jpg, png, gif Images Only!');
-	}
-}
 
 // Init Upload
-const upload_ad_image = multer({
-	storage: get_multer_storage_to_use(image_storage),
-	limits:{fileSize: 200000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForImage(file, cb);
-	}
-}).single('ad_image'); // this is the field that will be dealt
-// .array('blogpost_image_main', 12)
+function upload_ad_image(timestamp){
 
+	return multer({
+		storage: get_multer_storage_to_use(image_storage),
+		limits:{fileSize: 200 * 1024 *1024}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForImages(file, cb);
+		}
+	}).single('ad_image'); // this is the field that will be dealt
+	// .array('blogpost_image_main', 12)
+
+}
 
 // USED IN CREATING AD
 router.post('/create-ad-with-user', passport.authenticate('jwt', { session: false }), isAllowedCreatingAds, function(req, res, next){
 	
 	// console.log('OUTER LOG')
 	// console.log(req.body)
+	timestamp = Date.now()
 
-	upload_ad_image(req, res, (err) => {
+	upload_ad_image(timestamp)(req, res, (err) => {
 		if(err){
 
 			console.log(err)
@@ -89,66 +70,112 @@ router.post('/create-ad-with-user', passport.authenticate('jwt', { session: fals
 				// console.log('INNER LOG')
 				// console.log(req.body)
 
-			// image is uploaded , now saving image in db
-				const newAdvertisement = new Advertisement({
+				{(async () => {
 
-					_id: new mongoose.Types.ObjectId(),
-					ad_name: req.body.parent.ad_name,
-					ad_image: `./assets/images/uploads/advertisement_images/${filename_used_to_store_image_in_assets}`,
-					ad_description: req.body.parent.ad_description,
-					// endpoint: req.body.parent.endpoint,
+					if (use_gcp_storage){
 
-				});
+						await save_file_to_gcp(timestamp, req.file, 'advertisement_images')
+						console.log('SAVED TO GCP')
 
-				newAdvertisement.save(function (err, newAdvertisement) {
-					if (err){
-						res.status(404).json({ success: false, msg: 'couldnt create ad database entry'})
-						return console.log(err)
+					} else if (use_aws_s3_storage) {
+
+						console.log('SAVED TO AWS')
+
+					} else {
+
+						console.log('SAVED TO DISK STORAGE')
+
 					}
 
-					// assign user object then save
-					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-					.then((user) => {
-						if (user){
+		
+				// image is uploaded , now saving image in db
+					const newAdvertisement = new Advertisement({
 
-							newAdvertisement.ad_uploaded_by_user = user
-							newAdvertisement.save()
-
-							// in response sending new image too with base64 encoding
-							let base64_encoded_image = base64_encode(newAdvertisement.ad_image)
-
-							let new_advertisement = {
-								ad_name: newAdvertisement.ad_name,
-								ad_image: base64_encoded_image,
-								ad_description: new_advertisement.ad_description,
-							}
-
-							res.status(200).json({ success: true, msg: 'new ad saved', new_advertisement: new_advertisement});	
-
-
-							let newActivity = new Activity({
-								_id: new mongoose.Types.ObjectId(),
-								user: user,
-								activity_type: 'created_advertisement',
-								ad_created: newAdvertisement,
-							})
-							newActivity.save()
-							user.activities.push(newActivity)
-							user.save()
-
-						} else {
-
-							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
-
-						}
-					})
-					.catch((err) => {
-
-						next(err);
+						_id: new mongoose.Types.ObjectId(),
+						ad_name: req.body.parent.ad_name,
+						ad_image: get_file_path_to_use(timestamp, req.file, 'advertisement_images'),
+						// ad_image: `./assets/images/uploads/advertisement_images/${filename_used_to_store_image_in_assets}`,
+						ad_description: req.body.parent.ad_description,
+						// endpoint: req.body.parent.endpoint,
 
 					});
 
-				})
+					newAdvertisement.save(function (err, newAdvertisement) {
+						if (err){
+							res.status(404).json({ success: false, msg: 'couldnt create ad database entry'})
+							return console.log(err)
+						}
+
+						// assign user object then save
+						User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+						.then((user) => {
+							if (user){
+
+								// in response sending new image too with base64 encoding
+								let base64_encoded_image
+
+								if (use_gcp_storage){
+
+									{(async () => {
+
+										cloud_resp = await axios.get(newAdvertisement.ad_image)
+										base64_encoded_image = base64_encode( cloud_resp.data )
+
+									})()}
+
+								} else if (use_aws_s3_storage) {
+
+									{(async () => {
+
+										cloud_resp = await axios.get(newAdvertisement.ad_image)
+										base64_encoded_image = base64_encode( cloud_resp.data )
+
+									})()}
+
+
+								} else {
+
+									base64_encoded_image = base64_encode( newAdvertisement.ad_image )
+
+								}
+
+								newAdvertisement.ad_uploaded_by_user = user
+								newAdvertisement.save()
+
+								let new_advertisement = {
+									ad_name: newAdvertisement.ad_name,
+									ad_image: base64_encoded_image,
+									ad_description: new_advertisement.ad_description,
+								}
+
+								res.status(200).json({ success: true, msg: 'new ad saved', new_advertisement: new_advertisement});	
+
+
+								let newActivity = new Activity({
+									_id: new mongoose.Types.ObjectId(),
+									user: user,
+									activity_type: 'created_advertisement',
+									ad_created: newAdvertisement,
+								})
+								newActivity.save()
+								user.activities.push(newActivity)
+								user.save()
+
+							} else {
+
+								res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+
+							}
+						})
+						.catch((err) => {
+
+							next(err);
+
+						});
+
+					})
+
+				})()}
 
 				// not needed, this is used only in multer
 				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})

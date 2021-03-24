@@ -1,15 +1,64 @@
 const path = require('path')
+const multer = require('multer');
+const fs = require('fs')
+const env = require("dotenv").config({ path: "../../.env" });
+const use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? true : false
+const use_aws_s3_storage = ( process.env.AWS_S3_STORAGE_ENABLED === 'true' ) ? true : false
 
 let path_for_saving_files = '../../assets/uploads'
+
+if (use_gcp_storage === false && use_aws_s3_storage === false){
+
+	let all_links = [
+	// images
+		'./assets/uploads/advertisement_images',
+		'./assets/uploads/avatar_images',
+		'./assets/uploads/books_imagess',
+		'./assets/uploads/cover_images',
+		'./assets/uploads/page_images',
+		'./assets/uploads/social_post_images',
+		'./assets/uploads/sport_images',
+
+	// videos
+		'./assets/uploads/social_post_videos',
+		'./assets/uploads/thumbnails_for_social_videos',
+	]
+
+	Promise.all(all_links.map(async (dirpath) => {
+
+		try {
+
+			await fs.promises.mkdir(dirpath, { recursive: true })
+			console.log(`created ${dirpath}`)
+
+		} catch (err){
+
+			console.log(`was already created probably${dirpath}`)
+			console.log(err)
+
+		}
+
+	}))
+
+}
+
+
 
 function get_multer_disk_storage(timestamp){
 	// currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
 	// currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
 
 	return multer.diskStorage({
-		destination: function(req, file, cb){
+		destination: async function(req, file, cb){
 
 			let file_path = path.join(__dirname , `${path_for_saving_files}/${file.fieldname}s`)
+
+			await fs.access(file_path, function(err) {
+				if (err && err.code === 'ENOENT') {
+					fs.mkdir(file_path); //Create dir in case not found
+				}
+			});
+
 			cb(null, file_path)	
 
 		},
@@ -41,6 +90,41 @@ function checkFileTypeForImages(file, cb){
 		cb(null, true);
 	} else {
 		cb('Error: jpeg, jpg, png, gif Images Only!');
+	}
+
+}
+
+// Check File Type
+function checkFileTypeForImageAndVideo(file, cb){
+	// Allowed ext
+	let filetypes_for_image = /jpeg|jpg|png|gif/
+	// let filetypes_for_video = /xlsx|xls/
+	let filetypes_for_video = /mp4|mov|avi|flv/;
+
+	// Check ext
+	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
+	let extname_for_video = filetypes_for_video.test( path.extname(file.originalname).toLowerCase() );
+
+	// Check mime
+	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
+	let mimetype_for_video = filetypes_for_video.test( file.mimetype );
+
+	if (file.fieldname === "image_upload") { // if uploading resume
+		
+		if (mimetype_for_image && extname_for_image) {
+			cb(null, true);
+		} else {
+			cb('Error: jpeg, jpg, png, gif Images Only!');
+		}
+
+	} else { // else uploading images
+
+		if (mimetype_for_video && extname_for_video) {
+			cb(null, true);
+		} else {
+			cb('Error: mp4, mov, avi, flv Videos Only!');
+		}
+
 	}
 
 }
@@ -97,5 +181,7 @@ function checkFileTypeForImages(file, cb){
 
 module.exports = {
 	get_multer_disk_storage,
+
 	checkFileTypeForImages,
+	checkFileTypeForImageAndVideo,
 }

@@ -1,3 +1,4 @@
+const multer = require('multer');
 const path = require('path')
 const env = require("dotenv").config({ path: "../../.env" });
 const use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? true : false
@@ -42,7 +43,7 @@ function get_file_storage_venue(){
 
 function get_file_path_to_use(timestamp, file_to_save, folder_name){
 
-	let path_to_use = path.basename( file.originalname, path.extname( file.originalname ) ) + '-' + timestamp + path.extname( file.originalname )
+	let path_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) ) + '-' + timestamp + path.extname( file_to_save.originalname )
 
 	if (use_gcp_storage){
 

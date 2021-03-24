@@ -10,9 +10,6 @@ const mongoose = require('mongoose');
 const router = require('express').Router();
 const User = mongoose.model('User');
 
-const multer = require('multer');
-const path = require('path')
-
 require('../../models/activity');
 const Activity = mongoose.model('Activity');
 

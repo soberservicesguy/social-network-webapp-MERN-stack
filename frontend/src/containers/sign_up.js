@@ -51,6 +51,9 @@ class SignUpContainer extends Component {
 
 	signup_and_get_privileges(){
 		// upload file with axios request
+		let redirectCallback = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
+
+
 		const formData = new FormData()
 		formData.append('user_name', this.state.user_name)
 		formData.append('password', this.state.password)
@@ -74,13 +77,13 @@ class SignUpContainer extends Component {
 			if (response.data.success === true){
 
 				// REDIRECT TO LOGIN
-				this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
+				redirectCallback()
 				// console.log('yes')
 
 			} else if (response.data.msg === 'user already exists, try another'){
 
 				console.log('ID already exists, just sign in')
-				this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
+				redirectCallback()
 
 			} else {
 

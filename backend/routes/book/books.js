@@ -19,46 +19,34 @@ const path = require('path')
 require('../../models/activity');
 const Activity = mongoose.model('Activity');
 
+const { 
+	get_multer_storage_to_use, 
+	get_file_storage_venue, 
+	get_file_path_to_use,
 
-// Set The Storage Engine
-const image_storage = multer.diskStorage({
-	destination: path.join(__dirname , '../../assets/images/uploads/books_images'),
-	filename: function(req, file, cb){
-		// file name pattern fieldname-currentDate-fileformat
-		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+	use_gcp_storage, 
+	use_aws_s3_storage, 
 
-		filename_used_to_store_image_in_assets = file.originalname
-		cb(null, file.originalname);
+	save_file_to_gcp,
+	gcp_bucket,
 
-	}
-});
+	checkFileTypeForImages,
+} = require('../../config/storage/storage_settings')
 
-// Check File Type
-function checkFileTypeForImage(file, cb){
-	// Allowed ext
-	let filetypes = /jpeg|jpg|png|gif/;
-	// Check ext
-	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-	// Check mime
-	let mimetype = filetypes.test(file.mimetype);
+let timestamp
 
-	if(mimetype && extname){
-		return cb(null,true);
-	} else {
-		cb('Error: jpeg, jpg, png, gif Images Only!');
-	}
-}
 
 // Init Upload
-const upload_book_image_by_user = multer({
-	storage: image_storage,
-	limits:{fileSize: 200000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForImage(file, cb);
-	}
-}).single('book_image'); // this is the field that will be dealt
+function upload_book_image_by_user(timestamp){
+	return multer({
+		storage: get_multer_storage_to_use(image_storage),
+		limits:{fileSize: 200 * 1024 *1024}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForImages(file, cb);
+		}
+	}).single('book_image'); // this is the field that will be dealt
 // .array('blogpost_image_main', 12)
+}
 
 
 
@@ -69,8 +57,9 @@ router.post('/create-book-with-user', passport.authenticate('jwt', { session: fa
 	
 	// console.log('OUTER LOG')
 	// console.log(req.body)
+	timestamp = Date.now()
 
-	upload_book_image_by_user(req, res, (err) => {
+	upload_book_image_by_user(timestamp)(req, res, (err) => {
 		if(err){
 
 			console.log(err)
@@ -85,70 +74,114 @@ router.post('/create-book-with-user', passport.authenticate('jwt', { session: fa
 				// console.log('INNER LOG')
 				// console.log(req.body)
 
-			// image is uploaded , now saving image in db
-				const newBook = new Book({
+				{(async () => {
 
-					_id: new mongoose.Types.ObjectId(),
-					book_name: req.body.parent.book_name,
-					book_image: `./assets/images/uploads/books_images/${filename_used_to_store_image_in_assets}`,
-					book_description: req.body.parent.book_description,
-					// endpoint: req.body.parent.endpoint,
+					if (use_gcp_storage){
 
-				});
+						await save_file_to_gcp(timestamp, req.file, 'advertisement_images')
+						console.log('SAVED TO GCP')
 
-				newBook.save(function (err, newBook) {
+					} else if (use_aws_s3_storage) {
 
-					if (err){
-						res.status(404).json({ success: false, msg: 'couldnt create book database entry'})
-						return console.log(err)
+						console.log('SAVED TO AWS')
+
+					} else {
+
+						console.log('SAVED TO DISK STORAGE')
+
 					}
-					// assign user object then save
-					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-					.then((user) => {
-						if (user){
 
-							newBook.book_uploaded_by_user = user
-							newBook.save()
+				// image is uploaded , now saving image in db
+					const newBook = new Book({
 
-
-							// in response sending new image too with base64 encoding
-							let base64_encoded_image = base64_encode(newBook.book_image)
-
-							let new_book = {
-								book_name: newBook.book_name,
-								book_image: base64_encoded_image,
-								book_description: newBook.book_description,
-							}
-
-							res.status(200).json({ success: true, msg: 'new book saved', new_book: new_book});	
-
-
-							let newActivity = new Activity({
-								_id: new mongoose.Types.ObjectId(),
-								user: user,
-								activity_type: 'created_book',
-								book_created: newBook,
-							})
-							newActivity.save()
-							user.activities.push(newActivity)
-							user.save()
-
-						} else {
-
-							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
-
-						}
-					})
-					.catch((err) => {
-
-						next(err);
+						_id: new mongoose.Types.ObjectId(),
+						book_name: req.body.parent.book_name,
+						book_image: get_file_path_to_use(timestamp, req.file, 'books_images'),
+						// book_image: `./assets/images/uploads/books_images/${filename_used_to_store_image_in_assets}`,
+						book_description: req.body.parent.book_description,
+						// endpoint: req.body.parent.endpoint,
 
 					});
 
-				})
+					newBook.save(function (err, newBook) {
+
+						if (err){
+							res.status(404).json({ success: false, msg: 'couldnt create book database entry'})
+							return console.log(err)
+						}
+						// assign user object then save
+						User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+						.then((user) => {
+							if (user){
+
+								newBook.book_uploaded_by_user = user
+								newBook.save()
+
+								let base64_encoded_image
+
+								// in response sending new image too with base64 encoding
+								if (use_gcp_storage){
+
+									{(async () => {
+
+										cloud_resp = await axios.get(newBook.book_image)
+										base64_encoded_image = base64_encode( cloud_resp.data )
+
+									})()}
+
+								} else if (use_aws_s3_storage) {
+
+									{(async () => {
+
+										cloud_resp = await axios.get(newBook.book_image)
+										base64_encoded_image = base64_encode( cloud_resp.data )
+
+									})()}
+
+
+								} else {
+
+									base64_encoded_image = base64_encode( newBook.book_image )
+
+								}
+
+								let new_book = {
+									book_name: newBook.book_name,
+									book_image: base64_encoded_image,
+									book_description: newBook.book_description,
+								}
+
+								res.status(200).json({ success: true, msg: 'new book saved', new_book: new_book});	
+
+
+								let newActivity = new Activity({
+									_id: new mongoose.Types.ObjectId(),
+									user: user,
+									activity_type: 'created_book',
+									book_created: newBook,
+								})
+								newActivity.save()
+								user.activities.push(newActivity)
+								user.save()
+
+							} else {
+
+								res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+
+							}
+						})
+						.catch((err) => {
+
+							next(err);
+
+						});
+
+					})
 
 				// not needed, this is used only in multer
 				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
+				})()}
+
 			}
 		}
 	})

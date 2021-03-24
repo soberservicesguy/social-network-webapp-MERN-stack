@@ -34,8 +34,8 @@ class CreateSocialPost extends Component {
 			expanded:false,
 			redirectToRoute: false,
 			post_text: '',
-			image_upload: '',
-			video_upload: '',
+			social_post_image: '',
+			social_post_video: '',
 
 			tracked_width1: 0,
 			tracked_height1: 0,
@@ -223,11 +223,11 @@ class CreateSocialPost extends Component {
 											const formData = new FormData()
 
 											formData.append('post_text', this.state.post_text)
-											if(this.state.image_upload !== ''){
-												formData.append('image_upload', this.state.image_upload, this.state.image_upload.name)
+											if(this.state.social_post_image !== ''){
+												formData.append('social_post_image', this.state.social_post_image, this.state.social_post_image.name)
 											}
-											if(this.state.video_upload !== ''){
-												formData.append('video_upload', this.state.video_upload, this.state.video_upload.name)
+											if(this.state.social_post_video !== ''){
+												formData.append('social_post_video', this.state.social_post_video, this.state.social_post_video.name)
 											}
 
 											axios.post(utils.baseUrl + '/socialposts/create-socialpost-with-user', formData)
@@ -272,7 +272,7 @@ class CreateSocialPost extends Component {
 										onChange={(event) => {
 											// console logging selected file from menu
 											// setState method with event.target.files[0] as argument
-											this.setState(prev => ({...prev, image_upload: event.target.files[0]}))
+											this.setState(prev => ({...prev, social_post_image: event.target.files[0]}))
 											console.log( event.target.files[0] ) // gives first file
 										}}
 									/>
@@ -294,7 +294,7 @@ class CreateSocialPost extends Component {
 											// console logging selected file from menu
 											console.log( event.target.files[0] ) // gives first file
 											// setState method with event.target.files[0] as argument
-											this.setState(prev => ({...prev, video_upload: event.target.files[0]}))
+											this.setState(prev => ({...prev, social_post_video: event.target.files[0]}))
 										}}
 
 									/>

@@ -1,13 +1,13 @@
 const path = require('path')
 const { Storage } = require("@google-cloud/storage");
 const gcp_storage = new Storage({
-	keyFilename: path.join(__dirname, "../keys/android-app-backend-307507-d8ea1fdf8d98.json"),
+	keyFilename: path.join(__dirname, "../../keys/android-app-backend-307507-d8ea1fdf8d98.json"),
 	projectId: "android-app-backend-307507",
 })
 
 let gcp_bucket = 'portfolio_social_app'
 
-async function save_file_to_gcp(timestamp, file_payload, folder_name, bucket_name){
+async function save_file_to_gcp(timestamp, file_payload){
 
 // hardcode gcp_bucket if not supplied
 	if (typeof(bucket_name) === 'undefined'){
@@ -16,7 +16,7 @@ async function save_file_to_gcp(timestamp, file_payload, folder_name, bucket_nam
 
 	let the_bucket = gcp_storage.bucket(bucket_name)
 
-	let the_file = the_bucket.file(`${folder_name}/${path.basename( file.originalname, path.extname( file.originalname ) ) + '-' + timestamp + path.extname( file.originalname )}`);
+	let the_file = the_bucket.file(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`);
 
 	try{
 		await the_file.save(file_payload.buffer)
