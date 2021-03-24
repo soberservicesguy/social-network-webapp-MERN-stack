@@ -17,6 +17,16 @@ const path = require('path')
 require('../../models/activity');
 const Activity = mongoose.model('Activity');
 
+const { 
+	get_multer_storage_to_use, 
+	get_file_storage_venue, 
+	get_file_path_to_use,
+	use_gcp_storage, 
+	use_aws_s3_storage, 
+	save_file_to_gcp,
+	gcp_bucket,
+} = require('../../config/storage/storage_settings')
+
 // Set The Storage Engine
 const image_storage = multer.diskStorage({
 	destination: path.join(__dirname , '../../assets/images/uploads/advertisement_images'),
@@ -49,7 +59,7 @@ function checkFileTypeForImage(file, cb){
 
 // Init Upload
 const upload_ad_image = multer({
-	storage: image_storage,
+	storage: get_multer_storage_to_use(image_storage),
 	limits:{fileSize: 200000000}, // 1 mb
 	fileFilter: function(req, file, cb){
 		checkFileTypeForImage(file, cb);

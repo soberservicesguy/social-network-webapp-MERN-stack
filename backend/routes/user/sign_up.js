@@ -15,88 +15,49 @@ const utils = require('../../lib/utils');
 const multer = require('multer');
 const path = require('path');
 
-const env = require("dotenv").config({ path: "../../.env" });
-const use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? true : false
-const use_aws_s3_storage = ( process.env.AWS_S3_STORAGE_ENABLED === 'true' ) ? true : false
-const { gcp_storage, save_file_to_gcp, get_file_from_gcp, gcp_bucket } = require('../../config/google_cloud_storage')
-const { multers3_storage, s3_bucket } = require('../../config/aws_s3_storage')
+const { 
+	get_multer_storage_to_use, 
+	get_file_storage_venue, 
+	get_file_path_to_use,
+
+	use_gcp_storage, 
+	use_aws_s3_storage, 
+
+	save_file_to_gcp,
+	gcp_bucket,
+
+	checkFileTypeForImages,
+} = require('../../config/storage/storage_settings')
+
+let timestamp
 
 var filename_used_to_store_image_in_assets = ''
 var filename_used_to_store_image_in_assets_without_format = ''
 
-function get_storage_to_use(){
-	if (use_gcp_storage){
-	
-		return multer.memoryStorage()
-	
-	} else if (use_aws_s3_storage){
-	
-		return multers3_storage
-	
-	} else {
-	
-		return cover_and_avatar_storage
-	
-	}
-}
 
-function get_file_storage_place(){
-	if (use_gcp_storage){
-	
-		return 'gcp_storage'
-	
-	} else if (use_aws_s3_storage){
-	
-		return 'aws_s3'
-	
-	} else {
-	
-		return 'disk_storage'
-	
-	}
-}
+// Set The Storage Engine DRYed OUT
+// const image_storage = multer.diskStorage({
+// 	destination: path.join(__dirname , '../../assets/images/uploads/avatar_image'),
+// 	filename: function(req, file, cb){
+// 		// file name pattern fieldname-currentDate-fileformat
+// 		filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+// 		filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
 
+// 		cb(null, filename_used_to_store_image_in_assets);
 
-function get_file_path_to_use(file_to_save, folder_name){
-
-	if (use_gcp_storage){
-
-		// return `${bucket_name}/${file_to_save.originalname}` 
-		return `https://storage.googleapis.com/${gcp_bucket}/${folder_name}/${file_to_save.originalname}` 
-
-	} else if (use_aws_s3_storage){
-
-		// return `${bucket_name}/${file_to_save.originalname}`
-		return `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${file_to_save.originalname}`
-
-	} else {
-
-		return `assets/images/uploads/avatar_image/${file_to_save.originalname}`	
-
-	}	
-}
-
-// Set The Storage Engine
-const image_storage = multer.diskStorage({
-	destination: path.join(__dirname , '../../assets/images/uploads/avatar_image'),
-	filename: function(req, file, cb){
-		// file name pattern fieldname-currentDate-fileformat
-		filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
-
-		cb(null, filename_used_to_store_image_in_assets);
-
-	}
-});
+// 	}
+// });
 
 // Init Upload
-const upload_user_avatar_image = multer({
-	storage: get_storage_to_use(), // image_storage,
-	limits:{fileSize: 2000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForUserAvatar(file, cb);
-	}
-}).single('avatar_image'); // this is the field that will be dealt
+function upload_user_avatar_image(timestamp){
+	return multer({
+		storage: get_multer_storage_to_use(timestamp), // image_storage,
+		limits:{fileSize: 2000000}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForUserAvatar(file, cb);
+		}
+	}).single('avatar_image'); // this is the field that will be dealt
+}
 
 // Check File Type
 function checkFileTypeForUserAvatar(file, cb){
@@ -121,7 +82,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 	// console.log('OUTER LOG')
 	// console.log(req.body)
 
-	upload_user_avatar_image(req, res, (err) => {
+	upload_user_avatar_image(timestamp)(req, res, (err) => {
 		
 	// wrapping in IIFE since await requires async keyword which cant be applied to above multer function
 		{(async () => {
@@ -143,15 +104,13 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 
 				// WE NEED UPLOADED FILES THEREFORE CREATING CONDITIONS OF USING GCP, AWS, OR DISK STORAGE
 				// not needed since we not getting the image
-					// let user_avatar_image_to_use
+
 					if (use_gcp_storage){
 
 						// console.log('req.file')
 						// console.log(req.file)
 						// console.log(filename_used_to_store_image_in_assets)
-						await save_file_to_gcp(req.file, gcp_bucket, 'avatar_images')
-					// not needed since we not getting the image
-						// user_avatar_image_to_use = await get_file_from_gcp( req.file )
+						await save_file_to_gcp(req.file, 'avatar_images')
 
 					} else if (use_aws_s3_storage) {
 
@@ -177,9 +136,9 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 							_id: new mongoose.Types.ObjectId(),
 							// image_filepath: `./assets/images/uploads/avatar_image/${filename_used_to_store_image_in_assets}`,
 							image_filepath: get_file_path_to_use(req.file, 'avatar_images'),
+							images_hosted_location: get_file_storage_venue(),
 							category: req.body.category,
 							timestamp_of_uploading: String( Date.now() ),
-							images_hosted_location: get_file_storage_place(),
 							// title: req.body.title,
 							// description: req.body.description,
 							// all_tags: req.body.all_tags,
@@ -213,11 +172,11 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 								_id: new mongoose.Types.ObjectId(),
 								user_name: req.body.user_name,
 								phone_number: req.body.phone_number,
-								user_image: get_file_path_to_use(req.file, 'avatar_images'),
-								user_avatar_image: get_file_path_to_use(req.file, 'avatar_images'),
 								hash: hash,
 								salt: salt,
-								images_hosted_location: get_file_storage_place(),
+								user_image: get_file_path_to_use(req.file, 'avatar_images'),
+								user_avatar_image: get_file_path_to_use(req.file, 'avatar_images'),
+								images_hosted_location: get_file_storage_venue(),
 							});
 
 						}

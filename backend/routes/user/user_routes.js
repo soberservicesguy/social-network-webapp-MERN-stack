@@ -31,63 +31,21 @@ const path = require('path');
 
 const base64_encode = require('../../lib/image_to_base64')
 
-const env = require("dotenv").config({ path: "../../.env" });
-const use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? true : false
-const use_aws_s3_storage = ( process.env.AWS_S3_STORAGE_ENABLED === 'true' ) ? true : false
-const { gcp_storage, save_file_to_gcp, get_file_from_gcp, gcp_bucket } = require('../../config/google_cloud_storage')
-const { multers3_storage, s3_bucket } = require('../../config/aws_s3_storage')
+const { 
+	get_multer_storage_to_use, 
+	get_file_storage_venue, 
+	get_file_path_to_use,
 
-function get_storage_to_use(){
-	if (use_gcp_storage){
-	
-		return multer.memoryStorage()
-	
-	} else if (use_aws_s3_storage){
-	
-		return multers3_storage
-	
-	} else {
-	
-		return cover_and_avatar_storage
-	
-	}
-}
+	use_gcp_storage, 
+	use_aws_s3_storage, 
 
-function get_file_storage_place(){
-	if (use_gcp_storage){
-	
-		return 'gcp_storage'
-	
-	} else if (use_aws_s3_storage){
-	
-		return 'aws_s3'
-	
-	} else {
-	
-		return 'disk_storage'
-	
-	}
-}
+	save_file_to_gcp,
+	gcp_bucket,
 
+	checkFileTypeForImages,
+} = require('../../config/storage/storage_settings')
 
-function get_file_path_to_use(file_to_save, folder_name){
-
-	if (use_gcp_storage){
-
-		// return `${bucket_name}/${file_to_save.filename}` 
-		return `https://storage.googleapis.com/${gcp_bucket}/${folder_name}/${file_to_save.filename}` 
-
-	} else if (use_aws_s3_storage){
-
-		// return `${bucket_name}/${file_to_save.filename}`
-		return `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${file_to_save.filename}`
-
-	} else {
-
-		return `assets/images/uploads/avatar_image/${file_to_save.filename}`	
-
-	}	
-}
+let timestamp
 
 
 router.post('/signup-with-facebook-and-get-permission', passport.authenticate('facebook', { scope: ['user_friends', 'manage_pages'] }))
@@ -254,86 +212,110 @@ router.post('/login', async function(req, res, next){
 
 
 
-// Set The Storage Engine
-const cover_and_avatar_storage = multer.diskStorage({
-	// destination: path.join(__dirname , '../../assets/bulk_blogposts/'),
-	destination:function(req, file, cb){
-		// let file_path = `./uploads/${type}`;
-		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
-		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
+// Set The Storage Engine DRYed IT
+// const cover_and_avatar_storage = multer.diskStorage({
+// 	// destination: path.join(__dirname , '../../assets/bulk_blogposts/'),
+// 	destination:function(req, file, cb){
+// 		// let file_path = `./uploads/${type}`;
+// 		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
+// 		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
 
-		if (file.fieldname === "avatar_image") {
+// 		if (file.fieldname === "avatar_image") {
 
-			let file_path = path.join(__dirname , '../../assets/images/uploads/avatar_image/')
-			console.log(file_path)
-			cb(null, file_path)	
+// 			let file_path = path.join(__dirname , '../../assets/images/uploads/avatar_image/')
+// 			console.log(file_path)
+// 			cb(null, file_path)	
 
-		} else {
+// 		} else {
 
 			
-			let file_path = path.join(__dirname , `../../assets/images/uploads/cover_image/`)
-			console.log(file_path)
-			cb(null, file_path)	
+// 			let file_path = path.join(__dirname , `../../assets/images/uploads/cover_image/`)
+// 			console.log(file_path)
+// 			cb(null, file_path)	
 
-		}
+// 		}
 
-	},
-	filename: function(req, file, cb){
-		// file name pattern fieldname-currentDate-fileformat
-		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+// 	},
+// 	filename: function(req, file, cb){
+// 		// file name pattern fieldname-currentDate-fileformat
+// 		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+// 		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
 
-		filename_used_to_store_image_in_assets = file.originalname
-		cb(null, file.originalname);
+// 		filename_used_to_store_image_in_assets = file.originalname
+// 		cb(null, file.originalname);
 
-	}
-});
+// 	}
+// });
 
-// Check File Type
-function checkFileTypeForCoverAndAvatarImages(file, cb){
 
-	// Allowed ext
-	let filetypes_for_image = /jpeg|jpg|png|gif/
+// Check File Type DRYed out
+// function checkFileTypeForImages(file, cb){
 
-	// Check ext
-	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
+// 	// Allowed ext
+// 	let filetypes_for_image = /jpeg|jpg|png|gif/
 
-	// Check mime
-	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
+// 	// Check ext
+// 	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
 
-	if (file.fieldname === "avatar_image") { // if uploading resume
+// 	// Check mime
+// 	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
+
+// 	if (file.fieldname === "avatar_image") { // if uploading resume
 		
-		if (mimetype_for_image && extname_for_image) {
-			cb(null, true);
-		} else {
-			cb('Error: jpeg, jpg, png, gif Images Only!');
-		}
+// 		if (mimetype_for_image && extname_for_image) {
+// 			cb(null, true);
+// 		} else {
+// 			cb('Error: jpeg, jpg, png, gif Images Only!');
+// 		}
 
-	} else { // else uploading images
+// 	} else { // else uploading images
 
-		if (mimetype_for_image && extname_for_image) {
-			cb(null, true);
-		} else {
-			cb('Error: jpeg, jpg, png, gif Images Only!');
-		}
+// 		if (mimetype_for_image && extname_for_image) {
+// 			cb(null, true);
+// 		} else {
+// 			cb('Error: jpeg, jpg, png, gif Images Only!');
+// 		}
 
-	}
+// 	}
 
-}
+// }
+
 
 // Init Upload
-const upload_avatar_and_cover = multer({
-	storage: get_storage_to_use(), 
-	limits:{fileSize: 200000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForCoverAndAvatarImages(file, cb);
-	}
-}).fields([
-	{ name: 'avatar_image', maxCount: 1 }, 
-	{ name: 'cover_image', maxCount: 1 }
-])  // these are the fields that will be dealt
-// .single('blogpost_image_main'); 
-// .array('photos', 12)
+
+
+function upload_avatar_and_cover(timestamp){
+	return multer({
+		// storage: get_multer_storage_to_use(cover_and_avatar_storage),
+		storage: get_multer_storage_to_use(timestamp),
+		limits:{fileSize: 200000000}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForImages(file, cb);
+		}
+	}).fields([
+		{ name: 'avatar_image', maxCount: 1 }, 
+		{ name: 'cover_image', maxCount: 1 }
+	])  // these are the fields that will be dealt
+	// .single('blogpost_image_main'); 
+	// .array('photos', 12)
+}
+
+
+// DRYed out
+// const upload_avatar_and_cover = multer({
+// 	// storage: get_multer_storage_to_use(cover_and_avatar_storage),
+// 	storage: get_multer_storage_to_use(file, folder_name, timestamp),
+// 	limits:{fileSize: 200000000}, // 1 mb
+// 	fileFilter: function(req, file, cb){
+// 		checkFileTypeForImages(file, cb);
+// 	}
+// }).fields([
+// 	{ name: 'avatar_image', maxCount: 1 }, 
+// 	{ name: 'cover_image', maxCount: 1 }
+// ])  // these are the fields that will be dealt
+// // .single('blogpost_image_main'); 
+// // .array('photos', 12)
+
 
 router.post('/accept-friend-request', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
 
@@ -595,7 +577,9 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 
 	console.log('incoming')
 
-	upload_avatar_and_cover(req, res, (err) => {
+	timestamp = Date.now()
+
+	upload_avatar_and_cover(timestamp)(req, res, (err) => {
 
 		if(err){
 
@@ -614,9 +598,9 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 					user_education: req.body.user_education,
 					user_contact_details: req.body.user_contact_details,
 
-					images_hosted_location: get_file_storage_place(),
-					user_avatar_image: get_file_path_to_use( req.files['avatar_image'][0], 'avatar_images' ), 
-					user_cover_image: get_file_path_to_use( req.files['cover_image'][0], 'cover_images' ), 
+					images_hosted_location: get_file_storage_venue(),
+					user_avatar_image: get_file_path_to_use( timestamp, req.files['avatar_image'][0], 'avatar_images' ), 
+					user_cover_image: get_file_path_to_use( timestamp, req.files['cover_image'][0], 'cover_images' ), 
 				}
 
 			}, { new: true }, (err, user) => {
@@ -637,22 +621,11 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 						let promises = []
 
 					// saving image 1 in cloud
-						promises.push( save_file_to_gcp(req.files['avatar_image'][0]), gcp_bucket )
+						promises.push( save_file_to_gcp(timestamp, req.files['avatar_image'][0], 'avatar_images') )
 					// saving image 2 in cloud
-						promises.push( save_file_to_gcp(req.files['cover_image'][0]), gcp_bucket )
+						promises.push( save_file_to_gcp(timestamp, req.files['cover_image'][0], 'cover_images') )
 						await Promise.all(promises)
-
-					// getting files from cloud
-					// improved therefore not needed
-						// promises = []
-						// let file_1_data = get_file_from_gcp( req.files['avatar_image'][0] )
-						// let file_2_data = get_file_from_gcp( req.files['cover_image'][0] )
-						// promises.push( file_1_data )
-						// promises.push( file_2_data )
-						// await Promise.all(promises)
-						// user_avatar_image_to_use = file1_data
-						// user_cover_image_to_use = file_2_data
-
+					// getting from cloud
 						cloud_resp = await axios.get(user.user_avatar_image)
 						user_avatar_image_to_use = base64_encode( cloud_resp.data )
 
@@ -700,7 +673,7 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 					user_education: user.user_education,
 					user_contact_details: user.user_contact_details,
 
-					images_hosted_location: get_file_storage_place(),
+					images_hosted_location: get_file_storage_venue(),
 					user_avatar_image: user_avatar_image_to_use,
 					user_cover_image: user_cover_image_to_use,
 				}

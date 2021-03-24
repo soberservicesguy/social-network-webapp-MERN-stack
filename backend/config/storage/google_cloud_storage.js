@@ -7,15 +7,16 @@ const gcp_storage = new Storage({
 
 let gcp_bucket = 'portfolio_social_app'
 
-async function save_file_to_gcp(file_payload, bucket_name, folder_name){
+async function save_file_to_gcp(timestamp, file_payload, folder_name, bucket_name){
 
+// hardcode gcp_bucket if not supplied
 	if (typeof(bucket_name) === 'undefined'){
 		bucket_name = gcp_bucket
 	}
 
 	let the_bucket = gcp_storage.bucket(bucket_name)
 
-	let the_file = the_bucket.file(`${folder_name}/${path.basename( file.originalname, path.extname( file.originalname ) ) + '-' + Date.now() + path.extname( file.originalname )}`);
+	let the_file = the_bucket.file(`${folder_name}/${path.basename( file.originalname, path.extname( file.originalname ) ) + '-' + timestamp + path.extname( file.originalname )}`);
 
 	try{
 		await the_file.save(file_payload.buffer)
