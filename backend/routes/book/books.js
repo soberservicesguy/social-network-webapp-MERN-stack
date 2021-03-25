@@ -19,19 +19,23 @@ const path = require('path')
 require('../../models/activity');
 const Activity = mongoose.model('Activity');
 
-const { 
-	get_multer_storage_to_use, 
-	get_file_storage_venue, 
+const {
+	get_multer_storage_to_use,
+	get_file_storage_venue,
 	get_file_path_to_use,
 
-	use_gcp_storage, 
-	use_aws_s3_storage, 
+	use_gcp_storage,
+	use_aws_s3_storage,
 
 	save_file_to_gcp,
 	gcp_bucket,
 
+	get_snapshots_storage_path,
+
+	save_file_to_aws_s3,
+
 	checkFileTypeForImages,
-} = require('../../config/storage/storage_settings')
+} = require('../../config/storage/')
 
 let timestamp
 
@@ -39,7 +43,7 @@ let timestamp
 // Init Upload
 function upload_book_image_by_user(timestamp){
 	return multer({
-		storage: get_multer_storage_to_use(image_storage),
+		storage: get_multer_storage_to_use(timestamp),
 		limits:{fileSize: 200 * 1024 *1024}, // 1 mb
 		fileFilter: function(req, file, cb){
 			checkFileTypeForImages(file, cb);
@@ -78,7 +82,7 @@ router.post('/create-book-with-user', passport.authenticate('jwt', { session: fa
 
 					if (use_gcp_storage){
 
-						await save_file_to_gcp(timestamp, req.file, 'advertisement_images')
+						await save_file_to_gcp(timestamp, req.file, 'book_images')
 						console.log('SAVED TO GCP')
 
 					} else if (use_aws_s3_storage) {
@@ -96,8 +100,8 @@ router.post('/create-book-with-user', passport.authenticate('jwt', { session: fa
 
 						_id: new mongoose.Types.ObjectId(),
 						book_name: req.body.parent.book_name,
-						book_image: get_file_path_to_use(timestamp, req.file, 'books_images'),
-						// book_image: `./assets/images/uploads/books_images/${filename_used_to_store_image_in_assets}`,
+						book_image: get_file_path_to_use(timestamp, req.file, 'book_images'),
+						// book_image: `./assets/images/uploads/book_images/${filename_used_to_store_image_in_assets}`,
 						book_description: req.body.parent.book_description,
 						// endpoint: req.body.parent.endpoint,
 

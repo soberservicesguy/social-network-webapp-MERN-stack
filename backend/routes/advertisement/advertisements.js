@@ -29,7 +29,7 @@ const {
 	gcp_bucket,
 
 	checkFileTypeForImages,
-} = require('../../config/storage/storage_settings')
+} = require('../../config/storage/')
 
 let timestamp
 

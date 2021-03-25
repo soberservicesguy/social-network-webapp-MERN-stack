@@ -9,11 +9,13 @@ let path_for_saving_files = '../../assets/uploads'
 
 if (use_gcp_storage === false && use_aws_s3_storage === false){
 
+	// all are exact plural  of fieldnames
+
 	let all_links = [
 	// images
 		'./assets/uploads/advertisement_images',
 		'./assets/uploads/avatar_images',
-		'./assets/uploads/books_imagess',
+		'./assets/uploads/book_imagess',
 		'./assets/uploads/cover_images',
 		'./assets/uploads/page_images',
 		'./assets/uploads/social_post_images',
@@ -65,7 +67,8 @@ function get_multer_disk_storage(timestamp){
 
 		filename: function(req, file, cb){
 
-			let file_format = file.fieldname + '-' + timestamp + path.extname(file.originalname)
+			// let file_format = file.fieldname + '-' + timestamp + path.extname(file.originalname)
+			let file_format = path.basename( file.originalname, path.extname( file.originalname ) ) + '-' + timestamp + path.extname(file.originalname)
 			cb(null, file_format);
 
 		},
@@ -94,7 +97,7 @@ function checkFileTypeForImages(file, cb){
 
 }
 
-// Check File Type
+// works when image field is kept image_upload
 function checkFileTypeForImageAndVideo(file, cb){
 	// Allowed ext
 	let filetypes_for_image = /jpeg|jpg|png|gif/
@@ -123,6 +126,43 @@ function checkFileTypeForImageAndVideo(file, cb){
 			cb(null, true);
 		} else {
 			cb('Error: mp4, mov, avi, flv Videos Only!');
+		}
+
+	}
+
+}
+
+// works when excel sheet field is kept excel_sheet
+function checkFileTypeForImagesAndExcelSheet(file, cb){
+
+	// Allowed ext
+	let filetypes_for_image = /jpeg|jpg|png|gif/
+	// let filetypes_for_excelsheet = /xlsx|xls/
+	let filetypes_for_excelsheet = /[A-Za-z]+/
+
+	// Check ext
+	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
+	let extname_for_excelsheet = filetypes_for_excelsheet.test( path.extname(file.originalname).toLowerCase() );
+
+	// Check mime
+	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
+	let mimetype_for_excelsheet = filetypes_for_excelsheet.test( file.mimetype );
+
+
+	if (file.fieldname === "excel_sheet") { // if uploading resume
+		
+		if (mimetype_for_excelsheet && extname_for_excelsheet) {
+			cb(null, true);
+		} else {
+			cb('Error: only .xlsx, .xls for excel files');
+		}
+
+	} else { // else uploading images
+
+		if (mimetype_for_image && extname_for_image) {
+			cb(null, true);
+		} else {
+			cb('Error: jpeg, jpg, png, gif Images Only!');
 		}
 
 	}
@@ -184,4 +224,5 @@ module.exports = {
 
 	checkFileTypeForImages,
 	checkFileTypeForImageAndVideo,
+	checkFileTypeForImagesAndExcelSheet,
 }

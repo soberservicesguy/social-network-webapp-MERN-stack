@@ -31,19 +31,23 @@ const path = require('path');
 
 const base64_encode = require('../../lib/image_to_base64')
 
-const { 
-	get_multer_storage_to_use, 
-	get_file_storage_venue, 
+const {
+	get_multer_storage_to_use,
+	get_file_storage_venue,
 	get_file_path_to_use,
 
-	use_gcp_storage, 
-	use_aws_s3_storage, 
+	use_gcp_storage,
+	use_aws_s3_storage,
 
 	save_file_to_gcp,
 	gcp_bucket,
 
+	get_snapshots_storage_path,
+
+	save_file_to_aws_s3,
+
 	checkFileTypeForImages,
-} = require('../../config/storage/storage_settings')
+} = require('../../config/storage/')
 
 let timestamp
 

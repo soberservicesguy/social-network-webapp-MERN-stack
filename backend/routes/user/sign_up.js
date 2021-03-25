@@ -15,19 +15,23 @@ const utils = require('../../lib/utils');
 const multer = require('multer');
 const path = require('path');
 
-const { 
-	get_multer_storage_to_use, 
-	get_file_storage_venue, 
+const {
+	get_multer_storage_to_use,
+	get_file_storage_venue,
 	get_file_path_to_use,
 
-	use_gcp_storage, 
-	use_aws_s3_storage, 
+	use_gcp_storage,
+	use_aws_s3_storage,
 
 	save_file_to_gcp,
 	gcp_bucket,
 
+	get_snapshots_storage_path,
+
+	save_file_to_aws_s3,
+
 	checkFileTypeForImages,
-} = require('../../config/storage/storage_settings')
+} = require('../../config/storage/')
 
 let timestamp
 
@@ -178,6 +182,9 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 							});
 
 						}
+
+					console.log('FILE SAVED AT BELOW PATH')
+					console.log( get_file_path_to_use(timestamp, req.file, 'avatar_images') )
 
 					} catch (err){
 						console.log('user not created')

@@ -19,45 +19,40 @@ const path = require('path')
 require('../../models/activity');
 const Activity = mongoose.model('Activity');
 
-// Set The Storage Engine
-const image_storage = multer.diskStorage({
-	destination: path.join(__dirname , '../../assets/images/uploads/sport_image'),
-	filename: function(req, file, cb){
-		// file name pattern fieldname-currentDate-fileformat
-		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+const {
+	get_multer_storage_to_use,
+	get_file_storage_venue,
+	get_file_path_to_use,
 
-		filename_used_to_store_image_in_assets = file.originalname
-		cb(null, file.originalname);
+	use_gcp_storage,
+	use_aws_s3_storage,
 
-	}
-});
+	save_file_to_gcp,
+	gcp_bucket,
 
-// Check File Type
-function checkFileTypeForImage(file, cb){
-	// Allowed ext
-	let filetypes = /jpeg|jpg|png|gif/;
-	// Check ext
-	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-	// Check mime
-	let mimetype = filetypes.test(file.mimetype);
+	get_snapshots_storage_path,
 
-	if(mimetype && extname){
-		return cb(null,true);
-	} else {
-		cb('Error: jpeg, jpg, png, gif Images Only!');
-	}
-}
+	save_file_to_aws_s3,
+
+	checkFileTypeForImages,
+} = require('../../config/storage/')
+
+let timestamp
+
 
 // Init Upload
-const upload_sport_by_user = multer({
-	storage: image_storage,
-	limits:{fileSize: 200000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForImage(file, cb);
-	}
-}).single('sport_image'); // this is the field that will be dealt
-// .array('sport_image', 12)
+function upload_sport_by_user(){
+
+	return multer({
+		storage: image_storage,
+		limits:{fileSize: 200000000}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForImages(file, cb);
+		}
+	}).single('sport_image'); // this is the field that will be dealt
+	// .array('sport_image', 12)
+
+} 
 
 
 
@@ -68,8 +63,9 @@ router.post('/create-sport-with-user', passport.authenticate('jwt', { session: f
 	
 	// console.log('OUTER LOG')
 	// console.log(req.body)
+	timestamp = Date.now()
 
-	upload_sport_by_user(req, res, (err) => {
+	upload_sport_by_user(timestamp)(req, res, (err) => {
 		if(err){
 
 			console.log(err)
@@ -83,70 +79,116 @@ router.post('/create-sport-with-user', passport.authenticate('jwt', { session: f
 			} else {
 				// console.log('INNER LOG')
 				// console.log(req.body)
+				{(async () => {
 
-			// image is uploaded , now saving image in db
-				const newSport = new Sport({
+					if (use_gcp_storage){
 
-					_id: new mongoose.Types.ObjectId(),
-					sport_name: req.body.parent.sport_name,
-					sport_image: `./assets/images/uploads/sport_image/${filename_used_to_store_image_in_assets}`,
-					sport_description: req.body.parent.sport_description,
-					// endpoint: req.body.parent.endpoint,
+						await save_file_to_gcp(timestamp, req.file, 'sport_images')
+						console.log('SAVED TO GCP')
 
-				});
+					} else if (use_aws_s3_storage) {
 
-				newSport.save(function (err, newSport) {
+						console.log('SAVED TO AWS')
 
-					if (err){
-						res.status(404).json({ success: false, msg: 'couldnt create page database entry'})
-						return console.log(err)
+					} else {
+
+						console.log('SAVED TO DISK STORAGE')
+
 					}
-					// assign user object then save
-					User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-					.then((user) => {
-						if (user){
-
-							newSport.sport_created_by_user = user
-							newSport.save()
 
 
-							// in response sending new image too with base64 encoding
-							let base64_encoded_image = base64_encode(newSport.sport_image)
+				// image is uploaded , now saving image in db
+					const newSport = new Sport({
 
-							let new_sport = {
-								sport_name: newSport.sport_name,
-								sport_image: base64_encoded_image,
-								sport_description: newSport.sport_description,
-							}
-
-							res.status(200).json({ success: true, msg: 'new sport saved', new_sport: new_sport});	
-
-							let newActivity = new Activity({
-								_id: new mongoose.Types.ObjectId(),
-								user: user,
-								activity_type: 'created_sport',
-								sport_created: newSport,
-							})
-							newActivity.save()
-							user.activities.push(newActivity)
-							user.save()
-
-						} else {
-
-							res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
-
-						}
-					})
-					.catch((err) => {
-
-						next(err);
+						_id: new mongoose.Types.ObjectId(),
+						sport_name: req.body.parent.sport_name,
+						sport_image: get_file_path_to_use(timestamp, req.file, 'sport_images'),
+						// sport_image: `./assets/images/uploads/sport_image/${filename_used_to_store_image_in_assets}`,
+						sport_description: req.body.parent.sport_description,
+						// endpoint: req.body.parent.endpoint,
 
 					});
 
-				})
+					newSport.save(function (err, newSport) {
 
-				// not needed, this is used only in multer
-				// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
+						if (err){
+							res.status(404).json({ success: false, msg: 'couldnt create page database entry'})
+							return console.log(err)
+						}
+						// assign user object then save
+						User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+						.then((user) => {
+							if (user){
+
+								newSport.sport_created_by_user = user
+								newSport.save()
+
+
+								let base64_encoded_image
+							
+								// in response sending new image too with base64 encoding
+								if (use_gcp_storage){
+
+									{(async () => {
+
+										cloud_resp = await axios.get(newSport.sport_image)
+										base64_encoded_image = base64_encode( cloud_resp.data )
+
+									})()}
+
+								} else if (use_aws_s3_storage) {
+
+									{(async () => {
+
+										cloud_resp = await axios.get(newSport.sport_image)
+										base64_encoded_image = base64_encode( cloud_resp.data )
+
+									})()}
+
+
+								} else {
+
+									base64_encoded_image = base64_encode( newSport.sport_image )
+
+								}
+
+
+								let new_sport = {
+									sport_name: newSport.sport_name,
+									sport_image: base64_encoded_image,
+									sport_description: newSport.sport_description,
+								}
+
+								res.status(200).json({ success: true, msg: 'new sport saved', new_sport: new_sport});	
+
+								let newActivity = new Activity({
+									_id: new mongoose.Types.ObjectId(),
+									user: user,
+									activity_type: 'created_sport',
+									sport_created: newSport,
+								})
+								newActivity.save()
+								user.activities.push(newActivity)
+								user.save()
+
+							} else {
+
+								res.status(200).json({ success: false, msg: "user doesnt exists, try logging in again" });
+
+							}
+						})
+						.catch((err) => {
+
+							next(err);
+
+						});
+
+					})
+
+					// not needed, this is used only in multer
+					// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
+				})()}
+
 			}
 		}
 	})

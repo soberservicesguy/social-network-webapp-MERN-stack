@@ -29,26 +29,29 @@ const path = require('path')
 
 var ffmpeg = require('fluent-ffmpeg') // for setting thumbnail of video upload using snapshot
 
-const images_upload_path = 'assets/uploads/social_post_images'
-const video_upload_path = `assets/uploads/social_post_videos`
-const video_image_thumbnail_path = `assets/uploads/thumbnails_for_social_videos`
-
 const { 
 	get_multer_storage_to_use, 
-	get_file_storage_venue, 
+	get_file_storage_venue,
 	get_file_path_to_use,
 
-	use_gcp_storage, 
-	use_aws_s3_storage, 
+	use_gcp_storage,
+	use_aws_s3_storage,
 
 	save_file_to_gcp,
 	gcp_bucket,
 
+	get_snapshots_storage_path,
+
 	// checkFileTypeForImages,
 	checkFileTypeForImageAndVideo,
-} = require('../../config/storage/storage_settings')
+} = require('../../config/storage/')
 
 let timestamp
+
+const images_upload_path = 'assets/uploads/social_post_images'
+const video_upload_path = `assets/uploads/social_post_videos`
+const video_image_thumbnail_path = `assets/uploads/thumbnails_for_social_videos`
+
  
 // Init Upload
 function upload_image_or_video_in_social_post(timestamp){
@@ -66,12 +69,33 @@ function upload_image_or_video_in_social_post(timestamp){
 	// .array('photos', 12)
 }
 
-async function create_snapshots_from_uploaded_video(video_filename, video_file, callback){
-// video is uploaded , NOW creating thumbnail from video using snapshot
+async function create_snapshots_from_uploaded_video(timestamp, video_filename, video_file, callback){
+	// video is uploaded , NOW creating thumbnail from video using snapshot
 	ffmpeg(video_file)
 	.on('end', function() {
+
 		console.log('Screenshots taken');
+
+		// saving snapshots in gcp store or aws s3 if needed
+		let file_path
+		if ( use_gcp_storage ){
+
+			file_path = `${get_snapshots_storage_path()}/${video_filename}-${timestamp}.png`
+			save_file_to_gcp( timestamp, file_path, true )
+			
+		} else if ( use_aws_s3_storage ){
+
+			file_path = `${get_snapshots_storage_path()}/${video_filename}-${timestamp}.png`
+			save_file_to_aws_s3( 'thumbnails_for_social_videos', file_path )
+
+		} else {
+
+			console.log('FILE ALREADY AT DISK STORAGE NO NEED TO SAVE ANYWHERE')
+
+		}
+
 		callback()
+
 	})
 	.on('error', function(err) {
 		console.error(err);
@@ -80,11 +104,11 @@ async function create_snapshots_from_uploaded_video(video_filename, video_file, 
 		console.log('screenshots are ' + filenames.join(', '));
 	})
 	.screenshots({
-		filename: `${video_filename}.png`, // if single snapshot is needed
+		filename: `${video_filename}-${timestamp}.png`, // if single snapshot is needed
 		size: '150x100', 
 		count: 4,
 		// folder: './assets/videos/uploads/upload_thumbnails/',
-		folder: video_image_thumbnail_path,
+		folder: get_snapshots_storage_path(),
 	})
 }
 
@@ -259,13 +283,13 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 			} else {
 
 			// saving image and video files first if available
-				if ( req.files['social_post_image'] ){
+				if ( req.files['social_post_image'][0] ){
 
 					{(async () => {
 
 						if (use_gcp_storage){
 
-							await save_file_to_gcp(timestamp, req.file)
+							await save_file_to_gcp(timestamp, req.files['social_post_image'][0])
 							console.log('SAVED TO GCP')
 
 						} else if (use_aws_s3_storage) {
@@ -281,16 +305,13 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 				} 
 
-				if ( req.files['social_post_video'] ){
+				if ( req.files['social_post_video'][0] ){
 
 					{(async () => {
 
 						if (use_gcp_storage){
 
-							await save_file_to_gcp(timestamp, req.file)
-video_thumbnail_image: `${video_image_thumbnail_path}/${req.files['social_post_video'][0].filename}.png`
-							await save_file_to_gcp(timestamp, req.file)
-
+							await save_file_to_gcp(timestamp, req.files['social_post_video'][0])
 							console.log('SAVED TO GCP')
 
 						} else if (use_aws_s3_storage) {
@@ -346,8 +367,8 @@ video_thumbnail_image: `${video_image_thumbnail_path}/${req.files['social_post_v
 
 				} else if (req.files['social_post_video'] !== undefined && req.body.post_text){
 
-					video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
-
+					video_path = get_file_path_to_use(timestamp, `${req.files['social_post_video'][0].filename}`, 'social_post_videos')
+					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
 
 					function after_screenshot_callback(){
 
@@ -359,7 +380,7 @@ video_thumbnail_image: `${video_image_thumbnail_path}/${req.files['social_post_v
 							post_text: req.body.post_text,
 							video_for_post: get_file_path_to_use(timestamp, req.files['social_post_video'][0], 'social_post_videos'),
 							// video_for_post: `./assets/videos/uploads/social_post_videos/${req.files['social_post_video'][0].filename}`,
-							video_thumbnail_image: `${video_image_thumbnail_path}/${req.files['social_post_video'][0].filename}.png`,
+							video_thumbnail_image: `${get_snapshots_storage_path()}/${req.files['social_post_video'][0].filename}-${timestamp}.png`,
 							
 						});
 
@@ -367,11 +388,12 @@ video_thumbnail_image: `${video_image_thumbnail_path}/${req.files['social_post_v
 
 					}
 
-					create_snapshots_from_uploaded_video(req.files['social_post_video'][0].filename, video_path, after_screenshot_callback)
+					create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0].filename, video_path, after_screenshot_callback)
 
 				} else if (req.files['social_post_video'] !== undefined && !req.body.post_text){
 					
-					video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
+					video_path = get_file_path_to_use(timestamp, `${req.files['social_post_video'][0].filename}`, 'social_post_videos')
+					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
 
 					function after_screenshot_callback(){
 
@@ -380,14 +402,15 @@ video_thumbnail_image: `${video_image_thumbnail_path}/${req.files['social_post_v
 						newSocialPost = new SocialPost({
 							_id: social_post_id,
 							type_of_post: social_post_type,
-							video_for_post: `./assets/videos/uploads/social_post_videos/${req.files['social_post_video'][0].filename}`,
-							video_thumbnail_image: `assets/videos/uploads/thumbnails_for_social_videos/${filename_used_to_store_video_in_assets_without_format}_1.png`,
+							video_for_post: get_file_path_to_use(timestamp, req.files['social_post_video'][0], 'social_post_videos'),
+							// video_for_post: `./assets/videos/uploads/social_post_videos/${req.files['social_post_video'][0].filename}`,
+							video_thumbnail_image: `${get_snapshots_storage_path()}/${req.files['social_post_video'][0].filename}-${timestamp}.png`,
 						});
 
 						save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)
 					}
 
-					create_snapshots_from_uploaded_video(req.files['social_post_video'][0].filename, video_path, after_screenshot_callback)
+					create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0].filename, video_path, after_screenshot_callback)
 
 				} else {
 

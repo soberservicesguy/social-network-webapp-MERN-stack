@@ -4,15 +4,17 @@ const path = require( 'path' );
 
 let s3_bucket = 'portfolio-social-app'
 
-const s3 = new aws.S3({
+s3_params = {
 	accessKeyId: 'AKIAW2YVB4HUU247OPCY',
 	secretAccessKey: '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',
 	Bucket: s3_bucket, // bucket name
 // not needed
 	// region: 'Asia Pacific (Singapore) ap-southeast-1',
 	// s3BucketEndpoint:true,
-	// endpoint:"http://" + s3_bucket + ".s3.amazonaws.com",
-})
+	// endpoint:"http://" + s3_bucket + ".s3.amazonaws.com",	
+}
+
+const s3 = new aws.S3(s3_params)
 
 
 // const multers3_storage = multerS3({
@@ -37,7 +39,21 @@ function get_multers3_storage(timestamp){
 
 }
 
+
+function save_file_to_aws_s3(file_save_folder, file){
+
+	let params = {...s3_params, Key:file_save_folder, Body: file}
+	let conditions = {partSize: 10 * 1024 * 1024, queueSize: 1}
+
+	new aws.S3.upload(params, conditions, function(err, data){
+		console.log(err, data);
+	})
+
+}
+
 module.exports = {
 	get_multers3_storage,
 	s3_bucket,
+
+	save_file_to_aws_s3,
 }
