@@ -134,10 +134,12 @@ router.post('/bulk-upload-ads', passport.authenticate('jwt', { session: false })
 
 			{(async () => {
 
+				let images
+
 				if (use_gcp_storage){
 
 					await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_ads', req.files['excel_sheet'][0] )
-					let images = req.files['ad_image']
+					images = req.files['ad_image']
 					Promise.all(images.map((image_file) => {
 						await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_ads', image_file )
 					}))
@@ -146,6 +148,7 @@ router.post('/bulk-upload-ads', passport.authenticate('jwt', { session: false })
 				} else if (use_aws_s3_storage) {
 
 					await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_ads', req.files['excel_sheet'][0])
+					images = req.files['ad_image']
 					Promise.all(images.map((image_file) => {
 						await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_ads', image_file )
 					}))

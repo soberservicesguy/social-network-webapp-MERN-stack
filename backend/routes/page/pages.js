@@ -41,7 +41,7 @@ let timestamp
 // Init Upload
 function upload_page_by_user(timestamp){ 
 	return multer({
-		storage: image_storage,
+		storage: get_multer_storage_to_use(timestamp),
 		limits:{fileSize: 200000000}, // 1 mb
 		fileFilter: function(req, file, cb){
 			checkFileTypeForImages(file, cb);

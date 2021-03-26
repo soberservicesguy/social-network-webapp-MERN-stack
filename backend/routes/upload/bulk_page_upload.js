@@ -26,8 +26,35 @@ const fs = require('fs')
 const sheet_to_class = require('../../excel_to_databases/import_bulkpages')
 const bulk_delete_all_pages = require('../../excel_to_databases/bulk_delete_all_pages')
 
-var currentDate = ''
-var currentTime = ''
+const {
+	get_multer_storage_to_use,
+	get_multer_storage_to_use_for_bulk_files,
+	get_file_storage_venue,
+	get_file_path_to_use,
+	get_file_path_to_use_for_bulk_files,
+
+	use_gcp_storage,
+	use_aws_s3_storage,
+
+	save_file_to_gcp,
+	save_file_to_gcp_for_bulk_files,
+	gcp_bucket,
+
+	get_snapshots_storage_path,
+
+	save_file_to_aws_s3,
+	save_file_to_aws_s3_for_bulk_files,
+
+	get_multer_disk_storage_for_bulk_files,
+
+	checkFileTypeForImages,
+	checkFileTypeForImageAndVideo,
+	checkFileTypeForImagesAndExcelSheet,
+} = require('../../config/storage/')
+
+let timestamp
+let currentDate
+let currentTime
 
 // Set The Storage Engine
 const bulk_pages_storage = multer.diskStorage({
@@ -65,56 +92,21 @@ const bulk_pages_storage = multer.diskStorage({
 	}
 });
 
-// Check File Type
-function checkFileTypeForImageAndExcelSheet(file, cb){
+function bulk_upload_pages(timestamp, folder_name){
 
-	// Allowed ext
-	let filetypes_for_image = /jpeg|jpg|png|gif/
-	// let filetypes_for_excelsheet = /xlsx|xls/
-	let filetypes_for_excelsheet = /[A-Za-z]+/
-
-	// Check ext
-	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
-	let extname_for_excelsheet = filetypes_for_excelsheet.test( path.extname(file.originalname).toLowerCase() );
-
-	// Check mime
-	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
-	let mimetype_for_excelsheet = filetypes_for_excelsheet.test( file.mimetype );
-
-	if (file.fieldname === "page_image") { // if uploading resume
-		
-		if (mimetype_for_image && extname_for_image) {
-			cb(null, true);
-		} else {
-			cb('Error: jpeg, jpg, png, gif Images Only!');
+	return multer({
+		storage: get_multer_storage_to_use_for_bulk_files(timestamp, folder_name),
+		limits:{fileSize: 200000000}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForImagesAndExcelSheet(file, cb);
 		}
-
-	} else { // else uploading images
-
-		if (mimetype_for_excelsheet && extname_for_excelsheet) {
-			cb(null, true);
-		} else {
-			cb('Error: only .xlsx, .xls for excel files');
-		}
-
-	}
-
+	}).fields([
+		{ name: 'excel_sheet', maxCount: 1 }, 
+		{ name: 'page_image', maxCount: 1000 }
+	])  // these are the fields that will be dealt
+	// .single('page_image'); 
+	// .array('photos', 12)
 }
-
-// Init Upload
-const bulk_upload_pages = multer({
-	storage: bulk_pages_storage,
-	limits:{fileSize: 200000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForImageAndExcelSheet(file, cb);
-	}
-}).fields([
-	{ name: 'excel_sheet_for_page', maxCount: 1 }, 
-	{ name: 'page_image', maxCount: 1000 }
-])  // these are the fields that will be dealt
-// .single('page_image'); 
-// .array('photos', 12)
-
 
 // create blogpost with undefined
 // USED IN CREATING BLOGPOST
@@ -123,35 +115,70 @@ router.post('/bulk-upload-pages', passport.authenticate('jwt', { session: false 
 	// console.log('OUTER LOG')
 	// console.log(req.body)
 
-	bulk_upload_pages(req, res, (err) => {
+	timestamp = Date.now()
+	currentDate = timestamp.toLocaleDateString("en-US").split("/").join(" | ");
+	currentTime = timestamp.toLocaleTimeString("en-US").split("/").join(" | ");
+
+	bulk_upload_pages( `${currentDate}_${currentTime}`, 'bulk_pages' )(req, res, (err) => {
 		if(err){
 
 			console.log(err)
 
 		} else {
 
-			// give excel file name and run bulk import function
-			// req.files['excel_sheet_for_page'][0] // pull data from it and create blogposts
-			let user_id = ''
-		// finding the user who is uploading so that it can be passed to sheet_to_class for assignment on posts
-			User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-			.then((user) => {
-				if (user){
+			{(async () => {
 
-					user_id = user._id
-					// console.log( req.files['excel_sheet_for_socialpost'][0] )
-					// give path
-					let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_pages/${currentDate}_${currentTime}/${req.files['excel_sheet_for_page'][0].filename}`) 
-					sheet_to_class( uploaded_excel_sheet, user_id )
-					res.status(200).json({ success: true, msg: 'new pages created'});	
+				let images
+
+				if (use_gcp_storage){
+
+					await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_pages', req.files['excel_sheet'][0] )
+					images = req.files['page_image']
+					Promise.all(images.map((image_file) => {
+						await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_pages', image_file )
+					}))
+					console.log('SAVED TO GCP')
+
+				} else if (use_aws_s3_storage) {
+
+					await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_pages', req.files['excel_sheet'][0])
+					images = req.files['page_image']
+					Promise.all(images.map((image_file) => {
+						await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_pages', image_file )
+					}))
+					console.log('SAVED TO AWS')
 
 				} else {
-					res.status(200).json({ success: false, msg: "new pages NOT created, try again" });
+
+					console.log('SAVED TO DISK STORAGE')
+
 				}
-			})
-			.catch((error) => {
-				res.status(200).json({ success: false, msg: "new pages NOT created, try again" });
-			})
+
+				// give excel file name and run bulk import function
+				// req.files['excel_sheet'][0] // pull data from it and create blogposts
+				let user_id = ''
+			// finding the user who is uploading so that it can be passed to sheet_to_class for assignment on posts
+				User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
+				.then((user) => {
+					if (user){
+
+						user_id = user._id
+						// console.log( req.files['excel_sheet_for_socialpost'][0] )
+						// give path
+						let uploaded_excel_sheet = path.join(__dirname , `../../assets/bulk_pages/${currentDate}_${currentTime}/${req.files['excel_sheet'][0].filename}`) 
+						sheet_to_class( uploaded_excel_sheet, user_id )
+						res.status(200).json({ success: true, msg: 'new pages created'});	
+
+					} else {
+						res.status(200).json({ success: false, msg: "new pages NOT created, try again" });
+					}
+				})
+				.catch((error) => {
+					res.status(200).json({ success: false, msg: "new pages NOT created, try again" });
+				})
+
+			})()}
+
 		}
 	})
 })

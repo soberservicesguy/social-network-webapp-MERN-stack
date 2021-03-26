@@ -56,7 +56,7 @@ const video_image_thumbnail_path = `assets/uploads/thumbnails_for_social_videos`
 // Init Upload
 function upload_image_or_video_in_social_post(timestamp){
 	return multer({
-		storage: image_and_video_storage,
+		storage: get_multer_storage_to_use(timestamp),
 		limits:{fileSize: 200000000}, // 1 mb
 		fileFilter: function(req, file, cb){
 			checkFileTypeForImageAndVideo(file, cb);
@@ -283,7 +283,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 			} else {
 
 			// saving image and video files first if available
-				if ( req.files['social_post_image'][0] ){
+				if ( req.files['social_post_image'] ){
 
 					{(async () => {
 
@@ -305,7 +305,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 				} 
 
-				if ( req.files['social_post_video'][0] ){
+				if ( req.files['social_post_video'] ){
 
 					{(async () => {
 
@@ -772,11 +772,11 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 				console.log('activities_to_send')
 				console.log(activities_to_send.length)
 
-				// res.status(200).json(activities_to_send)
-				activities_to_send.map((act) => {
-					res.write([act])
-				})
-				res.end();
+				res.status(200).json(activities_to_send)
+				// activities_to_send.map((act) => {
+				// 	res.write(act)
+				// })
+				// res.end();
 
 				await user_checking_others_posts.save()
 			}

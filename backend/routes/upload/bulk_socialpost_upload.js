@@ -26,49 +26,77 @@ const fs = require('fs')
 const sheet_to_class = require('../../excel_to_databases/import_bulksocialposts')
 const delete_all_socialposts = require('../../excel_to_databases/delete_all_socialposts')
 
-var currentDate = ''
-var currentTime = ''
+const {
+	get_multer_storage_to_use,
+	get_multer_storage_to_use_for_bulk_files,
+	get_file_storage_venue,
+	get_file_path_to_use,
+	get_file_path_to_use_for_bulk_files,
+
+	use_gcp_storage,
+	use_aws_s3_storage,
+
+	save_file_to_gcp,
+	save_file_to_gcp_for_bulk_files,
+	gcp_bucket,
+
+	get_snapshots_storage_path,
+
+	save_file_to_aws_s3,
+	save_file_to_aws_s3_for_bulk_files,
+
+	get_multer_disk_storage_for_bulk_files,
+
+	checkFileTypeForImages,
+	checkFileTypeForImageAndVideo,
+	checkFileTypeForImagesAndExcelSheet,
+} = require('../../config/storage/')
+
+let timestamp
+let currentDate
+let currentTime
 
 // Set The Storage Engine
-const bulk_posts_storage = multer.diskStorage({
-	// destination: path.join(__dirname , '../../assets/bulk_socialposts/'),
-	destination:function(req, file, cb){
-		// let file_path = `./uploads/${type}`;
-		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
-		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
+// const bulk_posts_storage = multer.diskStorage({
+// 	// destination: path.join(__dirname , '../../assets/bulk_socialposts/'),
+// 	destination:function(req, file, cb){
+// 		// let file_path = `./uploads/${type}`;
+// 		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
+// 		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
 
-		if (file.fieldname === "socialpost_image") {
+// 		if (file.fieldname === "socialpost_image") {
 
-			let file_path = path.join(__dirname , '../../assets/bulk_socialposts/images')
-			cb(null, file_path)	
+// 			let file_path = path.join(__dirname , '../../assets/bulk_socialposts/images')
+// 			cb(null, file_path)	
 
-		} else if (file.fieldname === "socialpost_video") {
+// 		} else if (file.fieldname === "socialpost_video") {
 
-			let file_path = path.join(__dirname , '../../assets/bulk_socialposts/videos')
-			cb(null, file_path)	
+// 			let file_path = path.join(__dirname , '../../assets/bulk_socialposts/videos')
+// 			cb(null, file_path)	
 
-		} else {
+// 		} else {
 
-			fs.mkdir( path.join(__dirname , `../../assets/bulk_socialposts/${currentDate}_${currentTime}`), { recursive: true }, (err) => {
-				if (err) throw err;
-			})
+// 			fs.mkdir( path.join(__dirname , `../../assets/bulk_socialposts/${currentDate}_${currentTime}`), { recursive: true }, (err) => {
+// 				if (err) throw err;
+// 			})
 			
-			let file_path = path.join(__dirname , `../../assets/bulk_socialposts/${currentDate}_${currentTime}`)
-			cb(null, file_path)	
+// 			let file_path = path.join(__dirname , `../../assets/bulk_socialposts/${currentDate}_${currentTime}`)
+// 			cb(null, file_path)	
 
-		}
+// 		}
 
-	},
-	filename: function(req, file, cb){
-		// file name pattern fieldname-currentDate-fileformat
-		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
+// 	},
+// 	filename: function(req, file, cb){
+// 		// file name pattern fieldname-currentDate-fileformat
+// 		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
+// 		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
 
-		filename_used_to_store_image_in_assets = file.originalname
-		cb(null, file.originalname);
+// 		filename_used_to_store_image_in_assets = file.originalname
+// 		cb(null, file.originalname);
 
-	}
-});
+// 	}
+// });
+
 
 // Check File Type
 function checkFileTypeForImageAndExcelSheet(file, cb){
@@ -118,20 +146,21 @@ function checkFileTypeForImageAndExcelSheet(file, cb){
 }
 
 // Init Upload
-const bulk_upload_socialposts = multer({
-	storage: bulk_posts_storage,
-	limits:{fileSize: 200000000}, // 1 mb
-	fileFilter: function(req, file, cb){
-		checkFileTypeForImageAndExcelSheet(file, cb);
-	}
-}).fields([
-	{ name: 'excel_sheet_for_socialpost', maxCount: 1 }, 
-	{ name: 'socialpost_image', maxCount: 1000 },
-	{ name: 'socialpost_video', maxCount: 1000 },
-])  // these are the fields that will be dealt
-// .single('socialpost_image'); 
-// .array('photos', 12)
-
+function bulk_upload_socialposts(timestamp, folder_name){
+	return multer({
+		storage: get_multer_storage_to_use_for_bulk_files(timestamp, folder_name),
+		limits:{fileSize: 200000000}, // 1 mb
+		fileFilter: function(req, file, cb){
+			checkFileTypeForImageAndExcelSheet(file, cb);
+		}
+	}).fields([
+		{ name: 'excel_sheet_for_socialpost', maxCount: 1 }, 
+		{ name: 'socialpost_image', maxCount: 1000 },
+		{ name: 'socialpost_video', maxCount: 1000 },
+	])  // these are the fields that will be dealt
+	// .single('socialpost_image'); 
+	// .array('photos', 12)
+}
 
 // create blogpost with undefined
 // USED IN CREATING BLOGPOST
@@ -140,12 +169,58 @@ router.post('/bulk-upload-socialposts', passport.authenticate('jwt', { session: 
 	// console.log('OUTER LOG')
 	// console.log(req.body)
 
-	bulk_upload_socialposts(req, res, (err) => {
+	timestamp = Date.now()
+	currentDate = timestamp.toLocaleDateString("en-US").split("/").join(" | ");
+	currentTime = timestamp.toLocaleTimeString("en-US").split("/").join(" | ");
+
+	bulk_upload_socialposts( `${currentDate}_${currentTime}`, 'bulk_socialposts' )(req, res, (err) => {
 		if(err){
 
 			console.log(err)
 
 		} else {
+
+			{(async () => {
+
+				let images
+				let videos
+
+				if (use_gcp_storage){
+
+					await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_socialposts', req.files['excel_sheet'][0] )
+					images = req.files['socialpost_image']
+					Promise.all(images.map((image_file) => {
+						await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_socialposts', image_file )
+					}))
+					videos = req.files['socialpost_video']
+					Promise.all(videos.map((video_file) => {
+						await save_file_to_gcp_for_bulk_files( `${currentDate}_${currentTime}1`, 'bulk_socialposts', video_file )
+					}))
+					console.log('SAVED TO GCP')
+
+				} else if (use_aws_s3_storage) {
+
+					await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_socialposts', req.files['excel_sheet'][0])
+					images = req.files['socialpost_image']
+					Promise.all(images.map((image_file) => {
+						await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}`, 'bulk_socialposts', image_file )
+					}))
+					videos = req.files['socialpost_video']
+					Promise.all(videos.map((video_file) => {
+						await save_file_to_aws_s3_for_bulk_files( `${currentDate}_${currentTime}1`, 'bulk_socialposts', video_file )
+					}))
+					console.log('SAVED TO AWS')
+
+				} else {
+
+					console.log('SAVED TO DISK STORAGE')
+
+				}
+
+			})()}
+
+
+
 			var uploaded_videos = req.files['socialpost_video']
 
 			let create_all_snapshot = await Promise.all(uploaded_videos.map((uploaded_video) => {

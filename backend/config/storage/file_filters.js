@@ -90,8 +90,43 @@ function checkFileTypeForImagesAndExcelSheet(file, cb){
 
 }
 
+
+function checkFileTypeForVideosAndExcelSheet(file, cb){
+
+	let filetypes_for_video = /mp4|mov|avi|flv/;
+	let filetypes_for_excelsheet = /[A-Za-z]+/
+
+	// Allowed ext
+	let extname_for_video = filetypes_for_video.test( path.extname(file.originalname).toLowerCase() );
+	let extname_for_excelsheet = filetypes_for_excelsheet.test( path.extname(file.originalname).toLowerCase() );
+
+	// Check mime
+	let mimetype_for_video = filetypes_for_video.test( file.mimetype );
+	let mimetype_for_excelsheet = filetypes_for_excelsheet.test( file.mimetype );
+
+	if (file.fieldname === "excel_sheet") { // if uploading resume
+		
+		if (mimetype_for_excelsheet && extname_for_excelsheet) {
+			cb(null, true);
+		} else {
+			cb('Error: only .xlsx, .xls for excel files');
+		}
+
+	} else { // else uploading videos
+
+		if (mimetype_for_video && extname_for_video) {
+			cb(null, true);
+		} else {
+			cb('Error: mp4, mov, avi, flv Videos Only!');
+		}
+
+	}
+
+}
+
 module.exports = {
 	checkFileTypeForImages,
 	checkFileTypeForImageAndVideo,
 	checkFileTypeForImagesAndExcelSheet,
+	checkFileTypeForVideosAndExcelSheet,
 }
