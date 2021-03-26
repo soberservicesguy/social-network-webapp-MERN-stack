@@ -9,19 +9,14 @@ let gcp_bucket = 'portfolio_social_app'
 
 async function save_file_to_gcp(timestamp, file_payload, avoid_timestamp){
 
-// hardcode gcp_bucket if not supplied
-	if (typeof(bucket_name) === 'undefined'){
-		bucket_name = gcp_bucket
-	}
-
-	let the_bucket = gcp_storage.bucket(bucket_name)
+	let the_bucket = gcp_storage.bucket(gcp_bucket)
 	let the_file
 
 	try{
 
 		if (avoid_timestamp){
 
-			the_file = the_bucket.file(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) )  + path.extname( file_payload.originalname )}`);
+			the_file = the_bucket.file(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + path.extname( file_payload.originalname )}`);
 
 		} else {
 
@@ -66,10 +61,30 @@ async function save_file_to_gcp(timestamp, file_payload, avoid_timestamp){
 
 }
 
+// USE THIS WAY save_file_to_gcp_alternate( get_proper_date(timestamp), 'bulk_ads', req.files['das'][0] )
+async function save_file_to_gcp_alternate(timestamp, folder_name, file){
+
+	let the_bucket = gcp_storage.bucket(gcp_bucket)
+	let the_file
+
+	try{
+
+		the_file = the_bucket.file(`${folder_name}/${timestamp}/${file}`)
+		await the_file.save(file_payload.buffer)
+
+	} catch (err){
+
+		console.log(err)
+
+	}
+
+}
+
 
 
 module.exports = {
 	gcp_storage,
 	save_file_to_gcp,
+	save_file_to_gcp_alternate,
 	gcp_bucket,
 }

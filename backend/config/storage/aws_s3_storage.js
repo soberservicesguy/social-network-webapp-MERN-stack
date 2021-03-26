@@ -39,14 +39,32 @@ function get_multers3_storage(timestamp){
 
 }
 
+// USED FOR SAVING SNAPSHOTS
+async function save_file_to_aws_s3(folder_name, file_payload, file_content){
 
-function save_file_to_aws_s3(file_save_folder, file){
+	let params = { ...s3_params, Key:`${folder_name}/${file_payload}`, Body: file_content }
 
-	let params = {...s3_params, Key:file_save_folder, Body: file}
-	let conditions = {partSize: 10 * 1024 * 1024, queueSize: 1}
+	let s3_client = new aws.S3.client
+	return s3_client.putObject(params, function(resp){
+		console.log(resp)
+	})
 
-	new aws.S3.upload(params, conditions, function(err, data){
-		console.log(err, data);
+	// let params = {...s3_params, Key:file_name_with_path, Body: file_content}
+	// let conditions = {partSize: 10 * 1024 * 1024, queueSize: 1}
+	// new aws.S3.upload(params, conditions, function(err, data){
+	// 	console.log(err, data);
+	// })
+
+}
+
+// USER THIS WAY save_file_to_aws_s3_alternate( get_proper_date(timestamp), 'bulk_ads', req.files['das'][0] )
+async function save_file_to_aws_s3_alternate(timestamp, folder_name, file){
+
+	let params = { ...s3_params, Key:`${folder_name}/${timestamp}/${file}`, Body: file }
+
+	let s3_client = new aws.S3.client
+	return s3_client.putObject(params, function(resp){
+		console.log(resp)
 	})
 
 }
@@ -56,4 +74,5 @@ module.exports = {
 	s3_bucket,
 
 	save_file_to_aws_s3,
+	save_file_to_aws_s3_alternate,
 }

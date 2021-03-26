@@ -3,8 +3,8 @@ const path = require('path')
 const env = require("dotenv").config({ path: "../../.env" });
 const use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? true : false
 const use_aws_s3_storage = ( process.env.AWS_S3_STORAGE_ENABLED === 'true' ) ? true : false
-const { gcp_storage, save_file_to_gcp, gcp_bucket } = require('./google_cloud_storage')
-const { get_multers3_storage, s3_bucket, save_file_to_aws_s3 } = require('./aws_s3_storage')
+const { gcp_storage, save_file_to_gcp, gcp_bucket, save_file_to_gcp_alternate} = require('./google_cloud_storage')
+const { get_multers3_storage, s3_bucket, save_file_to_aws_s3, save_file_to_aws_s3_alternate } = require('./aws_s3_storage')
 
 const { get_multer_disk_storage, checkFileTypeForImages } = require('./disk_storage')
 
@@ -90,11 +90,13 @@ module.exports = {
 	use_aws_s3_storage,
 
 	save_file_to_gcp,
+	save_file_to_gcp_alternate,
 	gcp_bucket,
 
 	get_snapshots_storage_path,
 
 	save_file_to_aws_s3,
+	save_file_to_aws_s3_alternate,
 
 	checkFileTypeForImages,
 }
