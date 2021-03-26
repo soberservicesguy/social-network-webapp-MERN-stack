@@ -57,8 +57,8 @@ async function save_file_to_aws_s3(folder_name, file_payload, file_content){
 
 }
 
-// USER THIS WAY save_file_to_aws_s3_alternate( get_proper_date(timestamp), 'bulk_ads', req.files['das'][0] )
-async function save_file_to_aws_s3_alternate(timestamp, folder_name, file){
+// USER THIS WAY save_file_to_aws_s3_for_bulk_files( get_proper_date(timestamp), 'bulk_ads', req.files['das'][0] )
+async function save_file_to_aws_s3_for_bulk_files(timestamp, folder_name, file){
 
 	let params = { ...s3_params, Key:`${folder_name}/${timestamp}/${file}`, Body: file }
 
@@ -74,5 +74,5 @@ module.exports = {
 	s3_bucket,
 
 	save_file_to_aws_s3,
-	save_file_to_aws_s3_alternate,
+	save_file_to_aws_s3_for_bulk_files,
 }

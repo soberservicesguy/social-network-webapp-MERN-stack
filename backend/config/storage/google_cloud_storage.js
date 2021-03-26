@@ -61,8 +61,8 @@ async function save_file_to_gcp(timestamp, file_payload, avoid_timestamp){
 
 }
 
-// USE THIS WAY save_file_to_gcp_alternate( get_proper_date(timestamp), 'bulk_ads', req.files['das'][0] )
-async function save_file_to_gcp_alternate(timestamp, folder_name, file){
+// USE THIS WAY save_file_to_gcp_for_bulk_files( get_proper_date(timestamp), 'bulk_ads', req.files['das'][0] )
+async function save_file_to_gcp_for_bulk_files(timestamp, folder_name, file){
 
 	let the_bucket = gcp_storage.bucket(gcp_bucket)
 	let the_file
@@ -85,6 +85,6 @@ async function save_file_to_gcp_alternate(timestamp, folder_name, file){
 module.exports = {
 	gcp_storage,
 	save_file_to_gcp,
-	save_file_to_gcp_alternate,
+	save_file_to_gcp_for_bulk_files,
 	gcp_bucket,
 }

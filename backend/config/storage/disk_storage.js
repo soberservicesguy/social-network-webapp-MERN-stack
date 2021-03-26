@@ -76,98 +76,36 @@ function get_multer_disk_storage(timestamp){
 
 }
 
+// USED FOR BULK UPLOADS
+function get_multer_disk_storage_for_bulk_files(timestamp, folder_name){
 
-function checkFileTypeForImages(file, cb){
+	return multer.diskStorage({
+		destination: async function(req, file, cb){
 
-	// Allowed ext
-	let filetypes_for_image = /jpeg|jpg|png|gif/
+			let file_path = path.join(__dirname , `${path_for_saving_files}/${folder_name}/${timestamp}`)
 
-	// Check ext
-	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
+			await fs.access(file_path, function(err) {
+				if (err && err.code === 'ENOENT') {
+					fs.mkdir(file_path, { recursive: true }); //Create dir in case not found
+				}
+			});
 
-	// Check mime
-	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
+			cb(null, file_path)	
 
-		
-	if (mimetype_for_image && extname_for_image) {
-		cb(null, true);
-	} else {
-		cb('Error: jpeg, jpg, png, gif Images Only!');
-	}
+		},
 
-}
+		filename: function(req, file, cb){
 
-// works when image field is kept image_upload
-function checkFileTypeForImageAndVideo(file, cb){
-	// Allowed ext
-	let filetypes_for_image = /jpeg|jpg|png|gif/
-	// let filetypes_for_video = /xlsx|xls/
-	let filetypes_for_video = /mp4|mov|avi|flv/;
+			// let file_format = file.fieldname + '-' + timestamp + path.extname(file.originalname)
+			// let file_format = path.basename( file.originalname, path.extname( file.originalname ) ) + '-' + timestamp + path.extname(file.originalname)
+			let file_format = file.originalname
+			cb(null, file_format);
 
-	// Check ext
-	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
-	let extname_for_video = filetypes_for_video.test( path.extname(file.originalname).toLowerCase() );
-
-	// Check mime
-	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
-	let mimetype_for_video = filetypes_for_video.test( file.mimetype );
-
-	if (file.fieldname === "image_upload") { // if uploading resume
-		
-		if (mimetype_for_image && extname_for_image) {
-			cb(null, true);
-		} else {
-			cb('Error: jpeg, jpg, png, gif Images Only!');
-		}
-
-	} else { // else uploading images
-
-		if (mimetype_for_video && extname_for_video) {
-			cb(null, true);
-		} else {
-			cb('Error: mp4, mov, avi, flv Videos Only!');
-		}
-
-	}
+		},
+	})
 
 }
 
-// works when excel sheet field is kept excel_sheet
-function checkFileTypeForImagesAndExcelSheet(file, cb){
-
-	// Allowed ext
-	let filetypes_for_image = /jpeg|jpg|png|gif/
-	// let filetypes_for_excelsheet = /xlsx|xls/
-	let filetypes_for_excelsheet = /[A-Za-z]+/
-
-	// Check ext
-	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
-	let extname_for_excelsheet = filetypes_for_excelsheet.test( path.extname(file.originalname).toLowerCase() );
-
-	// Check mime
-	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
-	let mimetype_for_excelsheet = filetypes_for_excelsheet.test( file.mimetype );
-
-
-	if (file.fieldname === "excel_sheet") { // if uploading resume
-		
-		if (mimetype_for_excelsheet && extname_for_excelsheet) {
-			cb(null, true);
-		} else {
-			cb('Error: only .xlsx, .xls for excel files');
-		}
-
-	} else { // else uploading images
-
-		if (mimetype_for_image && extname_for_image) {
-			cb(null, true);
-		} else {
-			cb('Error: jpeg, jpg, png, gif Images Only!');
-		}
-
-	}
-
-}
 
 
 // NOT NEEDED ANYMORE
@@ -221,8 +159,5 @@ function checkFileTypeForImagesAndExcelSheet(file, cb){
 
 module.exports = {
 	get_multer_disk_storage,
-
-	checkFileTypeForImages,
-	checkFileTypeForImageAndVideo,
-	checkFileTypeForImagesAndExcelSheet,
+	get_multer_disk_storage_for_bulk_files,
 }
