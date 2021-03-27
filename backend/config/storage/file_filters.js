@@ -1,3 +1,5 @@
+const path = require('path')
+
 function checkFileTypeForImages(file, cb){
 
 	// Allowed ext
@@ -19,36 +21,40 @@ function checkFileTypeForImages(file, cb){
 }
 
 // works when image field is kept image_upload
-function checkFileTypeForImageAndVideo(file, cb){
-	// Allowed ext
-	let filetypes_for_image = /jpeg|jpg|png|gif/
-	// let filetypes_for_video = /xlsx|xls/
-	let filetypes_for_video = /mp4|mov|avi|flv/;
+function checkFileTypeForImageAndVideo(image_fieldname, video_fieldname){ 
 
-	// Check ext
-	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
-	let extname_for_video = filetypes_for_video.test( path.extname(file.originalname).toLowerCase() );
+	// return checkFileTypeForImageAndVideo(file, cb){
+	return (file, cb) => {
+		// Allowed ext
+		let filetypes_for_image = /jpeg|jpg|png|gif/
+		// let filetypes_for_video = /xlsx|xls/
+		let filetypes_for_video = /mp4|mov|avi|flv/;
 
-	// Check mime
-	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
-	let mimetype_for_video = filetypes_for_video.test( file.mimetype );
+		// Check ext
+		let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
+		let extname_for_video = filetypes_for_video.test( path.extname(file.originalname).toLowerCase() );
 
-	if (file.fieldname === "image_upload") { // if uploading resume
-		
-		if (mimetype_for_image && extname_for_image) {
-			cb(null, true);
-		} else {
-			cb('Error: jpeg, jpg, png, gif Images Only!');
+		// Check mime
+		let mimetype_for_image = filetypes_for_image.test( file.mimetype );
+		let mimetype_for_video = filetypes_for_video.test( file.mimetype );
+
+		if (file.fieldname === image_fieldname) { // if uploading resume
+			
+			if (mimetype_for_image && extname_for_image) {
+				cb(null, true);
+			} else {
+				cb('Error: jpeg, jpg, png, gif Images Only!');
+			}
+
+		} else { // else uploading images
+
+			if (mimetype_for_video && extname_for_video) {
+				cb(null, true);
+			} else {
+				cb('Error: mp4, mov, avi, flv Videos Only!');
+			}
+
 		}
-
-	} else { // else uploading images
-
-		if (mimetype_for_video && extname_for_video) {
-			cb(null, true);
-		} else {
-			cb('Error: mp4, mov, avi, flv Videos Only!');
-		}
-
 	}
 
 }

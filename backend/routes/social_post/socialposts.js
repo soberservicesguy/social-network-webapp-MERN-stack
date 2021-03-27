@@ -59,7 +59,7 @@ function upload_image_or_video_in_social_post(timestamp){
 		storage: get_multer_storage_to_use(timestamp),
 		limits:{fileSize: 200000000}, // 1 mb
 		fileFilter: function(req, file, cb){
-			checkFileTypeForImageAndVideo(file, cb);
+			checkFileTypeForImageAndVideo('social_post_image', 'social_post_video')(file, cb);
 		}
 	}).fields([
 		{ name: 'social_post_image', maxCount: 1 }, 
@@ -628,7 +628,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							user_owning_post = await User.findOne({_id: post_liked.user})
 							var { user_name, user_avatar_image } = user_owning_post
 							post_details = {...post_details, user_name, user_avatar_image: base64_encode(user_avatar_image)}
-							post_details = await get_post_details(type_of_post, post_created, post_details)
+							post_details = await get_post_details(type_of_post, post_liked, post_details)
 							activities_to_send.push(post_details)
 							break
 
@@ -643,7 +643,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							user_owning_post = await User.findOne({_id: post_share.user})
 							var { user_name, user_avatar_image } = user_owning_post
 							post_details = {...post_details, user_name, user_avatar_image: base64_encode(user_avatar_image)}
-							post_details = await get_post_details(type_of_post, post_created, post_details)
+							post_details = await get_post_details(type_of_post, post_share, post_details)
 							activities_to_send.push(post_details)
 							break
 
@@ -661,7 +661,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							user_owning_post = await User.findOne({_id: post_commented.user})
 							var { user_name, user_avatar_image } = user_owning_post
 							post_details = {...post_details, user_name, user_avatar_image: base64_encode(user_avatar_image)}
-							post_details = await get_post_details(type_of_post, post_created, post_details)
+							post_details = await get_post_details(type_of_post, post_commented, post_details)
 							activities_to_send.push(post_details)
 							break
 
@@ -1302,12 +1302,12 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 				console.log('activities_to_send')
 				console.log(activities_to_send.length)
 
-				// res.status(200).json(activities_to_send)
+				res.status(200).json(activities_to_send)
 
-				activities_to_send.map((act) => {
-					res.write([act])
-				})
-				res.end();
+				// activities_to_send.map((act) => {
+				// 	res.write([act])
+				// })
+				// res.end();
 
 				await user_checking_others_posts.save()
 			}
