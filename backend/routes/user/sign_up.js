@@ -112,7 +112,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 						// console.log('req.file')
 						// console.log(req.file)
 						// console.log(filename_used_to_store_image_in_assets)
-						await save_file_to_gcp(timestamp, req.file, 'avatar_images')
+						await save_file_to_gcp(timestamp, req.file)
 
 					} else if (use_aws_s3_storage) {
 
@@ -137,8 +137,8 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 
 							_id: new mongoose.Types.ObjectId(),
 							// image_filepath: `./assets/images/uploads/avatar_image/${filename_used_to_store_image_in_assets}`,
-							image_filepath: get_file_path_to_use(timestamp, req.file, 'avatar_images'),
-							images_hosted_location: get_file_storage_venue(),
+							image_filepath: get_file_path_to_use(req.file, 'avatar_images', timestamp),
+							object_files_hosted_at: get_file_storage_venue(),
 							category: req.body.category,
 							timestamp_of_uploading: String( Date.now() ),
 							// title: req.body.title,
@@ -169,6 +169,9 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 							const salt = saltHash.salt;
 							const hash = saltHash.hash;
 
+							console.log('req.file')
+							console.log(req.file)
+
 							newUser = new User({
 
 								_id: new mongoose.Types.ObjectId(),
@@ -176,15 +179,17 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 								phone_number: req.body.phone_number,
 								hash: hash,
 								salt: salt,
-								user_image: get_file_path_to_use(timestamp, req.file, 'avatar_images'),
-								user_avatar_image: get_file_path_to_use(timestamp, req.file, 'avatar_images'),
-								images_hosted_location: get_file_storage_venue(),
+								user_image: get_file_path_to_use(req.file, 'avatar_images', timestamp),
+								user_avatar_image: get_file_path_to_use(req.file, 'avatar_images', timestamp),
+								// user_image: get_file_path_to_use(req.file, 'avatar_images'),
+								// user_avatar_image: get_file_path_to_use(req.file, 'avatar_images'),
+								object_files_hosted_at: get_file_storage_venue(),
 							});
 
 						}
 
 					console.log('FILE SAVED AT BELOW PATH')
-					console.log( get_file_path_to_use(timestamp, req.file, 'avatar_images') )
+					console.log( get_file_path_to_use(req.file, 'avatar_images') )
 
 					} catch (err){
 						console.log('user not created')

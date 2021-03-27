@@ -7,6 +7,8 @@ const SocialPostSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
 
+	object_files_hosted_at: {type:String, enum:['gcp_storage', 'aws_s3', 'disk_storage',]},
+
 	type_of_post:{ type:String, enum:['text_post', 'image_post', 'video_post', 'text_with_image_post', 'text_with_video_post']},
 	post_text:{ type:String, default: null},
 	image_for_post:{ type:String, default: null},

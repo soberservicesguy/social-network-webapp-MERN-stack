@@ -30,20 +30,30 @@ const path = require('path')
 var ffmpeg = require('fluent-ffmpeg') // for setting thumbnail of video upload using snapshot
 
 const { 
-	get_multer_storage_to_use, 
+	get_image_to_display,
+	get_multer_storage_to_use,
+	get_multer_storage_to_use_for_bulk_files,
 	get_file_storage_venue,
 	get_file_path_to_use,
+	get_file_path_to_use_for_bulk_files,
 
 	use_gcp_storage,
 	use_aws_s3_storage,
 
+	get_file_from_gcp,
 	save_file_to_gcp,
+	save_file_to_gcp_for_bulk_files,
 	gcp_bucket,
 
 	get_snapshots_storage_path,
 
-	// checkFileTypeForImages,
+	get_file_from_aws,
+	save_file_to_aws_s3,
+	save_file_to_aws_s3_for_bulk_files,
+
+	checkFileTypeForImages,
 	checkFileTypeForImageAndVideo,
+	checkFileTypeForImagesAndExcelSheet,
 } = require('../../config/storage/')
 
 let timestamp
@@ -52,6 +62,10 @@ const images_upload_path = 'assets/uploads/social_post_images'
 const video_upload_path = `assets/uploads/social_post_videos`
 const video_image_thumbnail_path = `assets/uploads/thumbnails_for_social_videos`
 
+function select_random_screenshot(total_snapshots){
+	let index = Math.floor(Math.random() * total_snapshots)
+	return index + 1
+}
  
 // Init Upload
 function upload_image_or_video_in_social_post(timestamp){
@@ -71,21 +85,24 @@ function upload_image_or_video_in_social_post(timestamp){
 
 async function create_snapshots_from_uploaded_video(timestamp, video_filename, video_file, callback){
 	// video is uploaded , NOW creating thumbnail from video using snapshot
+	let file_without_format = path.basename( video_filename.filename, path.extname( video_filename.filename ) )
+
 	ffmpeg(video_file)
 	.on('end', function() {
 
 		console.log('Screenshots taken');
 
+
 		// saving snapshots in gcp store or aws s3 if needed
 		let file_path
 		if ( use_gcp_storage ){
 
-			file_path = `${get_snapshots_storage_path()}/${video_filename}-${timestamp}.png`
+			file_path = `${get_snapshots_storage_path()}/${file_without_format}.png`
 			save_file_to_gcp( timestamp, file_path, true )
 			
 		} else if ( use_aws_s3_storage ){
 
-			file_path = `${get_snapshots_storage_path()}/${video_filename}-${timestamp}.png`
+			file_path = `${get_snapshots_storage_path()}/${file_without_format}.png`
 			save_file_to_aws_s3( 'thumbnails_for_social_videos', file_path )
 
 		} else {
@@ -104,7 +121,7 @@ async function create_snapshots_from_uploaded_video(timestamp, video_filename, v
 		console.log('screenshots are ' + filenames.join(', '));
 	})
 	.screenshots({
-		filename: `${video_filename}-${timestamp}.png`, // if single snapshot is needed
+		filename: `${file_without_format}.png`, // if single snapshot is needed
 		size: '150x100', 
 		count: 4,
 		// folder: './assets/videos/uploads/upload_thumbnails/',
@@ -121,6 +138,7 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 			res.status(404).json({ success: false, msg: 'couldnt create socialpost database entry'})
 			return console.log(err)
 		}
+
 		// assign user object then save
 		User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
 		.then((user) => {
@@ -154,13 +172,15 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 					case "image_post":
 
 						SocialPost.findOne({ _id: social_post_id })
-						.then((saved_socialpost) => {
+						.then(async (saved_socialpost) => {
 
 							socialpost_endpoint = saved_socialpost.endpoint
 
+							let image_for_post_to_use = await get_image_to_display(newSocialPost.image_for_post, newSocialPost.object_files_hosted_at)
+
 							new_socialpost = {
 								type_of_post: newSocialPost.type_of_post,
-								image_for_post: base64_encode(newSocialPost.image_for_post),
+								image_for_post: image_for_post_to_use,
 							}
 
 							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
@@ -172,13 +192,15 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 					case "text_with_image_post":
 
 						SocialPost.findOne({ _id: social_post_id })
-						.then((saved_socialpost) => {
+						.then(async (saved_socialpost) => {
 
 							socialpost_endpoint = saved_socialpost.endpoint
 
+							let image_for_post_to_use = await get_image_to_display(newSocialPost.image_for_post, newSocialPost.object_files_hosted_at)
+
 							new_socialpost = {
 								type_of_post: newSocialPost.type_of_post,
-								image_for_post: base64_encode(newSocialPost.image_for_post),
+								image_for_post: image_for_post_to_use,
 								post_text: newSocialPost.type_of_post,
 							}
 
@@ -191,12 +213,15 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 					case "video_post":
 
 						SocialPost.findOne({ _id: social_post_id })
-						.then((saved_socialpost) => {
+						.then(async (saved_socialpost) => {
 
 							socialpost_endpoint = saved_socialpost.endpoint
+
+							let video_thumbnail_image_to_use = await get_image_to_display(newSocialPost.video_thumbnail_image, newSocialPost.object_files_hosted_at)
+
 							new_socialpost = {
 								type_of_post: newSocialPost.type_of_post,
-								video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
+								video_thumbnail_image: video_thumbnail_image_to_use,
 								video_for_post: newSocialPost.video_for_post,
 							}
 
@@ -210,14 +235,16 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 					case "text_with_video_post":
 
 						SocialPost.findOne({ _id: social_post_id })
-						.then((saved_socialpost) => {
+						.then(async (saved_socialpost) => {
 
 							socialpost_endpoint = saved_socialpost.endpoint
 
+							let video_thumbnail_image_to_use = await get_image_to_display(newSocialPost.video_thumbnail_image, newSocialPost.object_files_hosted_at)
+							
 							new_socialpost = {
 								post_text: newSocialPost.type_of_post,
 								type_of_post: newSocialPost.type_of_post,
-								video_thumbnail_image: base64_encode(newSocialPost.video_thumbnail_image),
+								video_thumbnail_image: video_thumbnail_image_to_use,
 								video_for_post: newSocialPost.video_for_post,
 							}
 
@@ -339,12 +366,16 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 				if (req.files['social_post_image'] !== undefined && req.body.post_text){
 
 					social_post_type = 'text_with_image_post'
+					image_path = get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images', timestamp)
 					// image_path = path.join(images_upload_path, `${req.files['social_post_image'][0].filename}`)
+
 					newSocialPost = new SocialPost({
 						_id: social_post_id,
 						type_of_post: social_post_type,
 						post_text: req.body.post_text,
-						image_for_post: get_file_path_to_use(timestamp, req.files['social_post_image'][0], 'social_post_images'),
+						image_for_post: image_path,
+						object_files_hosted_at: get_file_storage_venue(),
+						// image_for_post: get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images'),
 						// image_for_post: `./assets/images/uploads/social_post_images/${req.files['social_post_image'][0].filename}`,
 					});
 
@@ -353,13 +384,16 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 				} else if (req.files['social_post_image'] !== undefined && !req.body.post_text){
 
 					social_post_type = 'image_post'
+					image_path = get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images', timestamp)
 					// console.log('image_path')
 					// console.log(images_upload_path)
 					// image_path = path.join(images_upload_path, `${req.files['social_post_image'][0].filename}`)
 					newSocialPost = new SocialPost({
 						_id: social_post_id,
 						type_of_post: social_post_type,
-						image_for_post: get_file_path_to_use(timestamp, req.files['social_post_image'][0], 'social_post_images'),
+						image_for_post: image_path,
+						object_files_hosted_at: get_file_storage_venue(),
+						// image_for_post: get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images'),
 						// image_for_post: `./assets/images/uploads/social_post_images/${req.files['social_post_image'][0].filename}`,
 					});
 
@@ -367,50 +401,59 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 				} else if (req.files['social_post_video'] !== undefined && req.body.post_text){
 
-					video_path = get_file_path_to_use(timestamp, `${req.files['social_post_video'][0].filename}`, 'social_post_videos')
+					video_path = get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
 
 					function after_screenshot_callback(){
 
 						social_post_type = 'text_with_video_post'
+						let file_without_format = path.basename( req.files['social_post_video'][0].filename, path.extname( req.files['social_post_video'][0].filename ) )
 
 						newSocialPost = new SocialPost({
 							_id: social_post_id,
 							type_of_post: social_post_type,
 							post_text: req.body.post_text,
-							video_for_post: get_file_path_to_use(timestamp, req.files['social_post_video'][0], 'social_post_videos'),
+							video_for_post: video_path,
+							video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}_${select_random_screenshot(4)}.png`,
+							object_files_hosted_at: get_file_storage_venue(),
+							// video_for_post: get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos'),
+							// video_for_post: get_file_path_to_use(req.files['social_post_video'][0].filename, 'social_post_videos'),
 							// video_for_post: `./assets/videos/uploads/social_post_videos/${req.files['social_post_video'][0].filename}`,
-							video_thumbnail_image: `${get_snapshots_storage_path()}/${req.files['social_post_video'][0].filename}-${timestamp}.png`,
-							
+							// video_thumbnail_image: `${get_snapshots_storage_path()}/${req.files['social_post_video'][0].filename}-${timestamp}.png`,
 						});
 
 						save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)						
 
 					}
 
-					create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0].filename, video_path, after_screenshot_callback)
+					create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path, after_screenshot_callback)
 
 				} else if (req.files['social_post_video'] !== undefined && !req.body.post_text){
 					
-					video_path = get_file_path_to_use(timestamp, `${req.files['social_post_video'][0].filename}`, 'social_post_videos')
+					video_path = get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
 
 					function after_screenshot_callback(){
 
 						social_post_type = 'video_post'
+						let file_without_format = path.basename( req.files['social_post_video'][0].filename, path.extname( req.files['social_post_video'][0].filename ) )
 
 						newSocialPost = new SocialPost({
 							_id: social_post_id,
 							type_of_post: social_post_type,
-							video_for_post: get_file_path_to_use(timestamp, req.files['social_post_video'][0], 'social_post_videos'),
+							video_for_post: video_path,
+							video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}_${select_random_screenshot(4)}.png`,
+							object_files_hosted_at: get_file_storage_venue(),
+							// video_for_post: get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos'),
+							// video_for_post: get_file_path_to_use(req.files['social_post_video'][0].filename, 'social_post_videos'),
 							// video_for_post: `./assets/videos/uploads/social_post_videos/${req.files['social_post_video'][0].filename}`,
-							video_thumbnail_image: `${get_snapshots_storage_path()}/${req.files['social_post_video'][0].filename}-${timestamp}.png`,
-						});
+							// video_thumbnail_image: `${get_snapshots_storage_path()}/${req.files['social_post_video'][0].filename}-${timestamp}.png`,
+						})
 
 						save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)
 					}
 
-					create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0].filename, video_path, after_screenshot_callback)
+					create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path, after_screenshot_callback)
 
 				} else {
 
@@ -438,30 +481,44 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 async function get_post_details(type_of_post, post_created, post_details){
 
+	let image_for_post_to_use
+	let video_thumbnail_image_to_use
+
 	switch (type_of_post) {
 		case "text_post":
+
 			var { post_text } = post_created
 			post_details = { ...post_details, post_text }
 			break
 
 		case "image_post":
-			var { image_for_post } = post_created
-			post_details = { ...post_details, image_for_post: base64_encode(image_for_post) }
+
+			var { image_for_post, object_files_hosted_at } = post_created
+			image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
+			post_details = { ...post_details, image_for_post: image_for_post_to_use }
+
 			break
 
 		case "video_post":
-			var { video_for_post, video_thumbnail_image } = post_created
-			post_details = { ...post_details, video_for_post, video_thumbnail_image: base64_encode(video_thumbnail_image) }									
+
+			var { video_for_post, video_thumbnail_image, object_files_hosted_at } = post_created
+			video_thumbnail_image_to_use = await get_image_to_display(video_thumbnail_image, object_files_hosted_at)
+			post_details = { ...post_details, video_for_post, video_thumbnail_image: video_thumbnail_image_to_use }									
+
 			break
 
 		case "text_with_image_post":
-			var { post_text, image_for_post } = post_created
-			post_details = { ...post_details, post_text, image_for_post: base64_encode(image_for_post) }									
+
+			var { post_text, image_for_post, object_files_hosted_at } = post_created
+			image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
+			post_details = { ...post_details, post_text, image_for_post_to_use }									
 			break
 
 		case "text_with_video_post":
-			var { post_text, video_for_post, video_thumbnail_image } = post_created
-			post_details = { ...post_details, post_text, video_for_post, video_thumbnail_image: base64_encode(video_thumbnail_image) }									
+
+			var { post_text, video_for_post, video_thumbnail_image, object_files_hosted_at } = post_created
+			video_thumbnail_image_to_use = await get_image_to_display(video_thumbnail_image, object_files_hosted_at)
+			post_details = { ...post_details, post_text, video_for_post, video_thumbnail_image: video_thumbnail_image_to_use }									
 			break
 
 		default:
@@ -480,7 +537,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 	try{
 
 		let user_checking_others_posts = await User.findOne({ phone_number: req.user.user_object.phone_number }).populate('friends') // using req.user from passport js middleware
-		let { friends, last_timestamp_of_checking_notification } =  user_checking_others_posts
+		let { friends, last_timestamp_of_checking_notification, object_files_hosted_at } =  user_checking_others_posts
 
 		let activities_to_send = []
 
@@ -507,6 +564,25 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 			let friends_user_name = user_name
 			let friends_user_avatar_image = user_avatar_image
 			let friend_endpoint = friend.endpoint
+
+			let friends_user_avatar_image_to_use
+			let cloud_resp
+
+			if (object_files_hosted_at === 'gcp_storage'){
+
+				cloud_resp = await get_file_from_gcp(friends_user_avatar_image)
+				friends_user_avatar_image_to_use = cloud_resp.toString('base64')
+
+			} else if (object_files_hosted_at === 'aws_s3'){
+
+				cloud_resp = await get_file_from_aws(friends_user_avatar_image)
+				friends_user_avatar_image_to_use = cloud_resp.toString('base64')
+
+			} else {
+
+				friends_user_avatar_image_to_use = base64_encode( friends_user_avatar_image )
+
+			}
 
 			// we have reduced activities link for each user to last 50 in user model
 			let last_n_activities_of_friend = friend.activities
@@ -565,7 +641,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 				// console.log({last_timestamp_of_checking_notification})
 
 				let post_details = {}
-				post_details = { friends_user_name, friends_user_avatar_image: base64_encode(friends_user_avatar_image), friend_endpoint, timestamp:activity.timestamp }
+
+				post_details = { friends_user_name, friends_user_avatar_image: friends_user_avatar_image_to_use, friend_endpoint, timestamp:activity.timestamp }
 
 				if ( last_timestamp_of_checking_notification !== null && Number(activity.timestamp) < Number(last_timestamp_of_checking_notification) ){
 					// console.log('INNER TRIGGERED')
@@ -834,10 +911,30 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 		let activities_to_send = []
 
 		// access friend data here
-		var { user_name, user_avatar_image } = user_owning_socialposts
+		var { user_name, user_avatar_image, object_files_hosted_at } = user_owning_socialposts
 		let friends_user_name = user_name
 		let friends_user_avatar_image = user_avatar_image
 		let friend_endpoint = user_owning_socialposts.endpoint
+
+		let friends_user_avatar_image_to_use
+		let cloud_resp
+
+		if (object_files_hosted_at === 'gcp_storage'){
+
+			cloud_resp = await get_file_from_gcp(friends_user_avatar_image)
+			friends_user_avatar_image_to_use = cloud_resp.toString('base64')
+
+		} else if (object_files_hosted_at === 'aws_s3'){
+
+			cloud_resp = await get_file_from_aws(friends_user_avatar_image)
+			friends_user_avatar_image_to_use = cloud_resp.toString('base64')
+
+		} else {
+
+			friends_user_avatar_image_to_use = base64_encode( friends_user_avatar_image )
+
+		}
+
 
 		console.log('user_owning_socialposts')
 		console.log(user_owning_socialposts)
@@ -878,7 +975,7 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 			activity = await Activity.findOne({_id: activity})
 
 			let post_details = {}
-			post_details = { friends_user_name, friends_user_avatar_image: base64_encode(friends_user_avatar_image), friend_endpoint, timestamp:activity.timestamp }
+			post_details = { friends_user_name, friends_user_avatar_image: friends_user_avatar_image_to_use, friend_endpoint, timestamp:activity.timestamp }
 
 			let { activity_type } = activity
 			let user_owning_post
@@ -1095,10 +1192,30 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 			// var friend = await User.findOne({_id: friend_id})
 
 			// access friend data here
-			var { user_name, user_avatar_image } = friend
+			var { user_name, user_avatar_image, object_files_hosted_at } = friend
 			let friends_user_name = user_name
 			let friends_user_avatar_image = user_avatar_image
 			let friend_endpoint = friend.endpoint
+
+			let friends_user_avatar_image_to_use
+			let cloud_resp
+
+			if (object_files_hosted_at === 'gcp_storage'){
+
+				cloud_resp = await get_file_from_gcp(friends_user_avatar_image)
+				friends_user_avatar_image_to_use = cloud_resp.toString('base64')
+
+			} else if (object_files_hosted_at === 'aws_s3'){
+
+				cloud_resp = await get_file_from_aws(friends_user_avatar_image)
+				friends_user_avatar_image_to_use = cloud_resp.toString('base64')
+
+			} else {
+
+				friends_user_avatar_image_to_use = base64_encode( friends_user_avatar_image )
+
+			}
+
 
 			// we have reduced activities link for each user to last 50 in user model
 			let last_n_activities_of_friend = friend.activities
@@ -1157,7 +1274,7 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 				console.log({last_timestamp_of_checking_notification})
 
 				let post_details = {}
-				post_details = { friends_user_name, friends_user_avatar_image: base64_encode(friends_user_avatar_image), friend_endpoint, timestamp:activity.timestamp }
+				post_details = { friends_user_name, friends_user_avatar_image: friends_user_avatar_image_to_use, friend_endpoint, timestamp:activity.timestamp }
 
 				if ( last_timestamp_of_checking_notification !== null && Number(activity.timestamp) < Number(last_timestamp_of_checking_notification) ){
 					console.log('INNER TRIGGERED')

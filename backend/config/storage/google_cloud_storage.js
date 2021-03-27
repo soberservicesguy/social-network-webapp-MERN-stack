@@ -7,23 +7,49 @@ const gcp_storage = new Storage({
 
 let gcp_bucket = 'portfolio_social_app'
 
-async function save_file_to_gcp(timestamp, file_payload, avoid_timestamp){
+function get_file_from_gcp(complete_file_name){
+
+	let the_bucket = gcp_storage.bucket(gcp_bucket)
+	// return the_bucket.file(complete_file_name).createReadStream()
+	// remoteReadStream.pipe(someLocalWriteStream);
+
+	let the_file = the_bucket.file(complete_file_name)
+	let fileContents = new Buffer('');
+
+	return new Promise(function(resolve, reject){
+
+		the_file.createReadStream()
+		.on('error', function(err) {
+
+			console.log(err)
+			reject()
+
+		})
+		.on('data', function(chunk) {
+
+			fileContents = Buffer.concat([fileContents, chunk]);
+
+		})
+		.on('end', function() {
+
+			resolve(fileContents)
+
+		});
+
+	})
+
+}
+
+async function save_file_to_gcp(timestamp, file_payload){
 
 	let the_bucket = gcp_storage.bucket(gcp_bucket)
 	let the_file
 
 	try{
 
-		if (avoid_timestamp){
-
-			the_file = the_bucket.file(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + path.extname( file_payload.originalname )}`);
-
-		} else {
-
-			the_file = the_bucket.file(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`);
-
-		}
-
+		console.log('FILE BEING SAVED AT GCP')
+		console.log(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`)
+		the_file = the_bucket.file(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`);
 		await the_file.save(file_payload.buffer)
 
 	} catch (err){
@@ -84,7 +110,8 @@ async function save_file_to_gcp_for_bulk_files(timestamp, folder_name, file){
 
 module.exports = {
 	gcp_storage,
+	gcp_bucket,
+	get_file_from_gcp,
 	save_file_to_gcp,
 	save_file_to_gcp_for_bulk_files,
-	gcp_bucket,
 }

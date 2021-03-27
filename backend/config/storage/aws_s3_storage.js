@@ -1,6 +1,7 @@
 const aws = require( 'aws-sdk' );
 const multerS3 = require( 'multer-s3' );
 const path = require( 'path' );
+const fs = require('fs')
 
 let s3_bucket = 'portfolio-social-app'
 
@@ -39,13 +40,43 @@ function get_multers3_storage(timestamp){
 
 }
 
+function get_file_from_aws(complete_file_name){
+
+	let params = { Bucket:s3_bucket, Key: complete_file_name }
+	let fileContents = new Buffer('');
+
+	return new Promise(function(resolve, reject){
+
+		s3.getObject(params).createReadStream()
+		.on('error', function(err) {
+
+			console.log(err)
+			reject()
+
+		})
+		.on('data', function(chunk) {
+
+			fileContents = Buffer.concat([fileContents, chunk]);
+
+		})
+		.on('end', function() {
+
+			resolve(fileContents)
+
+		});
+
+
+	})
+
+}
+
 // USED FOR SAVING SNAPSHOTS
 async function save_file_to_aws_s3(folder_name, file_payload, file_content){
 
-	let params = { ...s3_params, Key:`${folder_name}/${file_payload}`, Body: file_content }
+	// let params = { ...s3_params, Key:`${folder_name}/${file_payload}`, Body: file_content }
+	let params = { Bucket:s3_bucket, Key:`${folder_name}/${file_payload}`, Body: file_content }
 
-	let s3_client = new aws.S3.client
-	return s3_client.putObject(params, function(resp){
+	return s3.putObject(params, function(resp){
 		console.log(resp)
 	})
 
@@ -56,6 +87,7 @@ async function save_file_to_aws_s3(folder_name, file_payload, file_content){
 	// })
 
 }
+
 
 // USER THIS WAY save_file_to_aws_s3_for_bulk_files( get_proper_date(timestamp), 'bulk_ads', req.files['das'][0] )
 async function save_file_to_aws_s3_for_bulk_files(timestamp, folder_name, file){
@@ -73,6 +105,7 @@ module.exports = {
 	get_multers3_storage,
 	s3_bucket,
 
+	get_file_from_aws,
 	save_file_to_aws_s3,
 	save_file_to_aws_s3_for_bulk_files,
 }

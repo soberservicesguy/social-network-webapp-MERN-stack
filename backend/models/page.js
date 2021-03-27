@@ -7,6 +7,8 @@ const PageSchema = new mongoose.Schema({
 
 	_id: Schema.Types.ObjectId,
 
+	object_files_hosted_at: {type:String, enum:['gcp_storage', 'aws_s3', 'disk_storage',]},
+
 	page_name:String,
 	page_image:String,
 	page_description:String,

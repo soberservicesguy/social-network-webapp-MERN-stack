@@ -32,6 +32,7 @@ const path = require('path');
 const base64_encode = require('../../lib/image_to_base64')
 
 const {
+	get_image_to_display,
 	get_multer_storage_to_use,
 	get_file_storage_venue,
 	get_file_path_to_use,
@@ -39,11 +40,13 @@ const {
 	use_gcp_storage,
 	use_aws_s3_storage,
 
+	get_file_from_gcp,
 	save_file_to_gcp,
 	gcp_bucket,
 
 	get_snapshots_storage_path,
 
+	get_file_from_aws,
 	save_file_to_aws_s3,
 
 	checkFileTypeForImages,
@@ -161,23 +164,9 @@ router.post('/login', async function(req, res, next){
 			// console.log(privileges_list)
 
 		// we need to look where image is hosted and then get it from there
-			let user_avatar_image_to_use
 			// let user_cover_image_to_use
-			let cloud_resp
 
-			if (user.images_hosted_location === 'gcp_storage' || user.images_hosted_location === 'aws_s3'){
-
-				console.log('user.user_avatar_image')
-				console.log(user.user_avatar_image)
-
-				cloud_resp = await axios.get(user.user_avatar_image);
-				user_avatar_image_to_use = cloud_resp.data
-
-			} else {
-
-				user_avatar_image_to_use = base64_encode( user.user_avatar_image )
-
-			}
+			let user_avatar_image_to_use = await get_image_to_display(user.user_avatar_image, user.object_files_hosted_at)
 
 			let user_details = {
 				// user_cover_image: user_cover_image_to_use,
@@ -385,20 +374,9 @@ router.get('/friends-list', passport.authenticate(['jwt'], { session: false }), 
 	await Promise.all( user.friends.map(async (friend_id) => {
 
 		let friend = await User.findOne({ _id: friend_id })
-		let {user_avatar_image, user_name_in_profile, endpoint} = friend
+		let {user_avatar_image, user_name_in_profile, endpoint, object_files_hosted_at} = friend
 
-		let image_64_encoded
-
-		try{
-
-			image_64_encoded = base64_encode(user_avatar_image)
-
-		} catch (err1){
-
-			console.log(err1)
-			image_64_encoded = ''
-
-		}
+		let image_64_encoded = await get_image_to_display(user_avatar_image, object_files_hosted_at)
 
 		friends_list.push({
 			// user_avatar_image: base64_encode(user_avatar_image), 
@@ -424,20 +402,9 @@ router.get('/friend-requests', passport.authenticate(['jwt'], { session: false }
 	await Promise.all( user.friend_requests.map(async (friend_id) => {
 
 		let friend_request = await User.findOne({ _id: friend_id })
-		let {user_avatar_image, user_name_in_profile, endpoint} = friend_request
+		let {user_avatar_image, user_name_in_profile, endpoint, object_files_hosted_at} = friend_request
 
-		let image_64_encoded
-
-		try{
-
-			image_64_encoded = base64_encode(user_avatar_image)
-
-		} catch (err1){
-
-			console.log(err1)
-			image_64_encoded = ''
-
-		}
+		let image_64_encoded = await get_image_to_display(user_avatar_image, object_files_hosted_at)
 
 		friends_requests.push({
 			// user_avatar_image: base64_encode(user_avatar_image), 
@@ -487,23 +454,12 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 		// console.log('non_friend')
 		// console.log(non_friend)
 
-		let {user_avatar_image, user_name_in_profile, endpoint} = non_friend
+		let {user_avatar_image, user_name_in_profile, endpoint, object_files_hosted_at} = non_friend
 
 		// console.log('endpoint')
 		// console.log(endpoint)
 
-		let image_64_encoded
-
-		try{
-
-			image_64_encoded = base64_encode(user_avatar_image)
-
-		} catch (err1){
-
-			console.log(err1)
-			image_64_encoded = ''
-
-		}
+		let image_64_encoded = await get_image_to_display(user_avatar_image, object_files_hosted_at)
 
 		friend_suggestions.push({
 			// user_avatar_image: base64_encode(user_avatar_image), 
@@ -602,7 +558,7 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 					user_education: req.body.user_education,
 					user_contact_details: req.body.user_contact_details,
 
-					images_hosted_location: get_file_storage_venue(),
+					object_files_hosted_at: get_file_storage_venue(),
 					user_avatar_image: get_file_path_to_use( timestamp, req.files['avatar_image'][0], 'avatar_images' ), 
 					user_cover_image: get_file_path_to_use( timestamp, req.files['cover_image'][0], 'cover_images' ), 
 				}
@@ -614,60 +570,30 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 				// console.log(user.user_avatar_image)
 
 			// WE NEED UPLOADED FILES THEREFORE CREATING CONDITIONS OF USING GCP, AWS, OR DISK STORAGE
-				let user_avatar_image_to_use
-				let user_cover_image_to_use
-				let cloud_resp
+				{(async () => {
 
-				if (use_gcp_storage){
-
-					{(async () => {
+					if (use_gcp_storage){
 
 						let promises = []
-
-					// saving image 1 in cloud
 						promises.push( save_file_to_gcp(timestamp, req.files['avatar_image'][0], 'avatar_images') )
-					// saving image 2 in cloud
 						promises.push( save_file_to_gcp(timestamp, req.files['cover_image'][0], 'cover_images') )
 						await Promise.all(promises)
-					// getting from cloud
-						cloud_resp = await axios.get(user.user_avatar_image)
-						user_avatar_image_to_use = base64_encode( cloud_resp.data )
 
-						cloud_resp = await axios.get(user.user_cover_image)
-						user_cover_image_to_use = base64_encode( cloud_resp.data )
+					} else if (use_aws_s3_storage) {
 
-					})()}
+						console.log('SAVED AUTOMATICALLY TO AWS')
 
-				} else if (use_aws_s3_storage) {
+					} else {
 
-					// improved therefore not needed
-					// let avatar_filename = req.files['avatar_image'][0].key // name of file
-					// let avatar_location = req.files['avatar_image'][0].location // url
+						console.log('SAVED AUTOMATICALLY TO LOCAL DISK')
 
-					// let cover_filename = req.files['cover_image'][0].key // name of file
-					// let cover_location = req.files['cover_image'][0].location // url
+					}
 
-					// user_avatar_image_to_use = avatar_location
-					// user_cover_image_to_use = cover_location
+					let user_avatar_image_to_use = await get_image_to_display(user.user_avatar_image, user.object_files_hosted_at)
+					let user_cover_image_to_use = await get_image_to_display(user.user_cover_image, user.object_files_hosted_at)
 
-					{(async () => {
-
-						cloud_resp = await axios.get(user.user_avatar_image)
-						user_avatar_image_to_use = base64_encode( cloud_resp.data )
-
-						cloud_resp = await axios.get(user.user_cover_image)
-						user_cover_image_to_use = base64_encode( cloud_resp.data )
-
-					})()}
-
-
-				} else {
-
-					user_avatar_image_to_use = base64_encode( user.user_avatar_image )
-					user_cover_image_to_use = base64_encode( user.user_cover_image )
-
-				}
-
+				})()}
+		
 				let user_details = {
 					user_name_in_profile: user.user_name_in_profile,
 					user_cover_image: user.user_cover_image,
@@ -677,7 +603,7 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 					user_education: user.user_education,
 					user_contact_details: user.user_contact_details,
 
-					images_hosted_location: get_file_storage_venue(),
+					object_files_hosted_at: get_file_storage_venue(),
 					user_avatar_image: user_avatar_image_to_use,
 					user_cover_image: user_cover_image_to_use,
 				}
