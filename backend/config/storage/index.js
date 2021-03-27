@@ -34,6 +34,29 @@ async function get_image_to_display(image_path_field, image_location_field){
 
 }
 
+async function get_saved_video(video_path_field, video_location_field){
+
+	let cloud_resp
+
+	let video
+
+	if (video_location_field === 'gcp_storage'){
+
+		cloud_resp = await get_file_from_gcp(video_path_field)
+
+	} else if (video_location_field === 'aws_s3'){
+
+		cloud_resp = await get_file_from_aws(video_path_field)
+
+	} else {
+
+
+	}
+
+	return video
+
+}
+
 
 function get_multer_storage_to_use(timestamp){
 	if (use_gcp_storage){
@@ -85,26 +108,40 @@ function get_file_storage_venue(){
 }
 
 
-function get_file_path_to_use(file_to_save, folder_name, timestamp){
+function get_file_path_to_use(file_to_save, folder_name, timestamp, is_snapshot){
 
 	let filename_to_use
 
 	if (use_gcp_storage){
 
-		// since  gcp doesnt use multer therefore originalname property should be used as there is no filename property by default
-		filename_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) ) + '-' + timestamp + path.extname( file_to_save.originalname )
-		
-		console.log('FILE BEING CALLED FROM HERE')
-		console.log(`https://storage.googleapis.com/${gcp_bucket}/${folder_name}/${filename_to_use}`)
+		if (is_snapshot !== true){
 
-		// return `https://storage.googleapis.com/${gcp_bucket}/${folder_name}/${filename_to_use}` 
-		return `${folder_name}/${filename_to_use}` 
+			// since  gcp doesnt use multer therefore originalname property should be used as there is no filename property by default
+			filename_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) ) + '-' + timestamp + path.extname( file_to_save.originalname )
+			// return `https://storage.googleapis.com/${gcp_bucket}/${folder_name}/${filename_to_use}` 
+			return `${folder_name}/${filename_to_use}` 
+
+		} else {
+
+			filename_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) ) + '-' + timestamp + path.extname( file_to_save.originalname )
+			return `/tmp/${filename_to_use}` 
+
+		}
 
 	} else if (use_aws_s3_storage){
 
-		filename_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) ) + '-' + timestamp + path.extname( file_to_save.originalname )
-		// return `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${filename_to_use}`
-		return `${folder_name}/${filename_to_use}` 
+		if (is_snapshot !== true){
+
+			filename_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) ) + '-' + timestamp + path.extname( file_to_save.originalname )
+			// return `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${filename_to_use}`
+			return `${folder_name}/${filename_to_use}` 
+
+		} else {
+
+			filename_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) ) + '-' + timestamp + path.extname( file_to_save.originalname )
+			return `/tmp/${filename_to_use}` 
+
+		}
 
 	} else {
 

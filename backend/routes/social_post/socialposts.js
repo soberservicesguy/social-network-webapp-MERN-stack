@@ -85,7 +85,17 @@ function upload_image_or_video_in_social_post(timestamp){
 
 async function create_snapshots_from_uploaded_video(timestamp, video_filename, video_file, callback){
 	// video is uploaded , NOW creating thumbnail from video using snapshot
-	let file_without_format = path.basename( video_filename.filename, path.extname( video_filename.filename ) )
+
+	console.log('video_filename')
+	console.log(video_filename)
+
+	let file_without_format = path.basename( video_filename.originalname, path.extname( video_filename.originalname	 ) )
+
+	console.log('file_without_format')
+	console.log(file_without_format)
+
+	console.log('video_file')
+	console.log(video_file)
 
 	ffmpeg(video_file)
 	.on('end', function() {
@@ -102,6 +112,7 @@ async function create_snapshots_from_uploaded_video(timestamp, video_filename, v
 			
 		} else if ( use_aws_s3_storage ){
 
+			console.log('ENTERED HERE')
 			file_path = `${get_snapshots_storage_path()}/${file_without_format}.png`
 			save_file_to_aws_s3( 'thumbnails_for_social_videos', file_path )
 
@@ -343,6 +354,9 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 						} else if (use_aws_s3_storage) {
 
+							console.log(`req.files['social_post_video']`)
+							console.log(req.files['social_post_video'][0])
+
 							console.log('SAVED TO AWS')
 
 						} else {
@@ -401,6 +415,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 				} else if (req.files['social_post_video'] !== undefined && req.body.post_text){
 
+					console.log('BELOW IS VIDE OPATH')
+					console.log(get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp))
 					video_path = get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
 
@@ -426,9 +442,24 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 					}
 
+					if (use_gcp_storage){
+
+						video_path = { source: req.files['social_post_video'][0].location }
+
+					} else if (use_aws_s3_storage){
+
+						video_path = { source: req.files['social_post_video'][0].location }
+
+					} else {
+
+					}	
+
 					create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path, after_screenshot_callback)
 
 				} else if (req.files['social_post_video'] !== undefined && !req.body.post_text){
+
+					console.log('BELOW IS VIDE OPATH')
+					console.log(get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp))
 					
 					video_path = get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
@@ -452,6 +483,18 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 						save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)
 					}
+
+					if (use_gcp_storage){
+
+						video_path = { source: req.files['social_post_video'][0].location }
+
+					} else if (use_aws_s3_storage){
+
+						video_path = { source: req.files['social_post_video'][0].location }
+
+					} else {
+
+					}	
 
 					create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path, after_screenshot_callback)
 
