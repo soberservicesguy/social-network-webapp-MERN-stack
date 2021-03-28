@@ -70,14 +70,66 @@ function get_file_from_aws(complete_file_name){
 
 }
 
+
+
 // USED FOR SAVING SNAPSHOTS
-async function save_file_to_aws_s3(folder_name, file_payload, file_content){
+function save_file_to_aws_s3(file_payload, timestamp, file_path){
 
-	// let params = { ...s3_params, Key:`${folder_name}/${file_payload}`, Body: file_content }
-	let params = { Bucket:s3_bucket, Key:`${folder_name}/${file_payload}`, Body: file_content }
+	let params
 
-	return s3.putObject(params, function(resp){
-		console.log(resp)
+	if (typeof timestamp === 'undefined' || timestamp === null){
+
+		if (typeof file_path === 'undefined' || file_path === null){
+
+			params = {
+				Bucket:s3_bucket, 
+				Key:`${file_payload.fieldname}s/${file_payload}`, 
+				Body: file_payload 
+			}
+
+		} else {
+
+			params = {
+				Bucket:s3_bucket, 
+				Key:`${file_path}/${file_payload}`, 
+				Body: file_payload 
+			}
+
+		}
+
+	} else {
+
+		// console.log('PATH IS BELOW')
+		// console.log( path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname ) )
+		// console.log( `${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}` )
+
+		if (typeof file_path === 'undefined' || file_path === null){
+
+			params = {
+				Bucket:s3_bucket, 
+				Key:`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`, 
+				Body: file_payload 
+			}
+
+		} else {
+
+			params = {
+				Bucket:s3_bucket, 
+				Key:`${file_path}/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`, 
+				Body: file_payload 
+			}
+
+		}
+
+	}
+
+	console.log('CAME OUT')
+	return s3.putObject(params, function(err, resp){
+		if (err === null) {
+			console.log('RESPONSE')
+			console.log(resp)
+		}
+		console.log(`${file_payload} FILE SAVED PROBABLY`)
 	})
 
 	// let params = {...s3_params, Key:file_name_with_path, Body: file_content}
@@ -88,7 +140,74 @@ async function save_file_to_aws_s3(folder_name, file_payload, file_content){
 
 }
 
+async function save_file_to_s3(file, filename_to_set, path_to_upload){
 
+	console.log('file.buffer')
+	console.log(file)
+
+	let FS = require('fs').promises
+
+	let fileContent = await FS.readFile(file)
+
+	var params = {
+		Body: fileContent, 
+		Bucket:s3_bucket, 
+		Key: `${path_to_upload}/${filename_to_set}`, // only filename and not path
+	};
+
+	try {
+
+		let response = s3.putObject(params).promise()
+		return response
+
+	} catch (err){
+		console.log(err)
+	}
+
+	// return await fs.readFileAsync(file, async (error, fileContent) => {
+	// 	// if unable to read file contents, throw exception
+	// 	console.log('fileContent')
+	// 	console.log(fileContent)
+
+	// 	if (error) { throw error; }
+
+	// 	var params = {
+	// 		Body: fileContent, 
+	// 		Bucket:s3_bucket, 
+	// 		Key: `${path_to_upload}/${filename_to_set}`, // only filename and not path
+	// 	};
+
+	// 	try {
+
+	// 		let response = await s3.putObject(params).promise()
+	// 		// let response = await s3.putObject(params).promise()
+	// 		// console.log('response')
+	// 		// console.log(response)
+	// 		return response
+
+	// 	} catch (err){
+	// 		console.log(err)
+	// 	}
+
+	// });
+
+
+	// var params = {
+	// 	Body: file.buffer, 
+	// 	Bucket:s3_bucket, 
+	// 	Key: `${file_path}/${file.originalname}`, 
+	// };
+
+	// return s3.putObject(params, function(err, resp) {
+	// 	if (err === null) {
+	// 		console.log('RESPONSE')
+	// 		console.log(resp)
+	// 	}
+	// 	console.log(`${file} FILE SAVED PROBABLY`)
+	// });
+}
+
+// WRONG, TRY TO COPY save_file_to_aws_s3 AND RECREATE IT
 // USER THIS WAY save_file_to_aws_s3_for_bulk_files( get_proper_date(timestamp), 'bulk_ads', req.files['das'][0] )
 async function save_file_to_aws_s3_for_bulk_files(timestamp, folder_name, file){
 
@@ -102,6 +221,7 @@ async function save_file_to_aws_s3_for_bulk_files(timestamp, folder_name, file){
 }
 
 module.exports = {
+	save_file_to_s3,
 	get_multers3_storage,
 	s3_bucket,
 
