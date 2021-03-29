@@ -4,7 +4,7 @@ const path = require('path')
 const env = require("dotenv").config({ path: "../../.env" });
 const use_gcp_storage = ( process.env.GOOGLE_CLOUD_STORAGE_ENABLED === 'true' ) ? true : false
 const use_aws_s3_storage = ( process.env.AWS_S3_STORAGE_ENABLED === 'true' ) ? true : false
-const { gcp_storage, save_file_to_gcp, gcp_bucket, save_file_to_gcp_for_bulk_files, get_file_from_gcp} = require('./google_cloud_storage')
+const { gcp_storage, save_file_to_gcp, gcp_bucket, save_file_to_gcp_for_bulk_files, get_file_from_gcp, save_file_to_gcp_storage} = require('./google_cloud_storage')
 const { get_multers3_storage, s3_bucket, save_file_to_aws_s3, save_file_to_aws_s3_for_bulk_files, get_file_from_aws, save_file_to_s3 } = require('./aws_s3_storage')
 const { get_multer_disk_storage, get_multer_disk_storage_for_bulk_files, } = require('./disk_storage')
 const { checkFileTypeForImages, checkFileTypeForImageAndVideo, checkFileTypeForImagesAndExcelSheet, } = require('./file_filters')
@@ -226,7 +226,21 @@ function get_snapshots_storage_path(){
 
 }
 
+function get_snapshots_fullname_and_path(folder_name, filename_without_format, timestamp){
+	if (use_gcp_storage || use_aws_s3_storage){
+
+		return `${folder_name}/${filename_without_format}-${timestamp}_.png`
+
+	} else {
+
+		return `assets/uploads/${folder_name}`
+
+	}
+}
+
 module.exports = {
+	save_file_to_gcp_storage,
+	get_snapshots_fullname_and_path,
 	get_image_to_display,
 	store_video_at_tmp_and_get_its_path,
 	

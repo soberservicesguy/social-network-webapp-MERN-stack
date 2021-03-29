@@ -29,7 +29,8 @@ const path = require('path')
 
 var ffmpeg = require('fluent-ffmpeg') // for setting thumbnail of video upload using snapshot
 
-const { 
+const {
+	get_snapshots_fullname_and_path,
 	get_image_to_display,
 	store_video_at_tmp_and_get_its_path,
 
@@ -59,6 +60,7 @@ const {
 	checkFileTypeForImagesAndExcelSheet,
 
 	save_file_to_s3,
+	save_file_to_gcp_storage,
 } = require('../../config/storage/')
 
 let timestamp
@@ -67,10 +69,23 @@ const images_upload_path = 'assets/uploads/social_post_images'
 const video_upload_path = `assets/uploads/social_post_videos`
 const video_image_thumbnail_path = `assets/uploads/thumbnails_for_social_videos`
 
-function select_random_screenshot(total_snapshots){
-	let index = Math.floor(Math.random() * total_snapshots)
-	return index + 1
+
+let total_snapshots_count = 4
+
+
+function select_random_screenshot(filename){
+
+	let index = Math.floor( Math.random() * Number(total_snapshots_count) )
+	console.log('index')
+	console.log({random:Math.random(), total_snapshots_count:total_snapshots_count})
+	console.log(Math.random() * Number(total_snapshots_count))
+	let filename_to_use_without_format = path.basename( filename, path.extname( filename ) ) // + path.extname( filename )
+	
+	// filename is like snapshot_.png , just entering random number 
+	return `${filename_to_use_without_format}${index+1}${path.extname( filename )}`
+
 }
+
  
 // Init Upload
 function upload_image_or_video_in_social_post(timestamp){
@@ -87,8 +102,6 @@ function upload_image_or_video_in_social_post(timestamp){
 	// .single('blogpost_image_main'); 
 	// .array('photos', 12)
 }
-
-let total_snapshots_count = 4
 
 async function create_snapshots_from_uploaded_video(timestamp, video_file, video_file_path, callback){
 	// video is uploaded , NOW creating thumbnail from video using snapshot
@@ -111,29 +124,42 @@ async function create_snapshots_from_uploaded_video(timestamp, video_file, video
 
 			console.log('Screenshots taken');
 
-			total_snapshots_count = new Array(total_snapshots_count)
+			let array_from_snapshot_count = new Array(total_snapshots_count)
 
 			// saving snapshots in gcp store or aws s3 if needed
 			let file_path
-			if ( use_gcp_storage ){
+			// if ( use_gcp_storage ){
 
-				file_path = `${get_snapshots_storage_path()}/${file_without_format}.png`
-				save_file_to_gcp( timestamp, file_path, true )
+			// 	file_path = `${get_snapshots_storage_path()}/${file_without_format}.png`
+			// 	save_file_to_gcp( timestamp, file_path, true )
 				
-			} else if ( use_aws_s3_storage ){
+			if ( use_gcp_storage || use_aws_s3_storage ){
 
 				console.log('ENTERED HERE')
 
 				let promises = []
+				let response
 
-				for (let i = 0; i < total_snapshots_count.length; i++) {
+				for (let i = 0; i < array_from_snapshot_count.length; i++) {
 
 					file_path = `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_${i+1}.png`
-					console.log('file_path')
-					console.log(file_path)
-					// save_file_to_aws_s3( file_path, null, 'thumbnails_for_social_videos' )
-					let response = save_file_to_s3( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
-					promises.push(response)
+
+					if (use_gcp_storage){
+
+						response = await save_file_to_gcp_storage( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
+						promises.push(response) // not working this way AND TAKING LONGER
+
+					// BETTER APPROACH BUT NOT WORKING AS PROMISES
+						// response = save_file_to_gcp_storage( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
+						// promises.push(response) // not working this way AND TAKING LONGER
+
+					} else if (use_aws_s3_storage){
+
+						response = save_file_to_s3( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
+						promises.push(response)
+
+					} else {
+					}
 
 				}
 
@@ -144,6 +170,8 @@ async function create_snapshots_from_uploaded_video(timestamp, video_file, video
 					resolve()
 
 				})
+
+
 
 			} else {
 
@@ -263,7 +291,8 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 
 							socialpost_endpoint = saved_socialpost.endpoint
 
-							let video_thumbnail_image_to_use = await get_image_to_display(newSocialPost.video_thumbnail_image, newSocialPost.object_files_hosted_at)
+							let get_random_screenshot = select_random_screenshot(newSocialPost.video_thumbnail_image)
+							let video_thumbnail_image_to_use = await get_image_to_display(`thumbnails_for_social_videos/${get_random_screenshot}`, newSocialPost.object_files_hosted_at)
 
 							new_socialpost = {
 								type_of_post: newSocialPost.type_of_post,
@@ -285,7 +314,8 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 
 							socialpost_endpoint = saved_socialpost.endpoint
 
-							let video_thumbnail_image_to_use = await get_image_to_display(newSocialPost.video_thumbnail_image, newSocialPost.object_files_hosted_at)
+							let get_random_screenshot = select_random_screenshot(newSocialPost.video_thumbnail_image)
+							let video_thumbnail_image_to_use = await get_image_to_display(`thumbnails_for_social_videos/${get_random_screenshot}`, newSocialPost.object_files_hosted_at)
 							
 							new_socialpost = {
 								post_text: newSocialPost.type_of_post,
@@ -412,6 +442,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 				let newSocialPost
 				let video_path_for_snapshots
 				let snapshots
+				let promises
 
 				console.log('HERE 1')
 
@@ -459,7 +490,6 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 						console.log(get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp))
 						video_path = get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
-
 						function after_screenshot_callback(){
 
 							social_post_type = 'text_with_video_post'
@@ -470,7 +500,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 								type_of_post: social_post_type,
 								post_text: req.body.post_text,
 								video_for_post: video_path,
-								video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}_${select_random_screenshot(4)}.png`,
+								video_thumbnail_image: get_snapshots_fullname_and_path('thumbnails_for_social_videos', file_without_format, timestamp),
+								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}_${select_random_screenshot(4)}.png`,
 								object_files_hosted_at: get_file_storage_venue(),
 								// video_for_post: get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos'),
 								// video_for_post: get_file_path_to_use(req.files['social_post_video'][0].filename, 'social_post_videos'),
@@ -480,12 +511,17 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 							console.log('NO ERROR HERE')
 							return newSocialPost
-
 						}
 
 						video_path_for_snapshots = await store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
 						snapshots = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path_for_snapshots)
-						save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)						
+						// promises = await Promise.all([video_path_for_snapshots, snapshots])
+						Promise.all([video_path_for_snapshots, snapshots]).then(() => {
+
+							console.log('NOW COMES THE ERROR')
+							save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
+
+						})
 
 					})()}
 
@@ -508,7 +544,10 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 								_id: social_post_id,
 								type_of_post: social_post_type,
 								video_for_post: video_path,
-								video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}_${select_random_screenshot(4)}.png`,
+								video_thumbnail_image: get_snapshots_fullname_and_path('thumbnails_for_social_videos', file_without_format, timestamp),
+								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_.png`, // ${select_random_screenshot(4)}
+								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_${i+1}.png`,
+								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}_${select_random_screenshot(4)}.png`,
 								object_files_hosted_at: get_file_storage_venue(),
 								// video_for_post: get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos'),
 								// video_for_post: get_file_path_to_use(req.files['social_post_video'][0].filename, 'social_post_videos'),
@@ -517,12 +556,19 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							})
 
 							return newSocialPost
-
 						}
+
+					// file_path = `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_${i+1}.png`
 
 						video_path_for_snapshots = await store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
 						snapshots = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path_for_snapshots)
-						save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
+
+						Promise.all([video_path_for_snapshots, snapshots]).then(() => {
+
+							console.log('NOW COMES THE ERROR')
+							save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
+
+						})
 
 					})()}
 

@@ -40,6 +40,8 @@ function get_file_from_gcp(complete_file_name){
 
 }
 
+
+
 async function save_file_to_gcp(timestamp, file_payload){
 
 	let the_bucket = gcp_storage.bucket(gcp_bucket)
@@ -106,9 +108,80 @@ async function save_file_to_gcp_for_bulk_files(timestamp, folder_name, file){
 
 }
 
+// being used for snapshots
+async function save_file_to_gcp_storage(file, filename_to_set, path_to_upload){
+
+	console.log('file.buffer')
+	console.log(file)
+
+	let FS = require('fs').promises
+
+	let fileContent = await FS.readFile(file)
+
+	let the_bucket = gcp_storage.bucket(gcp_bucket)
+	let the_file
+
+	try {
+
+		the_file = the_bucket.file(`${path_to_upload}/${filename_to_set}`)
+		let response = the_file.save(fileContent)
+		// console.log('the_file.save(fileContent)')
+		// console.log(response)
+		return response
+		// return the_file.save(fileContent)
+
+	} catch (err){
+		console.log(err)
+	}
+
+	// return await fs.readFileAsync(file, async (error, fileContent) => {
+	// 	// if unable to read file contents, throw exception
+	// 	console.log('fileContent')
+	// 	console.log(fileContent)
+
+	// 	if (error) { throw error; }
+
+	// 	var params = {
+	// 		Body: fileContent, 
+	// 		Bucket:s3_bucket, 
+	// 		Key: `${path_to_upload}/${filename_to_set}`, // only filename and not path
+	// 	};
+
+	// 	try {
+
+	// 		let response = await s3.putObject(params).promise()
+	// 		// let response = await s3.putObject(params).promise()
+	// 		// console.log('response')
+	// 		// console.log(response)
+	// 		return response
+
+	// 	} catch (err){
+	// 		console.log(err)
+	// 	}
+
+	// });
+
+
+	// var params = {
+	// 	Body: file.buffer, 
+	// 	Bucket:s3_bucket, 
+	// 	Key: `${file_path}/${file.originalname}`, 
+	// };
+
+	// return s3.putObject(params, function(err, resp) {
+	// 	if (err === null) {
+	// 		console.log('RESPONSE')
+	// 		console.log(resp)
+	// 	}
+	// 	console.log(`${file} FILE SAVED PROBABLY`)
+	// });
+}
+
+
 
 
 module.exports = {
+	save_file_to_gcp_storage,
 	gcp_storage,
 	gcp_bucket,
 	get_file_from_gcp,
