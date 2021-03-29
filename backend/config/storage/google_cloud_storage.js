@@ -42,7 +42,7 @@ function get_file_from_gcp(complete_file_name){
 
 
 
-async function save_file_to_gcp(timestamp, file_payload){
+function save_file_to_gcp(timestamp, file_payload){
 
 	let the_bucket = gcp_storage.bucket(gcp_bucket)
 	let the_file
@@ -52,7 +52,7 @@ async function save_file_to_gcp(timestamp, file_payload){
 		console.log('FILE BEING SAVED AT GCP')
 		console.log(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`)
 		the_file = the_bucket.file(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`);
-		await the_file.save(file_payload.buffer)
+		return the_file.save(file_payload.buffer)
 
 	} catch (err){
 

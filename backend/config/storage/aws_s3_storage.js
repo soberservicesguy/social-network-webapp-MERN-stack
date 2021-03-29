@@ -42,6 +42,9 @@ function get_multers3_storage(timestamp){
 
 function get_file_from_aws(complete_file_name){
 
+	console.log('complete_file_name')
+	console.log(complete_file_name)
+
 	let params = { Bucket:s3_bucket, Key: complete_file_name }
 	let fileContents = new Buffer('');
 
@@ -77,60 +80,62 @@ function save_file_to_aws_s3(file_payload, timestamp, file_path){
 
 	let params
 
-	if (typeof timestamp === 'undefined' || timestamp === null){
+	// if (typeof timestamp === 'undefined' || timestamp === null){
 
-		if (typeof file_path === 'undefined' || file_path === null){
+	// 	if (typeof file_path === 'undefined' || file_path === null){
 
 			params = {
 				Bucket:s3_bucket, 
 				Key:`${file_payload.fieldname}s/${file_payload}`, 
-				Body: file_payload 
+				Body: file_payload
 			}
 
-		} else {
+		// } else {
 
-			params = {
-				Bucket:s3_bucket, 
-				Key:`${file_path}/${file_payload}`, 
-				Body: file_payload 
-			}
+			// params = {
+			// 	Bucket:s3_bucket, 
+			// 	Key:`${file_path}/${file_payload}`, 
+			// 	Body: file_payload 
+			// }
 
-		}
+		// }
 
-	} else {
+	// } else {
 
 		// console.log('PATH IS BELOW')
 		// console.log( path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname ) )
 		// console.log( `${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}` )
 
-		if (typeof file_path === 'undefined' || file_path === null){
+	// 	if (typeof file_path === 'undefined' || file_path === null){
 
-			params = {
-				Bucket:s3_bucket, 
-				Key:`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`, 
-				Body: file_payload 
-			}
+	// 		params = {
+	// 			Bucket:s3_bucket, 
+	// 			Key:`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`, 
+	// 			Body: file_payload 
+	// 		}
 
-		} else {
+	// 	} else {
 
-			params = {
-				Bucket:s3_bucket, 
-				Key:`${file_path}/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`, 
-				Body: file_payload 
-			}
+	// 		params = {
+	// 			Bucket:s3_bucket, 
+	// 			Key:`${file_path}/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`, 
+	// 			Body: file_payload 
+	// 		}
 
-		}
+	// 	}
 
-	}
+	// }
 
-	console.log('CAME OUT')
-	return s3.putObject(params, function(err, resp){
-		if (err === null) {
-			console.log('RESPONSE')
-			console.log(resp)
-		}
-		console.log(`${file_payload} FILE SAVED PROBABLY`)
-	})
+	console.log('CAME OUT') 
+	let response = s3.putObject(params).promise()
+	return response
+	// return s3.putObject(params, function(err, resp){
+	// 	if (err === null) {
+	// 		console.log('RESPONSE')
+	// 		console.log(resp)
+	// 	}
+	// 	console.log(`${file_payload} FILE SAVED PROBABLY`)
+	// })
 
 	// let params = {...s3_params, Key:file_name_with_path, Body: file_content}
 	// let conditions = {partSize: 10 * 1024 * 1024, queueSize: 1}

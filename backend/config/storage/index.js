@@ -23,6 +23,7 @@ async function get_image_to_display(image_path_field, image_host_field){
 
 	} else if (image_host_field === 'aws_s3'){
 
+		console.log('ATTEMPTING TO GET')
 		cloud_resp = await get_file_from_aws(image_path_field)
 		image = cloud_resp.toString('base64')
 
@@ -36,28 +37,28 @@ async function get_image_to_display(image_path_field, image_host_field){
 
 }
 
-async function get_saved_video(video_path_field, video_location_field){
+// async function get_saved_video(video_path_field, video_location_field){
 
-	let cloud_resp
-
-
-	if (video_location_field === 'gcp_storage'){
-
-		cloud_resp = await get_file_from_gcp(video_path_field)
-
-	} else if (video_location_field === 'aws_s3'){
-
-		cloud_resp = await get_file_from_aws(video_path_field)
-
-	} else {
+// 	let cloud_resp
 
 
-	}
-			// return `/tmp/${filename_to_use}` 
+// 	if (video_location_field === 'gcp_storage'){
 
-	return cloud_resp
+// 		cloud_resp = await get_file_from_gcp(video_path_field)
 
-}
+// 	} else if (video_location_field === 'aws_s3'){
+
+// 		cloud_resp = await get_file_from_aws(video_path_field)
+
+// 	} else {
+
+
+// 	}
+// 			// return `/tmp/${filename_to_use}` 
+
+// 	return cloud_resp
+
+// }
 
 async function store_video_at_tmp_and_get_its_path(file_payload, video_path_for_local_storage){
 

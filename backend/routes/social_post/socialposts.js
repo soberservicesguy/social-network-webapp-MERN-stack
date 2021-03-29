@@ -206,7 +206,7 @@ async function create_snapshots_from_uploaded_video(timestamp, video_file, video
 
 function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id){
 
-	newSocialPost.save(function (err, newSocialPost) {
+	newSocialPost.save(async function (err, newSocialPost) {
 
 		if (err){
 			res.status(404).json({ success: false, msg: 'couldnt create socialpost database entry'})
@@ -215,11 +215,11 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 
 		// assign user object then save
 		User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-		.then((user) => {
+		.then(async (user) => {
 			if (user){
 
 				newSocialPost.user = user
-				newSocialPost.save()
+				await newSocialPost.save()
 
 				let new_socialpost = {}
 				let socialpost_endpoint = ''
@@ -228,7 +228,7 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 					case "text_post":
 
 						SocialPost.findOne({ _id: social_post_id })
-						.then((saved_socialpost) => {
+						.then(async (saved_socialpost) => {
 
 							socialpost_endpoint = saved_socialpost.endpoint
 
@@ -250,6 +250,8 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 
 							socialpost_endpoint = saved_socialpost.endpoint
 
+							console.log('newSocialPost.image_for_post')
+							console.log(newSocialPost.image_for_post)
 							let image_for_post_to_use = await get_image_to_display(newSocialPost.image_for_post, newSocialPost.object_files_hosted_at)
 
 							new_socialpost = {
@@ -407,9 +409,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 						}
 					})()}
 
-				} 
-
-				if ( req.files['social_post_video'] ){
+				} else if ( req.files['social_post_video'] ){
 
 					{(async () => {
 
@@ -432,6 +432,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 						}
 					})()}
 
+				} else {
 				} 
 
 
@@ -443,48 +444,51 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 				let video_path_for_snapshots
 				let snapshots
 				let promises
+				let save_socialpost
 
 				console.log('HERE 1')
 
-				if (req.files['social_post_image'] !== undefined && req.body.post_text){
+				{(async () => {
 
-					social_post_type = 'text_with_image_post'
-					image_path = get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images', timestamp)
-					// image_path = path.join(images_upload_path, `${req.files['social_post_image'][0].filename}`)
+					if (req.files['social_post_image'] !== undefined && req.body.post_text){
 
-					newSocialPost = new SocialPost({
-						_id: social_post_id,
-						type_of_post: social_post_type,
-						post_text: req.body.post_text,
-						image_for_post: image_path,
-						object_files_hosted_at: get_file_storage_venue(),
-						// image_for_post: get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images'),
-						// image_for_post: `./assets/images/uploads/social_post_images/${req.files['social_post_image'][0].filename}`,
-					});
+						social_post_type = 'text_with_image_post'
+						image_path = get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images', timestamp)
+						// image_path = path.join(images_upload_path, `${req.files['social_post_image'][0].filename}`)
+						newSocialPost = new SocialPost({
+							_id: social_post_id,
+							type_of_post: social_post_type,
+							post_text: req.body.post_text,
+							image_for_post: image_path,
+							object_files_hosted_at: get_file_storage_venue(),
+							// image_for_post: get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images'),
+							// image_for_post: `./assets/images/uploads/social_post_images/${req.files['social_post_image'][0].filename}`,
+						});
 
-					save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
+						save_socialpost = await save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
 
-				} else if (req.files['social_post_image'] !== undefined && !req.body.post_text){
+					} else if (req.files['social_post_image'] !== undefined && !req.body.post_text){
 
-					social_post_type = 'image_post'
-					image_path = get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images', timestamp)
-					// console.log('image_path')
-					// console.log(images_upload_path)
-					// image_path = path.join(images_upload_path, `${req.files['social_post_image'][0].filename}`)
-					newSocialPost = new SocialPost({
-						_id: social_post_id,
-						type_of_post: social_post_type,
-						image_for_post: image_path,
-						object_files_hosted_at: get_file_storage_venue(),
-						// image_for_post: get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images'),
-						// image_for_post: `./assets/images/uploads/social_post_images/${req.files['social_post_image'][0].filename}`,
-					});
+						social_post_type = 'image_post'
+						image_path = get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images', timestamp)
+						// console.log('image_path')
+						// console.log(images_upload_path)
+						// image_path = path.join(images_upload_path, `${req.files['social_post_image'][0].filename}`)
+						newSocialPost = new SocialPost({
+							_id: social_post_id,
+							type_of_post: social_post_type,
+							image_for_post: image_path,
+							object_files_hosted_at: get_file_storage_venue(),
+							// image_for_post: get_file_path_to_use(req.files['social_post_image'][0], 'social_post_images'),
+							// image_for_post: `./assets/images/uploads/social_post_images/${req.files['social_post_image'][0].filename}`,
+						});
 
-					save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
+						console.log('TILL HERERERERE')
 
-				} else if (req.files['social_post_video'] !== undefined && req.body.post_text){
 
-					{(async () => {
+						save_socialpost = await save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
+
+					} else if (req.files['social_post_video'] !== undefined && req.body.post_text){
 
 						console.log('BELOW IS VIDE OPATH')
 						console.log(get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp))
@@ -516,18 +520,14 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 						video_path_for_snapshots = await store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
 						snapshots = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path_for_snapshots)
 						// promises = await Promise.all([video_path_for_snapshots, snapshots])
-						Promise.all([video_path_for_snapshots, snapshots]).then(() => {
+						Promise.all([video_path_for_snapshots, snapshots]).then(async () => {
 
 							console.log('NOW COMES THE ERROR')
-							save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
+							save_socialpost = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
 
 						})
 
-					})()}
-
-				} else if (req.files['social_post_video'] !== undefined && !req.body.post_text){
-
-					{(async () => {
+					} else if (req.files['social_post_video'] !== undefined && !req.body.post_text){
 
 						console.log('BELOW IS VIDE OPATH')
 						console.log(get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp))
@@ -563,28 +563,28 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 						video_path_for_snapshots = await store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
 						snapshots = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path_for_snapshots)
 
-						Promise.all([video_path_for_snapshots, snapshots]).then(() => {
+						Promise.all([video_path_for_snapshots, snapshots]).then(async () => {
 
 							console.log('NOW COMES THE ERROR')
-							save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
+							save_socialpost = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
 
 						})
 
-					})()}
+					} else {
 
+						social_post_type = 'text_post'
+						newSocialPost = new SocialPost({
+							_id: social_post_id,
+							type_of_post: social_post_type,
+							post_text: req.body.post_text,
+						});
 
-				} else {
+						save_socialpost = await save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)
 
-					social_post_type = 'text_post'
-					newSocialPost = new SocialPost({
-						_id: social_post_id,
-						type_of_post: social_post_type,
-						post_text: req.body.post_text,
-					});
+					}
 
-					save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)
+				})()}
 
-				}
 
 					// not needed, this is used only in multer
 					// res.status(200).json({ success: true, msg: 'File Uploaded!',file: `uploads/${req.file.filename}`})
