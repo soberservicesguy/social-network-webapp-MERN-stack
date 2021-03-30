@@ -38,28 +38,6 @@ async function get_image_to_display(image_path_field, image_host_field){
 
 }
 
-// async function get_saved_video(video_path_field, video_location_field){
-
-// 	let cloud_resp
-
-
-// 	if (video_location_field === 'gcp_storage'){
-
-// 		cloud_resp = await get_file_from_gcp(video_path_field)
-
-// 	} else if (video_location_field === 'aws_s3'){
-
-// 		cloud_resp = await get_file_from_aws(video_path_field)
-
-// 	} else {
-
-
-// 	}
-// 			// return `/tmp/${filename_to_use}` 
-
-// 	return cloud_resp
-
-// }
 
 // async function store_video_at_tmp_and_get_its_path(file_payload, video_path_for_local_storage){
 function store_video_at_tmp_and_get_its_path(file_payload, video_path_for_local_storage){
@@ -100,6 +78,8 @@ function store_video_at_tmp_and_get_its_path(file_payload, video_path_for_local_
 
 }
 
+
+
 function delete_video_at_tmp(){
 
 	if (use_gcp_storage || use_aws_s3_storage){
@@ -109,6 +89,7 @@ function delete_video_at_tmp(){
 	}
 
 }
+
 
 function get_multer_storage_to_use(timestamp){
 	if (use_gcp_storage){
@@ -125,6 +106,7 @@ function get_multer_storage_to_use(timestamp){
 	
 	}
 }
+
 
 // USED WHILE SAVING VIDEOS, THEY ARE MANUALLY SAVED IN AWS TOO, BENEFIT IS THAT WE CAN MAKE SCREENSHOTS EASILY
 function get_multer_storage_to_use_alternate(timestamp){
@@ -143,6 +125,7 @@ function get_multer_storage_to_use_alternate(timestamp){
 	}
 }
 
+
 function get_multer_storage_to_use_for_bulk_files(timestamp, folder_name){
 	if (use_gcp_storage){
 	
@@ -158,6 +141,7 @@ function get_multer_storage_to_use_for_bulk_files(timestamp, folder_name){
 	
 	}
 }
+
 
 
 function get_file_storage_venue(){
@@ -203,6 +187,7 @@ function get_file_path_to_use(file_to_save, folder_name, timestamp){
 }
 
 
+
 function get_file_path_to_use_for_bulk_files(timestamp, folder_name, file_to_save){
 
 	// let filename_to_use = path.basename( file_to_save, path.extname( file_to_save ) ) + '-' + timestamp + path.extname( file_to_save )
@@ -231,6 +216,7 @@ function get_file_path_to_use_for_bulk_files(timestamp, folder_name, file_to_sav
 }
 
 
+
 function get_snapshots_storage_path(){
 
 	if (use_gcp_storage || use_aws_s3_storage){
@@ -245,6 +231,7 @@ function get_snapshots_storage_path(){
 
 }
 
+
 function get_snapshots_fullname_and_path(folder_name, filename_without_format, timestamp){
 	if (use_gcp_storage || use_aws_s3_storage){
 
@@ -258,32 +245,27 @@ function get_snapshots_fullname_and_path(folder_name, filename_without_format, t
 }
 
 module.exports = {
-	save_file_to_gcp_storage,
-	get_snapshots_fullname_and_path,
 	get_image_to_display,
 	store_video_at_tmp_and_get_its_path,
-	
+	delete_video_at_tmp,
 	get_multer_storage_to_use,
 	get_multer_storage_to_use_alternate,
 	get_multer_storage_to_use_for_bulk_files,
-	
 	get_file_storage_venue,
-	
 	get_file_path_to_use,
 	get_file_path_to_use_for_bulk_files,
+	get_snapshots_storage_path,
+	get_snapshots_fullname_and_path,
 
-	use_gcp_storage,
-	use_aws_s3_storage,
-
-	save_file_to_s3,
-
-	get_file_from_gcp,
+	gcp_bucket,
+	save_file_to_gcp_storage,
 	save_file_to_gcp,
 	save_file_to_gcp_for_bulk_files,
-	gcp_bucket,
-
-	get_snapshots_storage_path,
-
+	use_gcp_storage,
+	get_file_from_gcp,
+	
+	use_aws_s3_storage,
+	save_file_to_s3,
 	get_file_from_aws,
 	save_file_to_aws_s3,
 	save_file_to_aws_s3_for_bulk_files,
