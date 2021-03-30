@@ -103,7 +103,7 @@ function upload_image_or_video_in_social_post(timestamp){
 	// .array('photos', 12)
 }
 
-async function create_snapshots_from_uploaded_video(timestamp, video_file, video_file_path, callback){
+async function create_snapshots_from_uploaded_video(timestamp, video_file, video_file_path){
 	// video is uploaded , NOW creating thumbnail from video using snapshot
 
 	console.log('video_file')
@@ -124,63 +124,61 @@ async function create_snapshots_from_uploaded_video(timestamp, video_file, video
 
 			console.log('Screenshots taken');
 
-			let array_from_snapshot_count = new Array(total_snapshots_count)
+			// let array_from_snapshot_count = new Array(total_snapshots_count)
 
-			// saving snapshots in gcp store or aws s3 if needed
-			let file_path
-			// if ( use_gcp_storage ){
+			// // saving snapshots in gcp store or aws s3 if needed
+			// let file_path
+			// // if ( use_gcp_storage ){
 
-			// 	file_path = `${get_snapshots_storage_path()}/${file_without_format}.png`
-			// 	save_file_to_gcp( timestamp, file_path, true )
+			// // 	file_path = `${get_snapshots_storage_path()}/${file_without_format}.png`
+			// // 	save_file_to_gcp( timestamp, file_path, true )
 				
-			if ( use_gcp_storage || use_aws_s3_storage ){
+			// if ( use_gcp_storage || use_aws_s3_storage ){
 
-				console.log('ENTERED HERE')
+			// 	console.log('ENTERED HERE')
 
-				let promises = []
-				let response
+			// 	let promises = []
+			// 	let response
 
-				for (let i = 0; i < array_from_snapshot_count.length; i++) {
+			// 	for (let i = 0; i < array_from_snapshot_count.length; i++) {
 
-					file_path = `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_${i+1}.png`
+			// 		file_path = `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_${i+1}.png`
 
-					if (use_gcp_storage){
+			// 		if (use_gcp_storage){
 
-						response = await save_file_to_gcp_storage( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
-						promises.push(response) // not working this way AND TAKING LONGER
+			// 			response = await save_file_to_gcp_storage( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
+			// 			promises.push(response) // not working this way AND TAKING LONGER
 
-					// BETTER APPROACH BUT NOT WORKING AS PROMISES
-						// response = save_file_to_gcp_storage( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
-						// promises.push(response) // not working this way AND TAKING LONGER
+			// 		// BETTER APPROACH BUT NOT WORKING AS PROMISES
+			// 			// response = save_file_to_gcp_storage( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
+			// 			// promises.push(response) // not working this way AND TAKING LONGER
 
-					} else if (use_aws_s3_storage){
+			// 		} else if (use_aws_s3_storage){
 
-						response = save_file_to_s3( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
-						promises.push(response)
+			// 			response = save_file_to_s3( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
+			// 			promises.push(response)
 
-					} else {
-					}
+			// 		} else {
+			// 		}
 
-				}
+			// 	}
 
-				Promise.all(promises).then((vals) => {
+			// 	Promise.all(promises).then((vals) => {
 
-					console.log(vals)
-					console.log('REOVEDEDS')
-					resolve()
+			// 		console.log(vals)
+			// 		console.log('REOVEDEDS')
+			// 		resolve()
 
-				})
+			// 	})
 
+			// } else {
 
+			// 	console.log('FILE ALREADY AT DISK STORAGE NO NEED TO SAVE ANYWHERE')
 
-			} else {
-
-				console.log('FILE ALREADY AT DISK STORAGE NO NEED TO SAVE ANYWHERE')
-
-			}
+			// }
 
 			resolve()
-			// callback()
+
 		})
 		.on('error', function(err) {
 			console.error(err);
@@ -204,7 +202,7 @@ async function create_snapshots_from_uploaded_video(timestamp, video_file, video
 }
 
 
-function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id){
+async function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id){
 
 	newSocialPost.save(async function (err, newSocialPost) {
 
@@ -369,6 +367,70 @@ function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_
 
 }
 
+function save_generated_snapshots(video_file, timestamp){
+
+
+	let file_without_format = path.basename( video_file.originalname, path.extname( video_file.originalname	 ) )
+	let array_from_snapshot_count = new Array(total_snapshots_count)
+
+	// saving snapshots in gcp store or aws s3 if needed
+	let file_path
+	// if ( use_gcp_storage ){
+
+	// 	file_path = `${get_snapshots_storage_path()}/${file_without_format}.png`
+	// 	save_file_to_gcp( timestamp, file_path, true )
+		
+	if ( use_gcp_storage || use_aws_s3_storage ){
+
+		console.log('ENTERED HERE')
+
+		let promises = []
+		let response
+
+		for (let i = 0; i < array_from_snapshot_count.length; i++) {
+
+			file_path = `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_${i+1}.png`
+
+			if (use_gcp_storage){
+
+				response = save_file_to_gcp_storage( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
+				// return response
+				promises.push(response) // not working this way AND TAKING LONGER
+
+			// BETTER APPROACH BUT NOT WORKING AS PROMISES
+				// response = save_file_to_gcp_storage( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
+				// promises.push(response) // not working this way AND TAKING LONGER
+
+			} else if (use_aws_s3_storage){
+
+				response = save_file_to_s3( file_path, `${file_without_format}-${timestamp}_${i+1}.png` ,'thumbnails_for_social_videos' )
+				// return response
+				promises.push(response)
+
+			} else {
+			}
+	
+		}
+
+		return promises
+
+
+	} else {
+
+		console.log('FILE ALREADY AT DISK STORAGE NO NEED TO SAVE ANYWHERE')
+
+	}
+
+		// Promise.all(promises).then((vals) => {
+
+		// 	console.log(vals)
+		// 	console.log('REOVEDEDS')
+		// 	resolve()
+
+		// })
+
+}
+
 // USED IN CREATING BLOGPOST
 router.post('/create-socialpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedCreatingPosts, function(req, res, next){
 
@@ -379,7 +441,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 	upload_image_or_video_in_social_post(timestamp)(req, res, (err) => {
 
-		// {(async () => {
+		{(async () => {
 
 			if(err){
 
@@ -387,42 +449,52 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 			} else {
 
+				let promises = []
+				let save_image_or_video_promise
+
 			// saving image and video files first if available
 				if ( req.files['social_post_image'] ){
 
-					{(async () => {
 
 						if (use_gcp_storage){
 
-							await save_file_to_gcp( timestamp, req.files['social_post_image'][0] )
-							console.log('SAVED TO GCP')
+							// save_image_or_video_promise = await save_file_to_gcp( timestamp, req.files['social_post_image'][0] )
+							save_image_or_video_promise = save_file_to_gcp( timestamp, req.files['social_post_image'][0] )
+							promises.push(save_image_or_video_promise)
 
 						} else if (use_aws_s3_storage) {
 
-							await save_file_to_aws_s3( req.files['social_post_image'][0] )
+							// save_image_or_video_promise = await save_file_to_aws_s3( req.files['social_post_image'][0], timestamp )
+							save_image_or_video_promise = save_file_to_aws_s3( req.files['social_post_image'][0], timestamp )
+							promises.push(save_image_or_video_promise)
 							console.log('SAVED TO AWS')
+							console.log(save_image_or_video_promise)
 
 						} else {
 
 							console.log('SAVED TO DISK STORAGE')
 
 						}
-					})()}
 
 				} else if ( req.files['social_post_video'] ){
 
-					{(async () => {
 
 						if (use_gcp_storage){
 
-							await save_file_to_gcp(timestamp, req.files['social_post_video'][0])
+							// save_image_or_video_promise = await save_file_to_gcp(timestamp, req.files['social_post_video'][0])
+							save_image_or_video_promise = save_file_to_gcp(timestamp, req.files['social_post_video'][0])
+							promises.push(save_image_or_video_promise)
+
 							console.log('SAVED TO GCP')
 
 						} else if (use_aws_s3_storage) {
 
 							// console.log(`req.files['social_post_video']`)
 							// console.log(req.files['social_post_video'][0])
-							await save_file_to_aws_s3( req.files['social_post_video'][0] )
+							// save_image_or_video_promise = await save_file_to_aws_s3( req.files['social_post_video'][0] )
+							save_image_or_video_promise = save_file_to_aws_s3( req.files['social_post_video'][0] )
+							promises.push(save_image_or_video_promise)
+							// console.log(save_image_or_video_promise)
 							console.log('SAVED TO AWS')
 
 						} else {
@@ -430,7 +502,6 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							console.log('SAVED TO DISK STORAGE')
 
 						}
-					})()}
 
 				} else {
 				} 
@@ -441,14 +512,15 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 				let video_path = ''
 
 				let newSocialPost
-				let video_path_for_snapshots
-				let snapshots
-				let promises
-				let save_socialpost
+				let store_video_at_tmp_promise
+				let create_snapshots_promise
+				let save_snapshots_promises
+				let save_socialpost_promise
+
+				let promise_fulfilled
 
 				console.log('HERE 1')
 
-				{(async () => {
 
 					if (req.files['social_post_image'] !== undefined && req.body.post_text){
 
@@ -465,7 +537,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							// image_for_post: `./assets/images/uploads/social_post_images/${req.files['social_post_image'][0].filename}`,
 						});
 
-						save_socialpost = await save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
+						await Promise.all(promises)
+						save_socialpost_promise = await save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
 
 					} else if (req.files['social_post_image'] !== undefined && !req.body.post_text){
 
@@ -485,8 +558,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 						console.log('TILL HERERERERE')
 
-
-						save_socialpost = await save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
+						await Promise.all(promises)
+						save_socialpost_promise = await save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id)
 
 					} else if (req.files['social_post_video'] !== undefined && req.body.post_text){
 
@@ -517,15 +590,18 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							return newSocialPost
 						}
 
-						video_path_for_snapshots = await store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
-						snapshots = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path_for_snapshots)
-						// promises = await Promise.all([video_path_for_snapshots, snapshots])
-						Promise.all([video_path_for_snapshots, snapshots]).then(async () => {
+						store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
+						promises.push(store_video_at_tmp_promise)
 
-							console.log('NOW COMES THE ERROR')
-							save_socialpost = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
+						promise_fulfilled = await Promise.all(promises)
+						// promise_fulfilled = null
 
-						})
+						create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], promise_fulfilled[1])
+						save_snapshots_promises = save_generated_snapshots(req.files['social_post_video'][0], timestamp)
+
+						await Promise.all(save_snapshots_promises)
+
+						save_socialpost_promise = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
 
 					} else if (req.files['social_post_video'] !== undefined && !req.body.post_text){
 
@@ -560,15 +636,32 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 					// file_path = `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_${i+1}.png`
 
-						video_path_for_snapshots = await store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
-						snapshots = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_path_for_snapshots)
+						store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
+						promises.push(store_video_at_tmp_promise)
 
-						Promise.all([video_path_for_snapshots, snapshots]).then(async () => {
+						promise_fulfilled = await Promise.all(promises)
+						// promise_fulfilled = null
 
-							console.log('NOW COMES THE ERROR')
-							save_socialpost = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
+						// console.log('store_video_at_tmp_promise')
+						// console.log(store_video_at_tmp_promise)
+						// console.log(promise_fulfilled)
 
-						})
+						create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], promise_fulfilled[1])
+						save_snapshots_promises = save_generated_snapshots(req.files['social_post_video'][0], timestamp)
+
+						await Promise.all(save_snapshots_promises)
+
+						save_socialpost_promise = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
+
+						// store_video_at_tmp_promise = await store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
+						// create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], store_video_at_tmp_promise)
+
+						// Promise.all([store_video_at_tmp_promise, create_snapshots_promise]).then(async () => {
+
+						// 	console.log('NOW COMES THE ERROR')
+						// 	save_socialpost_promise = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
+
+						// })
 
 					} else {
 
@@ -579,11 +672,10 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							post_text: req.body.post_text,
 						});
 
-						save_socialpost = await save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)
+						save_socialpost_promise = await save_socialpost_and_activity(req, res, err,  newSocialPost, social_post_type, social_post_id)
 
 					}
 
-				})()}
 
 
 					// not needed, this is used only in multer
@@ -591,7 +683,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 				// }
 			}
 
-		// })()}
+		})()}
 
 	})
 

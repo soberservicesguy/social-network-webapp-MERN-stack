@@ -1,4 +1,5 @@
 const fs = require('fs')
+const FS = require('fs').promises
 const multer = require('multer');
 const path = require('path')
 const env = require("dotenv").config({ path: "../../.env" });
@@ -60,18 +61,35 @@ async function get_image_to_display(image_path_field, image_host_field){
 
 // }
 
-async function store_video_at_tmp_and_get_its_path(file_payload, video_path_for_local_storage){
+// async function store_video_at_tmp_and_get_its_path(file_payload, video_path_for_local_storage){
+function store_video_at_tmp_and_get_its_path(file_payload, video_path_for_local_storage){
 
 	if (use_gcp_storage || use_aws_s3_storage){
+		let promise 
+		// return new Promise(function(resolve, reject) {
+			return FS.writeFile(`/tmp/${file_payload.originalname}`, file_payload.buffer)
+			.then(() => {
+				return `/tmp/${file_payload.originalname}`			
+			})
+			.catch(() => {
+		        console.log(err)
+		        // reject()
+			})
+		// })
 
-		await fs.writeFile(`/tmp/${file_payload.originalname}`, file_payload.buffer, function(err) {
-		    if(err) {
-		        return console.log(err);
-		    }
-		    console.log("The file was saved!");
-		})
 
-		return `/tmp/${file_payload.originalname}`
+
+		// let promise = await FS.writeFile(`/tmp/${file_payload.originalname}`, file_payload.buffer)
+		// return `/tmp/${file_payload.originalname}`
+
+		// return fs.writeFile(`/tmp/${file_payload.originalname}`, file_payload.buffer, function(err) {
+		//     if(err) {
+		//         return console.log(err);
+		//     }
+		//     console.log("The file was saved!");
+		// 	return `/tmp/${file_payload.originalname}`
+		// })
+
 
 	} else {
 

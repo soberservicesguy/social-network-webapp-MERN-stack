@@ -2,6 +2,7 @@ const aws = require( 'aws-sdk' );
 const multerS3 = require( 'multer-s3' );
 const path = require( 'path' );
 const fs = require('fs')
+const FS = require('fs').promises
 
 let s3_bucket = 'portfolio-social-app'
 
@@ -75,19 +76,28 @@ function get_file_from_aws(complete_file_name){
 
 
 
-// USED FOR SAVING SNAPSHOTS
-function save_file_to_aws_s3(file_payload, timestamp, file_path){
+// USED WHEN MULTER IS USING RAM STORAGE
+function save_file_to_aws_s3(file_payload, timestamp){
 
+	let filename_to_use
 	let params
 
-	// if (typeof timestamp === 'undefined' || timestamp === null){
+	if (typeof timestamp === 'undefined' || timestamp === null){
 
-	// 	if (typeof file_path === 'undefined' || file_path === null){
+		filename_to_use = `${file_payload.originalname}`
 
+	} else {
+
+		filename_to_use = `${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`
+
+	}
+
+			
 			params = {
 				Bucket:s3_bucket, 
-				Key:`${file_payload.fieldname}s/${file_payload}`, 
-				Body: file_payload
+				Key:`${file_payload.fieldname}s/${filename_to_use}`, 
+				// Body: file_payload,
+				Body: file_payload.buffer,
 			}
 
 		// } else {
@@ -126,6 +136,16 @@ function save_file_to_aws_s3(file_payload, timestamp, file_path){
 
 	// }
 
+
+	// let fileContent = await FS.readFile(file_payload)
+
+	// var params = {
+	// 	Body: fileContent, 
+	// 	Bucket:s3_bucket, 
+	// 	Key: `${path_to_upload}/${filename_to_set}`, // only filename and not path
+	// };
+
+
 	console.log('CAME OUT') 
 	let response = s3.putObject(params).promise()
 	return response
@@ -145,12 +165,11 @@ function save_file_to_aws_s3(file_payload, timestamp, file_path){
 
 }
 
+// USED WHEN FILE IS READ FROM SOMEWHERE AND IS BEING UPLOADED
 async function save_file_to_s3(file, filename_to_set, path_to_upload){
 
 	console.log('file.buffer')
 	console.log(file)
-
-	let FS = require('fs').promises
 
 	let fileContent = await FS.readFile(file)
 
