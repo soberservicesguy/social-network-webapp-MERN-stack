@@ -98,6 +98,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 				if(req.file == undefined){
 
 					res.status(404).json({ success: false, msg: 'File is undefined!',file: `uploads/${req.file.filename}`})
+					return
 
 				} else {
 
@@ -113,6 +114,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 						// console.log(req.file)
 						// console.log(filename_used_to_store_image_in_assets)
 						await save_file_to_gcp(timestamp, req.file)
+						console.log('SAVED TO GCP')
 
 					} else if (use_aws_s3_storage) {
 
@@ -151,6 +153,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 
 					} catch (image_error){
 						res.status(404).json({ success: false, msg: 'couldnt create image database entry'})
+						return
 					}
 
 				// creating user, which needs image object

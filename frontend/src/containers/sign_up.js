@@ -229,7 +229,7 @@ class SignUpContainer extends Component {
 									type="text" 
 									// name="post_text"
 									// multiline={true}
-									onChange={ (event) =>  this.setState(prev => ({...prev, user_name: event.target.value})) }
+									onChange={ (event) =>  console.log(event.target) }
 									style={styles.roundTextInput} 
 								/>
 							</form>

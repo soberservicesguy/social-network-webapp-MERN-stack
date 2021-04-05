@@ -106,8 +106,9 @@ router.post('/login', async function(req, res, next){
 
 	    }
 
-		if (!user) {
+		if (!user || user === null) {
 			res.status(401).json({ success: false, msg: "could not find user" });
+			return
 		}
 
 	// Function defined at bottom of app.js
@@ -559,8 +560,10 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 					user_contact_details: req.body.user_contact_details,
 
 					object_files_hosted_at: get_file_storage_venue(),
-					user_avatar_image: get_file_path_to_use( timestamp, req.files['avatar_image'][0], 'avatar_images' ), 
-					user_cover_image: get_file_path_to_use( timestamp, req.files['cover_image'][0], 'cover_images' ), 
+					user_avatar_image: get_file_path_to_use( req.files['avatar_image'][0], 'avatar_images', timestamp ), 
+					// user_avatar_image: get_file_path_to_use( timestamp, req.files['avatar_image'][0], 'avatar_images' ), 
+					user_cover_image: get_file_path_to_use( req.files['cover_image'][0], 'cover_images', timestamp ), 
+					// user_cover_image: get_file_path_to_use( timestamp, req.files['cover_image'][0], 'cover_images' ), 
 				}
 
 			}, { new: true }, (err, user) => {
@@ -575,8 +578,8 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 					if (use_gcp_storage){
 
 						let promises = []
-						promises.push( save_file_to_gcp(timestamp, req.files['avatar_image'][0], 'avatar_images') )
-						promises.push( save_file_to_gcp(timestamp, req.files['cover_image'][0], 'cover_images') )
+						promises.push( save_file_to_gcp(timestamp, req.files['avatar_image'][0]) )
+						promises.push( save_file_to_gcp(timestamp, req.files['cover_image'][0]) )
 						await Promise.all(promises)
 
 					} else if (use_aws_s3_storage) {

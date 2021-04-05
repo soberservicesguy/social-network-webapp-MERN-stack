@@ -58,7 +58,7 @@ class MyResponsiveNavigation extends Component {
 
 	  	let settings_logo = (
 	  		<div style={{width:'8%', margin:'auto'}}>
-	  			<img src={utils.image} alt="" 
+	  			<img src={utils.user_settings_image} alt="" 
 	  				style={{
 	  					width:70, 
 	  					height:70, 

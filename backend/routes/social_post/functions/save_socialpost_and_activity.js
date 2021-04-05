@@ -5,15 +5,13 @@ const mongoose = require('mongoose');
 const Activity = mongoose.model('Activity');
 const SocialPost = mongoose.model('SocialPost');
 const User = mongoose.model('User');
-const {
-	select_random_screenshot,
-} = require('./select_random_screenshot')
+const select_random_screenshot = require('./select_random_screenshot')
 
 const {
 	get_image_to_display,
 } = require('../../../config/storage/')
 
-async function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id){
+async function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id, total_snapshots_count){
 
 	newSocialPost.save(async function (err, newSocialPost) {
 
@@ -43,7 +41,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 
 							new_socialpost = {
 								type_of_post: newSocialPost.type_of_post,
-								post_text: newSocialPost.type_of_post,
+								post_text: newSocialPost.post_text,
 							}
 
 							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
@@ -86,7 +84,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 							new_socialpost = {
 								type_of_post: newSocialPost.type_of_post,
 								image_for_post: image_for_post_to_use,
-								post_text: newSocialPost.type_of_post,
+								post_text: newSocialPost.post_text,
 							}
 
 							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
@@ -129,7 +127,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 							let video_thumbnail_image_to_use = await get_image_to_display(`thumbnails_for_social_videos/${get_random_screenshot}`, newSocialPost.object_files_hosted_at)
 							
 							new_socialpost = {
-								post_text: newSocialPost.type_of_post,
+								post_text: newSocialPost.post_text,
 								type_of_post: newSocialPost.type_of_post,
 								video_thumbnail_image: video_thumbnail_image_to_use,
 								video_for_post: newSocialPost.video_for_post,

@@ -1,5 +1,20 @@
 const path = require('path')
 
+function checkFileTypeForVideos(file, cb){
+	// Allowed ext
+	let filetypes = /mp4|avi|flv/;
+	// Check ext
+	let extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+	// Check mime
+	let mimetype = filetypes.test(file.mimetype);
+
+	if(mimetype && extname){
+		return cb(null,true);
+	} else {
+		cb('Error: mp4, avi,flv Videos Only!');
+	}
+}
+
 function checkFileTypeForImages(file, cb){
 
 	// Allowed ext
@@ -132,6 +147,7 @@ function checkFileTypeForVideosAndExcelSheet(file, cb){
 
 module.exports = {
 	checkFileTypeForImages,
+	checkFileTypeForVideos,
 	checkFileTypeForImageAndVideo,
 	checkFileTypeForImagesAndExcelSheet,
 	checkFileTypeForVideosAndExcelSheet,

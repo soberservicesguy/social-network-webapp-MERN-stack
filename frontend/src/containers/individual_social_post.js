@@ -50,10 +50,40 @@ class IndividualSocialPost extends Component {
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
-		// this.fetchAllLike(this.props.current_socialpost.endpoint)
-		// this.fetchAllShare(this.props.current_socialpost.endpoint)
-		// this.fetchAllComment(this.props.current_socialpost.endpoint)
+
 // FETCHING DATA FOR COMPONENT
+	// if id was set by previous route
+		// var { id } = this.props.match.params // use in render method to access param
+		// if (typeof id !== 'undefined'){
+		// 	id = id.replace(":id=", "")
+
+		// 	console.log('MAKING REQEST')
+		// 	axios.get(utils.baseUrl + '/socialposts/get-socialpost', 
+		// 		{
+		// 		    params: {
+		// 				endpoint: id,
+		// 		    }
+		// 		})
+		// 	.then((response) => {
+
+		// 		// console.log('RESPONSE')
+		// 		// console.log(response.data)
+		// 		this.props.set_current_socialpost(response.data)
+		// 		console.log('this.props.current_socialpost')		
+		// 		console.log(this.props.current_socialpost)		
+		// 		// this.setState( prev => ({...prev, 
+		// 		// 	comments: response.data,
+		// 		// 	show_comments: ( prev.show_comments === true ) ? false : true,
+		// 		// 	show_shares: false,
+		// 		// 	show_likes: false,
+		// 		// }))
+				
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log(error);
+		// 	})
+		// }
+		
 	}
 
 	fetchAllComment(endpoint) {
@@ -162,6 +192,8 @@ class IndividualSocialPost extends Component {
 	  	}
 
 		let data = this.props.current_socialpost
+
+		console.log({data})
 
 		let all_likes = (
 			<Grid container direction="column" style={{backgroundColor: '#eee', paddingTop:20, width:'70%', margin:'auto'}}>
@@ -281,4 +313,4 @@ IndividualSocialPost.defaultProps = {
 	//:,
 };
 
-export default IndividualSocialPost;
+export default withRouter(IndividualSocialPost)

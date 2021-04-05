@@ -3,9 +3,11 @@ const {
 	get_snapshots_storage_path,
 	save_file_to_gcp_storage,
 	save_file_to_s3,
+	use_gcp_storage,
+	use_aws_s3_storage,
 } = require('../../../config/storage/')
 
-function save_generated_snapshots(video_file, timestamp){
+function save_generated_snapshots(video_file, timestamp, total_snapshots_count){
 
 	let file_without_format = path.basename( video_file.originalname, path.extname( video_file.originalname	 ) )
 	let array_from_snapshot_count = new Array(total_snapshots_count)

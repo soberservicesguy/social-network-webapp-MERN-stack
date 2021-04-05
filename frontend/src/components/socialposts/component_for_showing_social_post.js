@@ -395,6 +395,9 @@ class ComponentForShowingSocialPost extends Component {
 
 	/* username and avatar start here */
 
+		let avatar_to_use = (typeof data.user_avatar_image === "undefined" || data.user_avatar_image === null) ? this.props.user_avatar_image : data.user_avatar_image
+	 
+
 		let username_avatar_in_created_post_type = (
 	  		<Link 
 	  			to={{pathname:`/friends/:id=${data.friend_endpoint}`, state:{id: data.friend_endpoint}}} 
@@ -404,7 +407,8 @@ class ComponentForShowingSocialPost extends Component {
 					<div style={styles.avatarContainer}>
 						<img 
 							alt="" 
-							src={"data:image/jpeg;base64," + data.friends_user_avatar_image} 
+							src={"data:image/jpeg;base64," + avatar_to_use}
+							// src={"data:image/jpeg;base64," + data.friends_user_avatar_image}
 							// src={utils.image}
 							style={styles.avatarImage}
 						/>
@@ -427,7 +431,8 @@ class ComponentForShowingSocialPost extends Component {
 					<div style={styles.avatarContainer}>
 						<img 
 							alt="" 
-							src={"data:image/jpeg;base64," + data.user_avatar_image} 
+							src={"data:image/jpeg;base64," + avatar_to_use}
+							// src={"data:image/jpeg;base64," + data.user_avatar_image} 
 							// src={utils.image}
 							style={styles.avatarImage}
 						/>
@@ -597,7 +602,8 @@ class ComponentForShowingSocialPost extends Component {
 							</div>
 						)
 
-					} else if (data.notification_type === 'created_post' && data.type_of_post === 'text_post'){
+					// adding the last condition || data.type_of_post === 'text_post' so that each post creation, like, share also shows us that post
+					} else if ( (data.notification_type === 'created_post' && data.type_of_post === 'text_post') || data.type_of_post === 'text_post'){
 
 						return (
 							<div style={styles.outerContainer}>
@@ -612,7 +618,7 @@ class ComponentForShowingSocialPost extends Component {
 							</div>
 						)
 
-					} else if (data.notification_type === 'created_post' && data.type_of_post === 'image_post'){
+					} else if ( (data.notification_type === 'created_post' && data.type_of_post === 'image_post')  || data.type_of_post === 'image_post'){
 
 						return (
 							<div style={styles.outerContainer}>
@@ -627,7 +633,7 @@ class ComponentForShowingSocialPost extends Component {
 							</div>
 						)
 
-					} else if (data.notification_type === 'created_post' && data.type_of_post === 'video_post'){
+					} else if ( (data.notification_type === 'created_post' && data.type_of_post === 'video_post')  || data.type_of_post === 'video_post'){
 
 						return (
 							<div style={styles.outerContainer}>
@@ -642,7 +648,7 @@ class ComponentForShowingSocialPost extends Component {
 							</div>
 						)
 
-					} else if (data.notification_type === 'created_post' && data.type_of_post === 'text_with_image_post'){
+					} else if ( (data.notification_type === 'created_post' && data.type_of_post === 'text_with_image_post')  || data.type_of_post === 'text_with_image_post'){
 
 						return (
 							<div style={styles.outerContainer}>
@@ -659,7 +665,7 @@ class ComponentForShowingSocialPost extends Component {
 							</div>
 						)
 
-					} else if (data.notification_type === 'created_post' && data.type_of_post === 'text_with_video_post'){
+					} else if ( (data.notification_type === 'created_post' && data.type_of_post === 'text_with_video_post') || data.type_of_post === 'text_with_video_post'){
 
 						return (
 							<div style={styles.outerContainer}>

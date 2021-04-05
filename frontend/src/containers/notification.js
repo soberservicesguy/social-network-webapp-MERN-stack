@@ -128,7 +128,7 @@ class NotificationsContainer extends Component {
 
 			<Grid container direction="column">
 
-				<div style={{backgroundColor: 'white', paddingLeft:20, paddingRight:20, margin:'auto'}}>
+				<div style={{backgroundColor: 'white', paddingLeft:20, paddingRight:0, margin:'auto'}}>
 
 					<button onClick={() => this.toggle_notification_modal()}
 						style={{
@@ -143,7 +143,7 @@ class NotificationsContainer extends Component {
 							textAlign:'center'
 
 						}}>
-							<img src={utils.image} alt="" 
+							<img src={utils.notification_image} alt="" 
 								style={{
 									width:70, 
 									height:70, 
