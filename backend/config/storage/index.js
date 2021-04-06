@@ -180,9 +180,36 @@ function get_file_path_to_use(file_to_save, folder_name, timestamp){
 
 	} else {
 
-		filename_to_use = path.basename( file_to_save.filename, path.extname( file_to_save.filename ) ) + path.extname( file_to_save.filename )
+		// filename_to_use = path.basename( file_to_save.filename, path.extname( file_to_save.filename ) ) + '-' + timestamp + path.extname( file_to_save.filename )	
+		filename_to_use = path.basename( file_to_save.filename, path.extname( file_to_save.filename ) )  + path.extname( file_to_save.filename )	
 		return `assets/uploads/${folder_name}/${filename_to_use}`	
+	}	
+}
 
+// used for videos
+function get_file_path_to_use_alternate(file_to_save, folder_name, timestamp){
+
+	let filename_to_use
+
+	if (use_gcp_storage){
+
+		// since  gcp doesnt use multer therefore originalname property should be used as there is no filename property by default
+		filename_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) ) + '-' + timestamp + path.extname( file_to_save.originalname )
+		// filename_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) )  + path.extname( file_to_save.originalname )
+		// return `https://storage.googleapis.com/${gcp_bucket}/${folder_name}/${filename_to_use}` 
+		return `${folder_name}/${filename_to_use}` 
+
+	} else if (use_aws_s3_storage){
+
+		filename_to_use = path.basename( file_to_save.originalname, path.extname( file_to_save.originalname ) ) + '-' + timestamp + path.extname( file_to_save.originalname )
+		// return `http://s3.amazonaws.com/${s3_bucket}/${folder_name}/${filename_to_use}`
+		return `${folder_name}/${filename_to_use}` 
+
+	} else {
+
+
+		filename_to_use = path.basename( file_to_save.filename, path.extname( file_to_save.filename ) ) + path.extname( file_to_save.filename )	
+		return `assets/uploads/${folder_name}/${filename_to_use}`	
 	}	
 }
 
@@ -245,6 +272,7 @@ function get_snapshots_fullname_and_path(folder_name, filename_without_format, t
 }
 
 module.exports = {
+	get_file_path_to_use_alternate,
 	get_image_to_display,
 	store_video_at_tmp_and_get_its_path,
 	delete_video_at_tmp,

@@ -31,6 +31,7 @@ const path = require('path')
 
 const {
 	get_image_to_display,
+	get_file_path_to_use_alternate,
 	store_video_at_tmp_and_get_its_path,
 	delete_video_at_tmp,
 	// get_multer_storage_to_use,
@@ -231,8 +232,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 					} else if (req.files['social_post_video'] !== undefined && req.body.post_text){
 
 						console.log('BELOW IS VIDE OPATH')
-						console.log(get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp))
-						video_path = get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp)
+						console.log(get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp))
+						video_path = get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 						let video_for_post
 						if (use_gcp_storage){
 
@@ -245,7 +246,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 						} else {
 
-							video_for_post = video_path
+							video_for_post = get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 
 						}
 					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
@@ -263,8 +264,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 								video_thumbnail_image: get_snapshots_fullname_and_path('thumbnails_for_social_videos', file_without_format, timestamp),
 								object_files_hosted_at: get_file_storage_venue(),
 								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}_${select_random_screenshot(4)}.png`,
-								// video_for_post: get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos'),
-								// video_for_post: get_file_path_to_use(req.files['social_post_video'][0].filename, 'social_post_videos'),
+								// video_for_post: get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos'),
+								// video_for_post: get_file_path_to_use_alternate(req.files['social_post_video'][0].filename, 'social_post_videos'),
 								// video_for_post: `./assets/videos/uploads/social_post_videos/${req.files['social_post_video'][0].filename}`,
 								// video_thumbnail_image: `${get_snapshots_storage_path()}/${req.files['social_post_video'][0].filename}-${timestamp}.png`,
 							});
@@ -273,24 +274,34 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							return newSocialPost
 						}
 
-						store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
-						promises.push(store_video_at_tmp_promise)
+						if (use_gcp_storage || use_aws_s3_storage){
 
-						promise_fulfilled = await Promise.all(promises)
+							store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
+							promises.push(store_video_at_tmp_promise)
 
-						create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], promise_fulfilled[1], total_snapshots_count)
-						save_snapshots_promises = save_generated_snapshots(req.files['social_post_video'][0], timestamp, total_snapshots_count)
+							promise_fulfilled = await Promise.all(promises)
 
-						await Promise.all(save_snapshots_promises)
+							create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], promise_fulfilled[1], total_snapshots_count)
+
+
+						} else {
+
+							create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_for_post, total_snapshots_count)
+
+						}
 
 						save_socialpost_promise = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id, total_snapshots_count)
+						// await Promise.all(save_snapshots_promises)
+
+
+
 
 					} else if (req.files['social_post_video'] !== undefined && !req.body.post_text){
 
 						console.log('BELOW IS VIDE OPATH')
-						console.log(get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp))
+						console.log(get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp))
 						
-						video_path = get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp)
+						video_path = get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 						let video_for_post
 						if (use_gcp_storage){
 
@@ -303,8 +314,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 						} else {
 
-							video_for_post = video_path
-
+							video_for_post = get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 						}
 					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
 
@@ -323,8 +333,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_.png`, // ${select_random_screenshot(4)}
 								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_${i+1}.png`,
 								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}_${select_random_screenshot(4)}.png`,
-								// video_for_post: get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos'),
-								// video_for_post: get_file_path_to_use(req.files['social_post_video'][0].filename, 'social_post_videos'),
+								// video_for_post: get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos'),
+								// video_for_post: get_file_path_to_use_alternate(req.files['social_post_video'][0].filename, 'social_post_videos'),
 								// video_for_post: `./assets/videos/uploads/social_post_videos/${req.files['social_post_video'][0].filename}`,
 								// video_thumbnail_image: `${get_snapshots_storage_path()}/${req.files['social_post_video'][0].filename}-${timestamp}.png`,
 							})
@@ -332,20 +342,27 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							return newSocialPost
 						}
 
-						store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
-						promises.push(store_video_at_tmp_promise)
+						if (use_gcp_storage || use_aws_s3_storage){
 
-						promise_fulfilled = await Promise.all(promises)
-						// console.log('store_video_at_tmp_promise')
-						// console.log(store_video_at_tmp_promise)
-						// console.log(promise_fulfilled)
+							store_video_at_tmp_promise = store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
+							promises.push(store_video_at_tmp_promise)
 
-						create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], promise_fulfilled[1], total_snapshots_count)
-						save_snapshots_promises = save_generated_snapshots(req.files['social_post_video'][0], timestamp, total_snapshots_count)
+							promise_fulfilled = await Promise.all(promises)
 
-						await Promise.all(save_snapshots_promises)
+							create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], promise_fulfilled[1], total_snapshots_count)
+							save_snapshots_promises = save_generated_snapshots(req.files['social_post_video'][0], timestamp, total_snapshots_count)
+							await Promise.all(save_snapshots_promises)
+
+						} else {
+
+							create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], video_for_post, total_snapshots_count)
+							save_snapshots_promises = save_generated_snapshots(req.files['social_post_video'][0], timestamp, total_snapshots_count)
+							// await Promise.all(save_snapshots_promises)
+
+						}
 
 						save_socialpost_promise = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id, total_snapshots_count)
+
 
 						// store_video_at_tmp_promise = await store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
 						// create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], store_video_at_tmp_promise)
@@ -353,7 +370,6 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 						// Promise.all([store_video_at_tmp_promise, create_snapshots_promise]).then(async () => {
 
 						// 	console.log('NOW COMES THE ERROR')
-						// 	save_socialpost_promise = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id)
 
 						// })
 

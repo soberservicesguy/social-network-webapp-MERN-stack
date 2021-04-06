@@ -9,6 +9,8 @@ const select_random_screenshot = require('./select_random_screenshot')
 
 const {
 	get_image_to_display,
+	use_gcp_storage,
+	use_aws_s3_storage,
 } = require('../../../config/storage/')
 
 async function save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id, total_snapshots_count){
@@ -59,6 +61,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 
 							console.log('newSocialPost.image_for_post')
 							console.log(newSocialPost.image_for_post)
+
 							let image_for_post_to_use = await get_image_to_display(newSocialPost.image_for_post, newSocialPost.object_files_hosted_at)
 
 							new_socialpost = {
@@ -101,13 +104,25 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 							socialpost_endpoint = saved_socialpost.endpoint
 
 							let get_random_screenshot = select_random_screenshot(newSocialPost.video_thumbnail_image, total_snapshots_count)
-							let video_thumbnail_image_to_use = await get_image_to_display(`thumbnails_for_social_videos/${get_random_screenshot}`, newSocialPost.object_files_hosted_at)
+							console.log('get_random_screenshot')
+							console.log(get_random_screenshot)
+							let video_thumbnail_image_to_use
+							if (use_gcp_storage || use_aws_s3_storage){
+
+								video_thumbnail_image_to_use = await get_image_to_display(`thumbnails_for_social_videos/${get_random_screenshot}`, newSocialPost.object_files_hosted_at)
+
+							} else {
+
+								video_thumbnail_image_to_use = `assets/uploads/thumbnails_for_social_videos/${get_random_screenshot}`
+
+							}
 
 							new_socialpost = {
 								type_of_post: newSocialPost.type_of_post,
 								video_thumbnail_image: video_thumbnail_image_to_use,
 								video_for_post: newSocialPost.video_for_post,
 								object_files_hosted_at: newSocialPost.object_files_hosted_at,
+								socialpost_endpoint: newSocialPost.endpoint,
 							}
 
 							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
@@ -125,7 +140,16 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 							socialpost_endpoint = saved_socialpost.endpoint
 
 							let get_random_screenshot = select_random_screenshot(newSocialPost.video_thumbnail_image, total_snapshots_count)
-							let video_thumbnail_image_to_use = await get_image_to_display(`thumbnails_for_social_videos/${get_random_screenshot}`, newSocialPost.object_files_hosted_at)
+							let video_thumbnail_image_to_use
+							if (use_gcp_storage || use_aws_s3_storage){
+
+								video_thumbnail_image_to_use = await get_image_to_display(`thumbnails_for_social_videos/${get_random_screenshot}`, newSocialPost.object_files_hosted_at)
+
+							} else {
+
+								video_thumbnail_image_to_use = `assets/uploads/thumbnails_for_social_videos/${get_random_screenshot}`
+
+							}
 							
 							new_socialpost = {
 								post_text: newSocialPost.post_text,
@@ -133,6 +157,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 								video_thumbnail_image: video_thumbnail_image_to_use,
 								video_for_post: newSocialPost.video_for_post,
 								object_files_hosted_at: newSocialPost.object_files_hosted_at,
+								socialpost_endpoint: newSocialPost.endpoint,
 							}
 
 							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	

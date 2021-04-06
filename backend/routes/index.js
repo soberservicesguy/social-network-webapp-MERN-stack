@@ -3,8 +3,8 @@ const router = require('express').Router();
 router.use('/users', require('./user/user_routes'));
 router.use('/users', require('./user/sign_up'));
 
-router.use('/video-stream', require('./video/video_stream'));
 router.use('/notifications', require('./notification/push_notifications'));
+router.use('/video-stream', require('./video_routes/video_serve'));
 
 router.use('/socialposts', require('./social_post/socialposts'));
 router.use('/advertisements', require('./advertisement/advertisements'));

@@ -469,10 +469,25 @@ class ComponentForShowingSocialPost extends Component {
 		)
 
 		let video_source
+		let post_video_content
+	
 		 if (data.object_files_hosted_at !== undefined && data.object_files_hosted_at === 'gcp_storage'){
 
 		 	video_source = `https://storage.googleapis.com/${ data.video_for_post }`
-			
+
+			post_video_content = (
+				<div style={styles.postVideoContainer}>
+					<video
+						type='video/mp4'
+						width="100%" 
+						height="300" 
+						controls
+						src={video_source} 
+						// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ video_to_show }`}} 
+						// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
+					/>
+				</div>
+			)
 
 		} else if (data.object_files_hosted_at !== undefined && data.object_files_hosted_at === 'aws_s3'){
 
@@ -481,25 +496,44 @@ class ComponentForShowingSocialPost extends Component {
 			console.log('video_source')
 			console.log(video_source)
 
+			post_video_content = (
+				<div style={styles.postVideoContainer}>
+					<video
+						type='video/mp4'
+						width="100%" 
+						height="300" 
+						controls
+						src={video_source} 
+						// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ video_to_show }`}} 
+						// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
+					/>
+				</div>
+			)
+
 		} else {
 
-			video_source = `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`
-			video_source = {uri: video_source}
+			// video_source = `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`
+			console.log('socialpost_endpoint')
+			console.log(data.socialpost_endpoint)
+			// video_source = `http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`
+			// video_source = {uri: video_source}
+			// console.log(`http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`)
+			post_video_content = (
+				<div style={styles.postVideoContainer}>
+					<video
+						type='video/mp4'
+						width="100%" 
+						height="300" 
+						controls
+						src={`http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`} // FOR REACT 
+						// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`}}  // FOR NATIVE
+						// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
+					/>
+				</div>
+			)
+// SS
 		}
 
-		let post_video_content = (
-			<div style={styles.postVideoContainer}>
-				<video
-					type='video/mp4'
-					width="100%" 
-					height="300" 
-					controls
-					src={video_source} 
-					// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ video_to_show }`}} 
-					// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
-				/>
-			</div>
-		)
 
 		let book_content = (
 			// , , , interested_users, endpoint
