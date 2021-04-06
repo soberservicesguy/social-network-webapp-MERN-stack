@@ -458,6 +458,10 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 				let friends_user_avatar_image_to_use
 				let cloud_resp
 
+				console.log('friends_user_avatar_image')
+				console.log(friends_user_avatar_image)
+				console.log('object_files_hosted_at')
+				console.log(object_files_hosted_at)
 				friends_user_avatar_image_to_use = await get_image_to_display(friends_user_avatar_image, object_files_hosted_at)
 
 // DRYed OUT
@@ -526,7 +530,12 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 				// let all_activities = await Promise.all(friend.activities.map(async (activity) => {
 				let all_activities = await Promise.all(last_n_activities_of_friend.map(async (activity) => {
 
-					activity = await Activity.findOne({_id: activity})
+					if (typeof activity === 'object' && activity !== null){
+						activity = activity
+					} else {
+						activity = await Activity.findOne({_id: activity})
+					}
+
 
 					// console.log('activity.timestamp')
 					// console.log(activity.timestamp)
@@ -1107,12 +1116,12 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 		console.log('activities_to_send')
 		console.log(activities_to_send.length)
 
-		// res.status(200).json(activities_to_send)
+		res.status(200).json(activities_to_send)
 
-		activities_to_send.map((act) => {
-			res.write([act])
-		})
-		res.end();
+		// activities_to_send.map((act) => {
+		// 	res.write([act])
+		// })
+		// res.end();
 
 
 	} catch (err) {

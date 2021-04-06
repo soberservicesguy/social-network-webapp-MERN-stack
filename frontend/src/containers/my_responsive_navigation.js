@@ -44,7 +44,7 @@ class MyResponsiveNavigation extends Component {
 	  		{option_name:'About Me', endpoint:'about-me'},
 	  		// {option_name:'Friends', endpoint:'friends'},
 	  		// {option_name:'Timeline', endpoint:'timeline'},
-	  		{option_name:'Pages', endpoint:'pages'},
+	  		// {option_name:'Pages', endpoint:'pages'},
 	  		{option_name:'Books', endpoint:'books'},
 	  		{option_name:'Sports', endpoint:'sports'},
 	  		// {option_name:'Logout', endpoint:'logout'},
@@ -106,7 +106,9 @@ class MyResponsiveNavigation extends Component {
 									} else if (item.option_name === 'Notifications'){
 
 										return(
-											<ConnectedNotificationsContainer/>
+											<div style={{marginLeft:70,}}>
+												<ConnectedNotificationsContainer/>
+											</div>
 										)
 										
 									} else {

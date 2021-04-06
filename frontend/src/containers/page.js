@@ -108,6 +108,7 @@ class PageContainer extends Component {
 
 PageContainer.defaultProps = {
 	// : ,
+
 };
 
 export default withResponsiveness(PageContainer);

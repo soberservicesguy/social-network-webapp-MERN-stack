@@ -395,8 +395,9 @@ class ComponentForShowingSocialPost extends Component {
 
 	/* username and avatar start here */
 
-		let avatar_to_use = (typeof data.user_avatar_image === "undefined" || data.user_avatar_image === null) ? this.props.user_avatar_image : data.user_avatar_image
-	 
+		let avatar_to_use = (typeof data.friends_user_avatar_image === "undefined" || data.friends_user_avatar_image === null) ? this.props.friends_user_avatar_image : data.friends_user_avatar_image
+		// avatar_to_use = data.friends_user_avatar_image
+		 
 
 		let username_avatar_in_created_post_type = (
 	  		<Link 
@@ -531,7 +532,6 @@ class ComponentForShowingSocialPost extends Component {
 					/>
 				</div>
 			)
-// SS
 		}
 
 

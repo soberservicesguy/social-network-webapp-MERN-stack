@@ -443,7 +443,7 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 	
 	non_friends_ids = last_n_users_ids.filter(
 		function(some_user_id){
-			return !friends.includes(some_user_id) && some_user_id !== user._id
+			return !friends.includes(some_user_id) || some_user_id !== user._id
 		}
 	)
 

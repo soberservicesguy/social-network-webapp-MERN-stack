@@ -77,14 +77,14 @@ class ComponentForShowingPage extends Component {
 					// { data.endpoint }
 
 		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
-		// var base64Image = "data:image/jpeg;base64," + data.page_image
+		var base64Image = "data:image/jpeg;base64," + data.page_image
 
 		return (
 			<div style={styles.outerContainer}>
 				<div style={styles.imageContainer}>
 					<img 
-						// src={base64Image} 
-						src = {utils.image}
+						src={base64Image} 
+						// src = {utils.image}
 						alt="" 
 						style={styles.imageStyle}
 					/>
@@ -107,17 +107,21 @@ class ComponentForShowingPage extends Component {
 							
 							let setResponseInCurrentPage = (arg) => this.props.set_current_page(arg)
 							let redirectToNewPage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+							let setStateToLike = () => this.setState( prev => ({...prev, liked: (prev.liked===true) ? false : true }) )
+
+							let page_endpoint = (typeof this.props.parentDetailsPayload.endpoint === "undefined" || this.props.parentDetailsPayload.endpoint === null) ? data.endpoint : this.props.parentDetailsPayload.endpoint
 
 							axios.post(utils.baseUrl + '/pages/create-interest-for-page', 
 								{
-									page_endpoint: this.props.parentDetailsPayload.endpoint,
+									// page_endpoint: this.props.parentDetailsPayload.endpoint,
+									page_endpoint: page_endpoint,
 								})
 							.then(function (response) {
 
 								console.log(response.data) // current blogpost screen data
 
 						// setting icon to liked
-								this.setState( prev => ({...prev, liked: (prev.liked===true) ? false : true }) )
+								setStateToLike()
 
 								// set to current parent object
 								setResponseInCurrentPage(response.data)

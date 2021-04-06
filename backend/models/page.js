@@ -19,7 +19,6 @@ const PageSchema = new mongoose.Schema({
 // other model links
 	interested_users: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
 
-	endpoint:String,
 	timestamp:String,
 
 })

@@ -18,16 +18,6 @@ import {
 } from '../redux_stuff/connected_components';
 
 
-const styles = theme => ({
-  root: {
-    height: 48,
-//    color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
-
 class BookContainer extends Component {
 	constructor(props) {
 		super(props);
@@ -65,7 +55,6 @@ class BookContainer extends Component {
 			
 		const total_books = this.props.total_books
 
-		const { classes } = this.props;
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
 
 		return (
@@ -97,5 +86,4 @@ BookContainer.defaultProps = {
 	// : ,
 };
 
-export default withResponsiveness(withStyles(styles)(BookContainer));
-
+export default withResponsiveness(BookContainer)

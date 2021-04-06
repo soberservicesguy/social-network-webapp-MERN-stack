@@ -11,7 +11,7 @@ const ActivitySchema = new mongoose.Schema({
 		'created_post', 'liked_post', 'shared_post', 'commented_on_post', 
 		'sent_friend_request', 'accepted_friend_request',
 		'created_book', 'got_interested_in_book',
-		'created_page', 'got_interested_in_book',
+		'created_page', 'got_interested_in_page',
 		'created_sport', 'got_interested_in_sport',
 		'created_advertisement', 'got_interested_in_advertisement',
 	]},

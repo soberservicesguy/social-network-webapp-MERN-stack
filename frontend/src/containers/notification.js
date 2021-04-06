@@ -158,6 +158,7 @@ class NotificationsContainer extends Component {
 
 					<div style={{
 						position:'absolute',
+						right:20,
 						backgroundColor: 'white',
 						width:(_xs || _sm ) ? '30%' : '15%',
 						opacity: (this.state.show_notifications_modal) ? 1 : 0,

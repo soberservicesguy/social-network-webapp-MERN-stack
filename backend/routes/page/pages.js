@@ -55,7 +55,7 @@ function upload_page_by_user(timestamp){
 
 // create blogpost with undefined
 // USED IN CREATING BLOGPOST
-router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session: false }), isAllowedCreatingPages, function(req, res, next){
+router.post('/create-page-with-user', passport.authenticate('jwt', { session: false }), isAllowedCreatingPages, function(req, res, next){
 	
 	// console.log('OUTER LOG')
 	// console.log(req.body)
@@ -96,11 +96,11 @@ router.post('/create-blogpost-with-user', passport.authenticate('jwt', { session
 					const newPage = new Page({
 
 						_id: new mongoose.Types.ObjectId(),
-						page_name: req.body.parent.page_name,
-						page_image: get_file_path_to_use(timestamp, req.file, 'page_images'),
+						page_name: req.body.page_name,
+						page_image: get_file_path_to_use(req.file, 'page_images', timestamp),
 						// page_image: `./assets/images/uploads/page_images/${filename_used_to_store_image_in_assets}`,
-						page_description: req.body.parent.page_description,
-						// endpoint: req.body.parent.endpoint,
+						page_description: req.body.page_description,
+						// endpoint: req.body.endpoint,
 
 					});
 
@@ -240,6 +240,7 @@ router.get('/pages-list-with-children', function(req, res, next){
 router.post('/create-interest-for-page', passport.authenticate('jwt', { session: false }), isAllowedInteractingWithOthersPosts, function(req, res, next){
 
 	var page_endpoint = req.body.page_endpoint
+	console.log(page_endpoint)
 
 	// var newLike = new Like({
 	// 	_id: new mongoose.Types.ObjectId(),
@@ -254,6 +255,10 @@ router.post('/create-interest-for-page', passport.authenticate('jwt', { session:
 		Page.findOne({endpoint: page_endpoint})
 		.then((page) => {
 
+			if (!page){
+				console.log('PAGE NOT FOUND')
+				return
+			}
 			page.interested_users.push( user )
 
 			// newLike.page = page
