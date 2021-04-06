@@ -99,10 +99,10 @@ router.post('/create-book-with-user', passport.authenticate('jwt', { session: fa
 					const newBook = new Book({
 
 						_id: new mongoose.Types.ObjectId(),
-						book_name: req.body.parent.book_name,
-						book_image: get_file_path_to_use(timestamp, req.file, 'book_images'),
+						book_name: req.body.book_name,
+						book_image: get_file_path_to_use(req.file, 'book_images', timestamp),
 						// book_image: `./assets/images/uploads/book_images/${filename_used_to_store_image_in_assets}`,
-						book_description: req.body.parent.book_description,
+						book_description: req.body.book_description,
 						// endpoint: req.body.parent.endpoint,
 
 					});

@@ -70,7 +70,7 @@ class SportContainer extends Component {
 
 		return (
 
-			<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+			<Grid container direction="row">
 				
 				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
 		  			<ConnectedCreateSport/>

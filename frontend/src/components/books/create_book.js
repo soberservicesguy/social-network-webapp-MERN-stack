@@ -46,7 +46,63 @@ class CreateBook extends Component {
 	render() {
 
 		const styles = {
-			
+		// round text input
+			roundTextInputContainer:{
+				width:'95%', 
+				height:50,
+				margin:'auto',
+				// marginBottom:0,
+				// backgroundColor: '#000000',
+			},
+
+			roundTextInput:{
+				outline:'none', 
+				width:'100%', 
+				height:50, 
+				paddingLeft:20,
+				paddingRight:100, 
+				color:'black', 
+				borderRadius:30,
+				borderWidth:1, 
+				borderStyle:'solid',
+				borderColor:'#eee', 
+				backgroundColor: '#eee',
+			},
+
+		// roundButtonInsideTextInput
+			roundButtonInsideTextInputContainer:{
+				width: '20%',
+				// width: 100,
+				height: 40,
+				backgroundColor: utils.maroonColor,
+				borderRadius: this.state.tracked_height2 / 2,
+				borderWidth: 1, 
+				borderStyle: 'solid',
+				borderColor: utils.maroonColor, 
+			},
+
+		// upload image and create ad button
+			buttonsContainer:{
+				width:'80%',
+				margin:'auto',
+				marginTop:10,
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+			},
+			uploadImageButton:{
+				fontWeight:'bold',
+				color:utils.maroonColor
+			},
+
+			createBookButton:{
+				outline:'none',
+				background:'none',
+				border:'none',
+				color:utils.maroonColor,
+				fontWeight:'bold',
+			}
+
 		}
 
 		// parameters being passed from previous route
@@ -64,31 +120,56 @@ class CreateBook extends Component {
 
 			return (
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
-				<div style={styles.outerContainer}>
+				<div style={{backgroundColor: 'white', paddingTop:20, paddingBottom:20}}>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your book_name" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
+				{/* round text input */}
+					<div style={styles.roundTextInputContainer}>
+						<form>
+							<input 
+								ref={ (divElement) => { this.divElement1 = divElement } }
+								type="text" 
+								name="post_text"
+								multiline={true}
+								placeholder="Type your book_name" 
 								onChange={ (event) => this.setState( prev => ({...prev, book_name: event.target.value})) }
+								style={styles.roundTextInput} 
 							/>
 						</form>
-				  	</div>
 
-					<div style={styles.textinputContainer}>
-						<p style={styles.headingOverInput}>
-							IMAGE MAIN
-						</p>
-						<form className={styles.root} noValidate autoComplete="off">
+					</div>
+
+
+					<div style={styles.roundTextInputContainer}>
+						<form style={{marginTop:10}}>
+							<input 
+								type="text" 
+								name="post_text"
+								multiline={true}
+								placeholder="Type your book_description" // placeholder 
+								onChange={ (event) => this.setState( prev => ({...prev, book_description: event.target.value})) }
+								style={styles.roundTextInput} 
+							/>
+						</form>
+
+					</div>
+
+
+
+					<div style={styles.buttonsContainer}>
+						<div>
+							<label htmlFor="myInput">
+								{/* below div will act as myInput button*/}
+								<div style={styles.uploadImageButton}>
+									Upload Image
+								</div>
+							</label>
 							<input
+								id="myInput"
+								style={{display:'none'}}
+								type={"file"}
 								// multiple="multiple" // for selecting multiple files
-								name="book_image" // name of input field or fieldName simply
 								enctype="multipart/form-data"
-								type="file"
+								name="book_image" // name of input field or fieldName simply
 								onChange={(event) => {
 									// console logging selected file from menu
 									console.log( event.target.files[0] ) // gives first file
@@ -96,55 +177,43 @@ class CreateBook extends Component {
 									this.setState(prev => ({...prev, book_image: event.target.files[0]}))
 								}}
 							/>
-						</form>
+						</div>						
+
+						<button style={styles.createBookButton}
+							onClick={ () => {
+								let setResponseInCurrentBook = (arg) => this.props.set_current_book(arg)
+								let redirectToNewBook = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+
+								const formData = new FormData()
+								formData.append('book_name', this.state.book_name)
+								formData.append('book_description', this.state.book_description)
+								formData.append('book_image', this.state.book_image, this.state.book_image.name)
+
+								axios.post(utils.baseUrl + '/books/create-book-with-user', formData)
+								.then(function (response) {
+									console.log(response.data) // current book screen data
+									
+									// set to current parent object
+									setResponseInCurrentBook(response.data)
+
+									// change route to current_book
+									redirectToNewBook()
+
+								})
+								.catch(function (error) {
+									console.log(error)
+								});						
+
+							}}
+						>
+							<p style={styles.innerText}>
+								Press To Create Book
+							</p>
+						</button>
 					</div>
 
-
-				  	<div style={styles.textinputContainer}>
-						<form className={styles.root} noValidate autoComplete="off">
-							<TextField 
-								label="Type your book_description" // placeholder 
-								id="standard-basic" // "filled-basic" / "outlined-basic"
-								variant="outlined" // "filled"
-								classes={styles.textinput}
-								onChange={ (event) => this.setState( prev => ({...prev, book_description: event.target.value})) }
-							/>
-						</form>
-				  	</div>
-
-
-					<button style={styles.buttonWithoutBG}
-						onClick={ () => {
-							let setResponseInCurrentBook = (arg) => this.props.set_current_book(arg)
-							let redirectToNewBook = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
-
-							const formData = new FormData()
-							formData.append('book_name', this.state.book_name)
-							formData.append('book_description', this.state.book_description)
-							formData.append('book_image', this.state.book_image, this.state.book_image.name)
-
-							axios.post(utils.baseUrl + '/books/create-book-with-user', formData)
-							.then(function (response) {
-								console.log(response.data) // current book screen data
-								
-								// set to current parent object
-								setResponseInCurrentBook(response.data)
-
-								// change route to current_book
-								redirectToNewBook()
-
-							})
-							.catch(function (error) {
-								console.log(error)
-							});						
-
-						}}
-					>
-						<p style={styles.innerText}>
-							Press To Create Book
-						</p>
-					</button>
 				</div>
+
 			);
 		}			
 	}

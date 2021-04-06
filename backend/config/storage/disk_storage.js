@@ -15,7 +15,7 @@ if (use_gcp_storage === false && use_aws_s3_storage === false){
 	// images
 		'./assets/uploads/advertisement_images',
 		'./assets/uploads/avatar_images',
-		'./assets/uploads/book_imagess',
+		'./assets/uploads/book_images',
 		'./assets/uploads/cover_images',
 		'./assets/uploads/page_images',
 		'./assets/uploads/social_post_images',
@@ -85,6 +85,7 @@ function get_multer_disk_storage_for_bulk_files(timestamp, folder_name){
 			let file_path = path.join(__dirname , `${path_for_saving_files}/${folder_name}/${timestamp}`)
 
 			await fs.access(file_path, function(err) {
+		//  create directory if not exists is not working, so created all manually
 				if (err && err.code === 'ENOENT') {
 					fs.mkdir(file_path, { recursive: true }); //Create dir in case not found
 				}

@@ -42,15 +42,15 @@ class ComponentForShowingSport extends Component {
 
 		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
 
-		// var base64Image = "data:image/jpeg;base64," + data.sport_image
+		var base64Image = "data:image/jpeg;base64," + data.sport_image
 
 		return (
 			<div style={styles.outerContainer}>
 				<div style={styles.imageContainer}>
 					<img 
 						alt="" 
-						// src={base64Image}
-						src={utils.image} 
+						src={base64Image}
+						// src={utils.image} 
 						style={styles.imageStyle}
 					/>
 				</div>

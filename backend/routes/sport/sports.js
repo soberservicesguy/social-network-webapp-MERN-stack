@@ -101,11 +101,11 @@ router.post('/create-sport-with-user', passport.authenticate('jwt', { session: f
 					const newSport = new Sport({
 
 						_id: new mongoose.Types.ObjectId(),
-						sport_name: req.body.parent.sport_name,
-						sport_image: get_file_path_to_use(timestamp, req.file, 'sport_images'),
+						sport_name: req.body.sport_name,
+						sport_image: get_file_path_to_use(req.file, 'sport_images', timestamp ),
 						// sport_image: `./assets/images/uploads/sport_image/${filename_used_to_store_image_in_assets}`,
-						sport_description: req.body.parent.sport_description,
-						// endpoint: req.body.parent.endpoint,
+						sport_description: req.body.sport_description,
+						// endpoint: req.body.endpoint,
 
 					});
 
