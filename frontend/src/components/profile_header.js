@@ -42,7 +42,8 @@ class ProfileHeader extends Component {
 			},
 
 			backgroundImage:{
-				height:200,				
+				height:200,
+				width:'95%',
 				backgroundImage: `url("data:image/jpeg;base64,${this.props.user_cover_image}")`,
 				// backgroundColor: '#cccccc', // Used if the image is unavailable
 				backgroundPosition: 'center',

@@ -77,7 +77,7 @@ class CreateSocialPost extends Component {
 
 		const styles = {
 			outerContainer:{
-				backgroundColor: 'white',
+				// backgroundColor: 'white',
 			},
 
 			avatarAndCreatePostContainer:{

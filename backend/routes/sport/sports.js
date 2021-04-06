@@ -229,7 +229,7 @@ router.post('/create-interest-for-sport', passport.authenticate('jwt', { session
 				_id: new mongoose.Types.ObjectId(),
 				user: user,
 				activity_type: 'got_interested_in_sport',
-				sport_liked: newSport,
+				sport_liked: sport,
 			})
 			newActivity.save()
 			user.activities.push(newActivity)
@@ -295,7 +295,7 @@ router.get('/sports-list', function(req, res, next){
 
 
 // USED
-router.get('/get-all-interest-in-sport',async function(req, res, next){
+router.get('/get-all-likes-of-sport',async function(req, res, next){
 
 	let list_of_promises = []
 
@@ -304,8 +304,13 @@ router.get('/get-all-interest-in-sport',async function(req, res, next){
 	populate('interested_users').
 	then((sport_with_interested_users) => {
 
+		// console.log('sport_with_interested_users')
+		// console.log(sport_with_interested_users)
+
 		if ( sport_with_interested_users ){
 
+			// console.log('sport_with_interested_users.interested_users')
+			// console.log(sport_with_interested_users.interested_users)
 			return sport_with_interested_users.interested_users
 	
 		} else {
@@ -319,24 +324,30 @@ router.get('/get-all-interest-in-sport',async function(req, res, next){
 	list_of_promises.push( sport_with_interested_users )
 
 // find likes from blogpost
-	let final_interested_payload = await Promise.all(sport_with_interested_users.map(async (like_object) => {
+	let final_interested_payload = await Promise.all(sport_with_interested_users.map(async (user_object) => {
 
 	// find user from each like
-		return await User.findOne({_id:like_object.user})
-		.then(async (user_object) => {
+		console.log('user_object.user_name')
+		console.log(user_object.user_name)
 
-			if (user_object){
+		// return await User.findOne({_id:like_object.user})
+		// .then(async (user_object) => {
+
+		// 	console.log('user_object')
+		// 	console.log(user_object)
+
+		// 	if (user_object){
 
 				// return user_object
 				return {
-					user_name:user_object.user_name,
+					user_name:user_object.user_name_in_profile,
 					user_avatar_image:base64_encode(user_object.user_avatar_image),
 				}
 
-			} else {
-				null
-			}
-		})
+			// } else {
+			// 	null
+			// }
+		// })
 		
 	}))
 
@@ -371,6 +382,7 @@ router.get('/get-all-interest-in-sport',async function(req, res, next){
 	Promise.all(list_of_promises)
 	.then(() => {
 
+		// console.log('final_interested_payload')
 		// console.log(final_interested_payload)
 		res.status(200).json( final_interested_payload );
 

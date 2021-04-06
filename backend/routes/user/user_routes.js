@@ -572,6 +572,10 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 				// console.log( path.join(__dirname ,`../../assets/images/uploads/avatar_image/${req.files['avatar_image'][0].filename}`) )
 				// console.log(user.user_avatar_image)
 
+
+			let user_avatar_image_to_use
+			let user_cover_image_to_use
+
 			// WE NEED UPLOADED FILES THEREFORE CREATING CONDITIONS OF USING GCP, AWS, OR DISK STORAGE
 				{(async () => {
 
@@ -592,28 +596,27 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 
 					}
 
-					let user_avatar_image_to_use = await get_image_to_display(user.user_avatar_image, user.object_files_hosted_at)
-					let user_cover_image_to_use = await get_image_to_display(user.user_cover_image, user.object_files_hosted_at)
+					user_avatar_image_to_use = await get_image_to_display(user.user_avatar_image, user.object_files_hosted_at)
+					user_cover_image_to_use = await get_image_to_display(user.user_cover_image, user.object_files_hosted_at)
+
+					let user_details = {
+						user_name_in_profile: user.user_name_in_profile,
+						// user_cover_image: user.user_cover_image,
+						user_brief_intro: user.user_brief_intro,
+						user_about_me: user.user_about_me,
+						user_working_zone: user.user_working_zone,
+						user_education: user.user_education,
+						user_contact_details: user.user_contact_details,
+
+						object_files_hosted_at: get_file_storage_venue(),
+						user_avatar_image: user_avatar_image_to_use,
+						user_cover_image: user_cover_image_to_use,
+					}
+
+					res.status(200).json({ success: true, message: 'user_updated', user_details: user_details});
 
 				})()}
-		
-				let user_details = {
-					user_name_in_profile: user.user_name_in_profile,
-					user_cover_image: user.user_cover_image,
-					user_brief_intro: user.user_brief_intro,
-					user_about_me: user.user_about_me,
-					user_working_zone: user.user_working_zone,
-					user_education: user.user_education,
-					user_contact_details: user.user_contact_details,
-
-					object_files_hosted_at: get_file_storage_venue(),
-					user_avatar_image: user_avatar_image_to_use,
-					user_cover_image: user_cover_image_to_use,
-				}
-
-				res.status(200).json({ success: true, message: 'user_updated', user_details: user_details});
-
-
+			
 			})
 			.catch((err1) => {
 

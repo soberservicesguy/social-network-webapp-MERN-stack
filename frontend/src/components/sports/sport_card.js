@@ -57,6 +57,8 @@ class SportCard extends Component {
 		this.state = {
 			expanded: false,
 			likes:[],
+
+			showOnlyQuantityForLike:true,
 		}	
 
 	}
@@ -64,7 +66,11 @@ class SportCard extends Component {
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
+		this.setState( prev => ({...prev, showOnlyQuantityForLike: true}) )
+	}
 
+	componentWillUnmount(){
+		this.setState( prev => ({...prev, showOnlyQuantityForLike: true}) )
 	}
 
 	fetchAllLike(endpoint) {
@@ -89,6 +95,41 @@ class SportCard extends Component {
 
 	render() {
 
+		const styles = {
+			showSocialsContainer:{
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				width:'95%',
+				margin:'auto',
+				marginTop:10,
+			},
+			showSocialsButton:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white'
+			},
+			createSocialObjectsContainer:{
+				width:'90%',
+				margin:'auto',
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+				marginTop:20,
+				paddingBottom:20,
+
+				borderWidth:0,
+				borderTopWidth:1,
+				borderStyle:'solid',
+				borderColor:utils.maroonColor,
+				paddingTop:10,
+			},
+		}
+
+
+
 		return (
 		  	<div>
 
@@ -99,36 +140,25 @@ class SportCard extends Component {
 			  		/>
 		  		</div>
 
-				<div>
-					{/* 2nd show individual summary of childs */}
-					<SummarizeLikesOfSport
-						showOnlyQuantity= { false }
-						child_quantity = { this.props.likes_quantity }
-						dataPayloadFromParent = { this.props.likes }
-					/>
-				</div>
+	  			<React.Fragment>
+					<div style={styles.showSocialsContainer}>
+						<ShowLikesOfSport
+							dataPayloadFromParent = { this.props.dataPayloadFromParent }
+							likes_quantity = { this.props.likes_quantity }
+						/>
+						<ConnectedCreateLikeForSport
+							parentDetailsPayload = { this.props.dataPayloadFromParent }
+		  					redirectToNew = { true }
+						/>					
+					</div>
 
-				<div>
-					{/* 3rd show individual button for showing childs */}
-					<button style={styles.buttonWithoutBG}
-						onPress={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
-					>
-						<p>
-							Show All Like
-						</p>
-					</button>
-					
-					<ShowLikesOfSport
-						dataPayloadFromParent = { this.state.likes }
-					/>
-				</div>
 
-				<div>
-					{/* 4th create individual child options like comment / like */}
-					<ConnectedCreateLikeForSport
-						parentDetailsPayload = { this.props.dataPayloadFromParent }
-					/>
-				</div>
+					<div style={styles.createSocialObjectsContainer}>
+						{/* 4th create individual child options like comment / like */}					
+					</div>
+
+				</React.Fragment>
+
 
 		  	</div>
 		);

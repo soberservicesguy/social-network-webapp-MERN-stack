@@ -31,6 +31,9 @@ class ComponentForShowingLike extends Component {
 		const data = this.props.componentData // data being plugged from parent flatlist
 		var base64Image = "data:image/jpeg;base64," + data.user_avatar_image
 
+		console.log('data.user_name')
+		console.log(data.user_name)
+
 		const styles = {
 			outerContainer:{
 				width:'70%',
@@ -49,6 +52,7 @@ class ComponentForShowingLike extends Component {
 			usernameText:{
 				fontSize:20,
 				fontWeight:'bold',
+				color:'black'
 			},
 
 			imageContainer:{

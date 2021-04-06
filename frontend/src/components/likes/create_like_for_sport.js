@@ -22,6 +22,9 @@ import {
 	Redirect,
 } from "react-router-dom";
 
+import ThumbUp from '@material-ui/icons/ThumbUp';
+
+
 const styles = theme => ({
 	root: {
 		height: 48,
@@ -79,6 +82,15 @@ class CreateLikeForSport extends Component {
 
 	render() {
 
+		var styles = {
+			buttonWithoutBG:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white'
+			}
+		}
+
 		// parameters being passed from previous route
 		const endpoint_params_passed = this.props.match.params
 
@@ -95,7 +107,8 @@ class CreateLikeForSport extends Component {
 		return (
 			// e.g a social post, textinput which lets user to enter text, takes persons id as assigned object
 
-				<div style={styles.outerContainer}>
+
+				<div>
 
 					<button style={styles.buttonWithoutBG}
 						onClick={ () => {
@@ -123,9 +136,7 @@ class CreateLikeForSport extends Component {
 
 						}}
 					>
-						<p style={styles.innerText}>
-							Press To Show Interest
-						</p>
+						<ThumbUp style={{color:utils.maroonColor, fontSize:30,}}/>
 					</button>
 				</div>
 			);

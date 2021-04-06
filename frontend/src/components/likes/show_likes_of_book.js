@@ -55,7 +55,7 @@ class ShowLikesOfBook extends Component {
 
 	fetchAllLike(endpoint) {
 
-		axios.get(utils.baseUrl + '/socialposts/get-all-likes-of-book', 
+		axios.get(utils.baseUrl + '/books/get-all-likes-of-book', 
 			{
 			    params: {
 					endpoint: endpoint,
@@ -71,13 +71,15 @@ class ShowLikesOfBook extends Component {
 			console.log(error);
 		})
 
-		this.setState( prev => ({...prev, show_like_modal: true}) )		
+		// this.setState( prev => ({...prev, show_like_modal: true}) )		
 	}
 
 
 // COMPONENT DID MOUNT
 	componentDidMount() {
-
+		if (this.props.likes_quantity === null || typeof this.props.likes_quantity === 'undefined' ){
+			this.fetchAllLike(this.props.dataPayloadFromParent.endpoint)
+		}
 	}
 
 	render() {
@@ -105,9 +107,14 @@ class ShowLikesOfBook extends Component {
 				<div>
 					<button 
 						style={styles.showSocialsButton}
-						onClick={ () => this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) }
+						onClick={ () => {
+							if (this.props.likes_quantity){
+								this.fetchAllLike( this.props.dataPayloadFromParent.endpoint ) 
+							}
+							this.setState( prev => ({...prev, show_like_modal: true}) )		
+						}}
 					>
-						<ThumbUp style={{color:'grey', fontSize:30, marginRight:20,}}/> {this.props.likes_quantity} likes							
+						<ThumbUp style={{color:'grey', fontSize:30, marginRight:20,}}/> {(this.props.likes_quantity) ? this.props.likes_quantity : this.state.likes.length } likes							
 					</button>
 				</div>
 
@@ -124,7 +131,7 @@ class ShowLikesOfBook extends Component {
 		
 						<button onClick={() => {
 							this.toggle_like_modal()
-							this.setState( prev => ({...prev, likes: [] }) )
+							// this.setState( prev => ({...prev, likes: [] }) )
 						}}
 							style={{
 								outline:'none',

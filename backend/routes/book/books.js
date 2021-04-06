@@ -245,7 +245,7 @@ router.post('/create-interest-for-book', passport.authenticate('jwt', { session:
 })
 
 // USED
-router.get('/get-all-interest-in-book',async function(req, res, next){
+router.get('/get-all-likes-of-book',async function(req, res, next){
 
 	let list_of_promises = []
 
@@ -269,24 +269,24 @@ router.get('/get-all-interest-in-book',async function(req, res, next){
 	list_of_promises.push( book_with_interested_users )
 
 // find likes from blogpost
-	let final_interested_payload = await Promise.all(book_with_interested_users.map(async (like_object) => {
+	let final_interested_payload = await Promise.all(book_with_interested_users.map(async (user_object) => {
 
 	// find user from each like
-		return await User.findOne({_id:like_object.user})
-		.then(async (user_object) => {
+		// return await User.findOne({_id:like_object.user})
+		// .then(async (user_object) => {
 
-			if (user_object){
+		// 	if (user_object){
 
 				// return user_object
 				return {
-					user_name:user_object.user_name,
+					user_name:user_object.user_name_in_profile,
 					user_avatar_image:base64_encode(user_object.user_avatar_image),
 				}
 
-			} else {
-				null
-			}
-		})
+		// 	} else {
+		// 		null
+		// 	}
+		// })
 		
 	}))
 
