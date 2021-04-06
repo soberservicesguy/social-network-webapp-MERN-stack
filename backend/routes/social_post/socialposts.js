@@ -42,13 +42,14 @@ const {
 	// get_snapshots_storage_path,
 	get_snapshots_fullname_and_path,
 
-	// gcp_bucket,
+	gcp_bucket,
 	// save_file_to_gcp_storage,
 	save_file_to_gcp,
 	// save_file_to_gcp_for_bulk_files,
 	use_gcp_storage,
 	get_file_from_gcp,
 	
+	s3_bucket,
 	use_aws_s3_storage,
 	// save_file_to_s3,
 	get_file_from_aws,
@@ -158,7 +159,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							// console.log(`req.files['social_post_video']`)
 							// console.log(req.files['social_post_video'][0])
 							// save_image_or_video_promise = await save_file_to_aws_s3( req.files['social_post_video'][0] )
-							save_image_or_video_promise = save_file_to_aws_s3( req.files['social_post_video'][0] )
+							save_image_or_video_promise = save_file_to_aws_s3( req.files['social_post_video'][0], timestamp )
 							promises.push(save_image_or_video_promise)
 							// console.log(save_image_or_video_promise)
 							console.log('SAVED TO AWS')
@@ -232,6 +233,21 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 						console.log('BELOW IS VIDE OPATH')
 						console.log(get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp))
 						video_path = get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp)
+						let video_for_post
+						if (use_gcp_storage){
+
+							video_for_post = `${ gcp_bucket }/${ video_path }`
+
+						} else if (use_aws_s3_storage){
+
+							// since we will be using cloud front
+							video_for_post = `${ video_path }`
+
+						} else {
+
+							video_for_post = video_path
+
+						}
 					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
 						function after_screenshot_callback(){
 
@@ -242,7 +258,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 								_id: social_post_id,
 								type_of_post: social_post_type,
 								post_text: req.body.post_text,
-								video_for_post: video_path,
+								video_for_post: video_for_post,
+								// video_for_post: video_path,
 								video_thumbnail_image: get_snapshots_fullname_and_path('thumbnails_for_social_videos', file_without_format, timestamp),
 								object_files_hosted_at: get_file_storage_venue(),
 								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}_${select_random_screenshot(4)}.png`,
@@ -274,6 +291,21 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 						console.log(get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp))
 						
 						video_path = get_file_path_to_use(req.files['social_post_video'][0], 'social_post_videos', timestamp)
+						let video_for_post
+						if (use_gcp_storage){
+
+							video_for_post = `${ gcp_bucket }/${ video_path }`
+
+						} else if (use_aws_s3_storage){
+
+							// since we will be using cloud front
+							video_for_post = `${ video_path }`
+
+						} else {
+
+							video_for_post = video_path
+
+						}
 					// video_path = path.join(video_upload_path, `${req.files['social_post_video'][0].filename}`)
 
 						function after_screenshot_callback(){
@@ -284,7 +316,8 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							newSocialPost = new SocialPost({
 								_id: social_post_id,
 								type_of_post: social_post_type,
-								video_for_post: video_path,
+								video_for_post: video_for_post,
+								// video_for_post: video_path,
 								video_thumbnail_image: get_snapshots_fullname_and_path('thumbnails_for_social_videos', file_without_format, timestamp),
 								object_files_hosted_at: get_file_storage_venue(),
 								// video_thumbnail_image: `${get_snapshots_storage_path()}/${file_without_format}-${timestamp}_.png`, // ${select_random_screenshot(4)}

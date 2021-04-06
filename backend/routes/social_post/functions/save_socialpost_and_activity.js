@@ -107,6 +107,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 								type_of_post: newSocialPost.type_of_post,
 								video_thumbnail_image: video_thumbnail_image_to_use,
 								video_for_post: newSocialPost.video_for_post,
+								object_files_hosted_at: newSocialPost.object_files_hosted_at,
 							}
 
 							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	
@@ -131,6 +132,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 								type_of_post: newSocialPost.type_of_post,
 								video_thumbnail_image: video_thumbnail_image_to_use,
 								video_for_post: newSocialPost.video_for_post,
+								object_files_hosted_at: newSocialPost.object_files_hosted_at,
 							}
 
 							res.status(200).json({ success: true, msg: 'new social post saved', socialpost_endpoint: socialpost_endpoint, new_socialpost: new_socialpost});	

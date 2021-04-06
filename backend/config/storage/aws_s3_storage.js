@@ -81,6 +81,8 @@ function save_file_to_aws_s3(file_payload, timestamp){
 
 	let filename_to_use
 	let params
+	console.log('timestamp')
+	console.log(timestamp)
 
 	if (typeof timestamp === 'undefined' || timestamp === null){
 
@@ -90,6 +92,8 @@ function save_file_to_aws_s3(file_payload, timestamp){
 
 		filename_to_use = `${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`
 
+		console.log('filename_to_use')
+		console.log(filename_to_use)
 	}
 
 			

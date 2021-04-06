@@ -468,13 +468,35 @@ class ComponentForShowingSocialPost extends Component {
 			</div>
 		)
 
+		let video_source
+		 if (data.object_files_hosted_at !== undefined && data.object_files_hosted_at === 'gcp_storage'){
+
+		 	video_source = `https://storage.googleapis.com/${ data.video_for_post }`
+			
+
+		} else if (data.object_files_hosted_at !== undefined && data.object_files_hosted_at === 'aws_s3'){
+
+			// video_source = `https://s3.amazonaws.com/${ data.video_for_post }`
+			video_source = `https://d3iwm50qkhk5zm.cloudfront.net/${ data.video_for_post }`
+			console.log('video_source')
+			console.log(video_source)
+
+		} else {
+
+			video_source = `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`
+			video_source = {uri: video_source}
+		}
+
 		let post_video_content = (
 			<div style={styles.postVideoContainer}>
-				<video 
+				<video
+					type='video/mp4'
 					width="100%" 
 					height="300" 
 					controls
-					src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
+					src={video_source} 
+					// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ video_to_show }`}} 
+					// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
 				/>
 			</div>
 		)

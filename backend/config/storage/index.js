@@ -264,6 +264,7 @@ module.exports = {
 	use_gcp_storage,
 	get_file_from_gcp,
 	
+	s3_bucket,
 	use_aws_s3_storage,
 	save_file_to_s3,
 	get_file_from_aws,
