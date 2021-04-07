@@ -99,7 +99,7 @@ let currentTime
 
 
 // Check File Type
-function checkFileTypeForImageAndExcelSheet(file, cb){
+function checkFileTypeForImageAndVideoAndExcelSheet(file, cb){
 
 	// Allowed ext
 	let filetypes_for_image = /jpeg|jpg|png|gif/
@@ -151,7 +151,7 @@ function bulk_upload_socialposts(timestamp, folder_name){
 		storage: get_multer_storage_to_use_for_bulk_files(timestamp, folder_name),
 		limits:{fileSize: 200000000}, // 1 mb
 		fileFilter: function(req, file, cb){
-			checkFileTypeForImageAndExcelSheet(file, cb);
+			checkFileTypeForImageAndVideoAndExcelSheet(file, cb);
 		}
 	}).fields([
 		{ name: 'excel_sheet_for_socialpost', maxCount: 1 }, 

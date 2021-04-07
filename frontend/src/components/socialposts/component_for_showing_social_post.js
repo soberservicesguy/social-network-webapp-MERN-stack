@@ -472,7 +472,7 @@ class ComponentForShowingSocialPost extends Component {
 		let video_source
 		let post_video_content
 	
-		 if (data.object_files_hosted_at !== undefined && data.object_files_hosted_at === 'gcp_storage'){
+		if (data.object_files_hosted_at !== undefined && data.object_files_hosted_at === 'gcp_storage'){
 
 		 	video_source = `https://storage.googleapis.com/${ data.video_for_post }`
 
