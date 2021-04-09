@@ -169,6 +169,7 @@ router.post('/bulk-upload-socialposts', passport.authenticate('jwt', { session: 
 	// console.log('OUTER LOG')
 	// console.log(req.body)
 
+	// timestamp = Date.now()
 	timestamp = Date.now()
 	currentDate = timestamp.toLocaleDateString("en-US").split("/").join(" | ");
 	currentTime = timestamp.toLocaleTimeString("en-US").split("/").join(" | ");

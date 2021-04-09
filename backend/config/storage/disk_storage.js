@@ -82,14 +82,19 @@ function get_multer_disk_storage_for_bulk_files(timestamp, folder_name){
 	return multer.diskStorage({
 		destination: async function(req, file, cb){
 
+
+			fs.mkdir( path.join(__dirname , `${path_for_saving_files}/${folder_name}/${timestamp}`), { recursive: true }, (err) => {
+				if (err) throw err;
+			})
+
 			let file_path = path.join(__dirname , `${path_for_saving_files}/${folder_name}/${timestamp}`)
 
-			await fs.access(file_path, function(err) {
+			// await fs.access(file_path, function(err) {
 		//  create directory if not exists is not working, so created all manually
-				if (err && err.code === 'ENOENT') {
-					fs.mkdir(file_path, { recursive: true }); //Create dir in case not found
-				}
-			});
+				// if (err && err.code === 'ENOENT') {
+					// fs.mkdir(file_path, { recursive: true }); //Create dir in case not found
+				// }
+			// });
 
 			cb(null, file_path)	
 

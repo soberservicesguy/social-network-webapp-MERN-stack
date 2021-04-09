@@ -49,8 +49,8 @@ function save_file_to_gcp(timestamp, file_payload){
 
 	try{
 
-		console.log('FILE BEING SAVED AT GCP')
-		console.log(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`)
+		// console.log('FILE BEING SAVED AT GCP')
+		// console.log(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`)
 		the_file = the_bucket.file(`${file_payload.fieldname}s/${path.basename( file_payload.originalname, path.extname( file_payload.originalname ) ) + '-' + timestamp + path.extname( file_payload.originalname )}`);
 		return the_file.save(file_payload.buffer)
 
@@ -97,8 +97,8 @@ async function save_file_to_gcp_for_bulk_files(timestamp, folder_name, file){
 
 	try{
 
-		the_file = the_bucket.file(`${folder_name}/${timestamp}/${file}`)
-		await the_file.save(file_payload.buffer)
+		the_file = the_bucket.file(`${folder_name}/${timestamp}/${file.originalname}`)
+		await the_file.save(file.buffer)
 
 	} catch (err){
 
@@ -111,8 +111,8 @@ async function save_file_to_gcp_for_bulk_files(timestamp, folder_name, file){
 // being used for snapshots
 async function save_file_to_gcp_storage(file, filename_to_set, path_to_upload){
 
-	console.log('file.buffer')
-	console.log(file)
+	// console.log('file.buffer')
+	// console.log(file)
 
 	let FS = require('fs').promises
 

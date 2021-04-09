@@ -43,8 +43,8 @@ function get_multers3_storage(timestamp){
 
 function get_file_from_aws(complete_file_name){
 
-	console.log('complete_file_name')
-	console.log(complete_file_name)
+	// console.log('complete_file_name')
+	// console.log(complete_file_name)
 
 	let params = { Bucket:s3_bucket, Key: complete_file_name }
 	let fileContents = new Buffer('');
@@ -172,8 +172,8 @@ function save_file_to_aws_s3(file_payload, timestamp){
 // USED WHEN FILE IS READ FROM SOMEWHERE AND IS BEING UPLOADED
 async function save_file_to_s3(file, filename_to_set, path_to_upload){
 
-	console.log('file.buffer')
-	console.log(file)
+	// console.log('file.buffer')
+	// console.log(file)
 
 	let fileContent = await FS.readFile(file)
 
@@ -235,18 +235,38 @@ async function save_file_to_s3(file, filename_to_set, path_to_upload){
 	// });
 }
 
-// WRONG, TRY TO COPY save_file_to_aws_s3 AND RECREATE IT
-// USER THIS WAY save_file_to_aws_s3_for_bulk_files( get_proper_date(timestamp), 'bulk_ads', req.files['das'][0] )
+// async function save_file_to_aws_s3_for_bulk_files(timestamp, folder_name, file){
+
+// 	let params = { ...s3_params, Key:`${folder_name}/${timestamp}/${file}`, Body: file }
+
+// 	let s3_client = new aws.S3.client
+// 	return s3_client.putObject(params, function(resp){
+// 		console.log(resp)
+// 	})
+
+// }
+
+// copied from content_app, above is deprecated
 async function save_file_to_aws_s3_for_bulk_files(timestamp, folder_name, file){
 
-	let params = { ...s3_params, Key:`${folder_name}/${timestamp}/${file}`, Body: file }
+	let params = { 
+		Bucket:s3_bucket, 
+		Key:`${folder_name}/${timestamp}/${file.originalname}`, 
+		Body: file.buffer
+	}
 
-	let s3_client = new aws.S3.client
-	return s3_client.putObject(params, function(resp){
+	return s3.putObject(params, function(resp){
 		console.log(resp)
 	})
 
+
+	// let s3_client = new aws.S3.client
+	// return s3_client.putObject(params, function(resp){
+	// 	console.log(resp)
+	// })
+
 }
+
 
 module.exports = {
 	save_file_to_s3,
