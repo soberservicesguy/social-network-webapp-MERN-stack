@@ -11,7 +11,7 @@ const { get_multer_disk_storage, get_multer_disk_storage_for_bulk_files, } = req
 const { checkFileTypeForImages, checkFileTypeForImageAndVideo, checkFileTypeForImagesAndExcelSheet, checkFileTypeForVideos} = require('./file_filters')
 const base64_encode = require('../../lib/image_to_base64')
 
-let folder_name_to_use = 'thumbnails_for_social_videos'
+let folder_name_to_use_for_snapshots = 'thumbnails_for_social_videos'
 
 function get_filepath_to_save_with_bulk_uploading(folder_name, timestamp){
 
@@ -275,7 +275,7 @@ function get_snapshots_storage_path(){
 		
 	} else {
 	
-		return `assets/uploads/${folder_name_to_use}`
+		return `assets/uploads/${folder_name_to_use_for_snapshots}`
 	
 	}	
 
