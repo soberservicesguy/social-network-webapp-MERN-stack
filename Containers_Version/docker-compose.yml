@@ -8,11 +8,14 @@ services:
     container_name: reverse_proxy # giving name to this container
     depends_on: # services it will be able to talk to
         - frontend-service
-        - blogpost-service
-        - bulk-upload-service
-        - image-service
+        - socialposts-service
+        - advertisements-service
+        - friends-service
+        - books-service
         - users-module-service
-        - video-service
+        - notifications-service
+        - pages-service
+        - sports-service
     volumes:
       - ./image_sources/nginx_proxy/nginx.conf:/etc/nginx/nginx.conf
     ports: # port of local machine mapped to port of exposed port of container
@@ -24,20 +27,23 @@ services:
     build:
       context: ./image_sources/frontend_service/ # building from docker file in this directory
     depends_on:
-        - blogpost-service
-        - bulk-upload-service
-        - image-service
+        - socialposts-service
+        - advertisements-service
+        - friends-service
+        - books-service
         - users-module-service
-        - video-service
+        - notifications-service
+        - pages-service
+        - sports-service
     ports: # port of local machine mapped to port of exposed port of container
       - 8080:80
     restart: on-failure
 
-  blogpost-service:
-    image: blogpost-service # name given to the image
-    container_name: blogpost_service # giving name to this container
+  socialposts-service:
+    image: socialposts-service # name given to the image
+    container_name: socialposts_service # giving name to this container
     build:
-      context: ./image_sources/blogposts # building from docker file in this directory
+      context: ./image_sources/socialposts # building from docker file in this directory
     ports: # port of local machine mapped to port of exposed port of container
       - 5001:5001
     restart: on-failure
@@ -45,22 +51,22 @@ services:
     #   - mongodb-service  # means this service can use mongo service (which is another) OR CALL THIS SERVICE
 
 
-  bulk-upload-service:
-    image: bulk-upload-service # name given to the image
-    container_name: bulk_upload_service # giving name to this container
+  advertisements-service:
+    image: advertisements-service # name given to the image
+    container_name: advertisements_service # giving name to this container
     build:
-      context: ./image_sources/bulk_uploads # building from docker file in this directory
+      context: ./image_sources/advertisements # building from docker file in this directory
     ports: # port of local machine mapped to port of exposed port of container
       - 5002:5002
     restart: on-failure
     # links:
     #   - mongodb-service  # means this service can use mongo service (which is another) OR CALL THIS SERVICE
 
-  image-service:
-    image: image-service # name given to the image
-    container_name: image_service # giving name to this container
+  books-service:
+    image: books-service # name given to the image
+    container_name: books_service # giving name to this container
     build:
-      context: ./image_sources/images # building from docker file in this directory
+      context: ./image_sources/books # building from docker file in this directory
     ports: # port of local machine mapped to port of exposed port of container
       - 5003:5003
     restart: on-failure
@@ -78,17 +84,50 @@ services:
     # links:
     #   - mongodb-service  # means this service can use mongo service (which is another) OR CALL THIS SERVICE
 
-  video-service:
-    image: video-service # name given to the image
-    container_name: video_service # giving name to this container
+  friends-service:
+    image: friends-service # name given to the image
+    container_name: friends_service # giving name to this container
     build:
-      context: ./image_sources/videos # building from docker file in this directory
+      context: ./image_sources/friends # building from docker file in this directory
     ports: # port of local machine mapped to port of exposed port of container
       - 5005:5005
     restart: on-failure
     # links:
     #   - mongodb-service  # means this service can use mongo service (which is another) OR CALL THIS SERVICE
 
+  notifications-service:
+    image: notifications-service # name given to the image
+    container_name: notifications_service # giving name to this container
+    build:
+      context: ./image_sources/notifications # building from docker file in this directory
+    ports: # port of local machine mapped to port of exposed port of container
+      - 5006:5006
+    restart: on-failure
+    # links:
+    #   - mongodb-service  # means this service can use mongo service (which is another) OR CALL THIS SERVICE
+
+  pages-service:
+    image: pages-service # name given to the image
+    container_name: pages_service # giving name to this container
+    build:
+      context: ./image_sources/pages # building from docker file in this directory
+    ports: # port of local machine mapped to port of exposed port of container
+      - 5007:5007
+    restart: on-failure
+    # links:
+    #   - mongodb-service  # means this service can use mongo service (which is another) OR CALL THIS SERVICE
+
+
+  sports-service:
+    image: sports-service # name given to the image
+    container_name: sports_service # giving name to this container
+    build:
+      context: ./image_sources/sports # building from docker file in this directory
+    ports: # port of local machine mapped to port of exposed port of container
+      - 5008:5008
+    restart: on-failure
+    # links:
+    #   - mongodb-service  # means this service can use mongo service (which is another) OR CALL THIS SERVICE
 
 
   mongodb:
