@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: socialposts
-        image: soberservicesguy/portfolio-images:socialapp_socialposts
+        image: soberservicesguy/portfolio-images:socialapp_socialposts_5
         resources:
           limits:
             cpu: "200m"
@@ -32,17 +32,17 @@ spec:
         - name: MONGODB_USER
           valueFrom:
             secretKeyRef:
-              name: appointment-mongodb-secret
+              name: social-mongodb-secret
               key: MONGO_ROOT_USERNAME
         - name: MONGODB_PASS
           valueFrom:
             secretKeyRef:
-              name: appointment-mongodb-secret
+              name: social-mongodb-secret
               key: MONGO_ROOT_PASSWORD
         - name: MONGODB_SERVER
           valueFrom:
             configMapKeyRef:
-              name: appointment-mongodb-configmap
+              name: social-mongodb-configmap
               key: MONGO_SERVER
       imagePullSecrets:
       - name: regcred

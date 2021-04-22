@@ -12,27 +12,27 @@ spec:
     # - host: localhost
       http:
         paths:
-          - path: /blogpostings/
+          - path: /socialposts/
             pathType: Prefix
             backend:
               service:
-                name: blogpost-service
+                name: socialposts-service
                 port:
                   number: 5001
 
-          - path: /uploads/
+          - path: /advertisements/
             pathType: Prefix
             backend:
               service:
-                name: bulk-upload-service
+                name: advertisements-service
                 port:
                   number: 5002
 
-          - path: /image/
+          - path: /books/
             pathType: Prefix
             backend:
               service:
-                name: image-service
+                name: books-service
                 port:
                   number: 5003
 
@@ -44,18 +44,44 @@ spec:
                 port:
                   number: 5004
 
-          - path: /video/
+          - path: /friends/
             pathType: Prefix
             backend:
               service:
-                name: video-service
+                name: friends-service
                 port:
                   number: 5005
+
+          # - path: /notifications/
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: notifications-service
+          #       port:
+          #         number: 5006
+
+          - path: /pages/
+            pathType: Prefix
+            backend:
+              service:
+                name: pages-service
+                port:
+                  number: 5007
+
+          - path: /sports/
+            pathType: Prefix
+            backend:
+              service:
+                name: sports-service
+                port:
+                  number: 5006
+
+
 
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: content-frontend-service
+                name: social-frontend-service
                 port:
                   number: 80
