@@ -106,7 +106,7 @@ class MyResponsiveNavigation extends Component {
 									} else if (item.option_name === 'Notifications'){
 
 										return(
-											<div style={{marginLeft:70,}}>
+											<div style={{marginLeft:(_xs || _sm || _md) ? -20 : 70,}}>
 												<ConnectedNotificationsContainer/>
 											</div>
 										)

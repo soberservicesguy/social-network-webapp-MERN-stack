@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@google-cloud/storage": "^5.8.4",
     "aws-sdk": "^2.866.0",
     "axios": "^0.21.1",
     "base64url": "^3.0.1",
