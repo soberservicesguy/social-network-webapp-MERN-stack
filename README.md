@@ -1,13 +1,13 @@
 # social_network_webapp_MERN_stack
 
-FOLDER DETAILS:
+**Project Details:**
 
 'App' refers to the development version having Node backend with Express and MongoDB, along with  React frontend.
 'Containers_Version' refers to the app in containers network form based on Docker Compose
 'Kubernetes_Version' refers to app in the pods network form based on deployments, services and Ingress
 
 
-APP FEATURES:
+**App Features:**
 	
 User can sign up, select privileges, upload avatar, add friends, create written posts, image posts, video posts. User can also interact with posts from friends, send and accept friend requests, like / comment  / share posts of friends.
 
@@ -22,17 +22,17 @@ User can upload advertisements if privileged.
 Users powers are determined with the privileges he carries.
 
 
-Database:
+**Database:**
 
 Anyone from MongoDB Atlas and Local MongoDB service can be used. Simply adjust the .env file with path App/backend/.env 
 
 
-Storage:
+**Storage:**
 
 Anyone from Local storage, AWS S3 or Google Cloud storage can be used. Simply adjust the .env file with path App/backend/.env 
 
 
-USAGE:
+**Usage:**
 
 /login allows user to login
 /signup allows user to sign up, select privileges and upload avatar
