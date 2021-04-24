@@ -34,6 +34,12 @@ const reducerForSocialPost = (state = initialState, action) => {
 
 	switch (action.type) {
 
+		case "SET_CURRENT_SOCIALPOST":
+
+			return {...state, currentSocialPost: action.current_socialpost}
+			break;
+
+
 		case "APPEND_FETCHED_SOCIALPOST":
 
 			last_key = (state.totalSocialPost.length > 0) ? state.totalSocialPost[ state.totalSocialPost.length - 1 ].key : 0
@@ -47,10 +53,6 @@ const reducerForSocialPost = (state = initialState, action) => {
 			return {...state, totalSocialPost: list_with_key }
 			break;
 
-		case "SET_CURRENT_SOCIALPOST":
-
-			return {...state, currentSocialPost: action.current_socialpost}
-			break;
 
 
 		case "SET_FETCHED_SOCIALPOST":
