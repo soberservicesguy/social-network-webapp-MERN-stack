@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const passport = require('passport');
-const cors = require("cors");
+// const cors = require("cors");
 
 // const bodyParser = require("body-parser"); // commented out since we using app.use(express.json()); // app.use(express.urlencoded({extended: true}));
 
@@ -38,13 +38,20 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+
+try {
+  app.use(require('./config/cors_policy'))
+} catch (err){
+  console.log('couldnt incorporate cors policy')
+}
+
 // setting up cors
-app.use(
-  cors({
-    origin: "http://localhost:3000", // restrict calls to those this address
-    methods: ['GET', 'POST'] // only allow GET, POST requests
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000", // restrict calls to those this address
+//     methods: ['GET', 'POST'] // only allow GET, POST requests
+//   })
+// );
 
 
 /**
