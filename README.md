@@ -3,6 +3,7 @@
 **Live App:**
 
 https://social-app-dot-portfolio-apps-311617.uc.r.appspot.com
+Please zoom out in your browser to 80% instead of 100%
 
 
 **Project Details:**
