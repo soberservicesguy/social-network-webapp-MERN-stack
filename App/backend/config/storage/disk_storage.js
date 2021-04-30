@@ -14,6 +14,7 @@ if (use_gcp_storage === false && use_aws_s3_storage === false){
 	let all_links = [
 	// images
 		'./assets/uploads/advertisement_images',
+		'./assets/uploads/ad_images',
 		'./assets/uploads/avatar_images',
 		'./assets/uploads/book_images',
 		'./assets/uploads/cover_images',

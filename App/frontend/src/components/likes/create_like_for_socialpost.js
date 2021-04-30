@@ -85,8 +85,8 @@ class CreateLikeForSocialpost extends Component {
 									socialpost_endpoint: endpoint,
 								})
 							.then(function (response) {
-								console.log('LIKED')
-								console.log(response.data) // current blogpost screen data
+								// console.log('LIKED')
+								// console.log(response.data) // current blogpost screen data
 								
 								// set to current parent object
 								setResponseInCurrentSocialpost({...response.data, endpoint: endpoint})

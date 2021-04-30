@@ -38,7 +38,7 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-
+  
 try {
   app.use(require('./config/cors_policy'))
 } catch (err){

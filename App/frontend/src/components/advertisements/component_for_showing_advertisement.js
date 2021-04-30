@@ -31,7 +31,7 @@ class ComponentForShowingAdvertisement extends Component {
 		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
 		// 			{ data.ad_image }
 		// 			{ data.endpoint }
-		// var base64Image = "data:image/jpeg;base64," + this.props.current_image
+		var base64Image = "data:image/jpeg;base64," + data.ad_image
 
 		const styles = {
 			outerContainer:{
@@ -40,7 +40,7 @@ class ComponentForShowingAdvertisement extends Component {
 
 			imageStyle:{
 				width:'100%', 
-				height:300, 
+				height:200, 
 				resizeMode: "stretch"
 			},
 
@@ -58,8 +58,8 @@ class ComponentForShowingAdvertisement extends Component {
 			<div style={styles.outerContainer}>
 				<div style={styles.imageContainer}>
 					<img 
-						// src={base64Image}
-						src={utils.image} 
+						src={base64Image}
+						// src={utils.image} 
 						alt="" 
 						style={styles.imageStyle}
 					/>

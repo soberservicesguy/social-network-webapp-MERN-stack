@@ -54,7 +54,9 @@ try {
 
 // app.use(require('./routes'));
 
-app.use(require('./routes/advertisement/advertisements'));
+// app.use(require('./routes/advertisement/advertisements'));
+app.use(require('./routes/advertisement/advertisement_routes'));
+app.use(require('./routes/advertisement/ads'));
 
 
 

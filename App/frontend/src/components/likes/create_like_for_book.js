@@ -119,15 +119,18 @@ class CreateLikeForBook extends Component {
 							let redirectToNewBook = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 							let redirectToNew = this.props.redirectToNew
 
+							let endpoint = (this.props.parentDetailsPayload.endpoint) ? this.props.parentDetailsPayload.endpoint : this.props.current_book.endpoint
+
 							axios.post(utils.baseUrl + '/books/create-interest-for-book', 
 								{
-									book_endpoint: this.props.parentDetailsPayload.endpoint,
+									// book_endpoint: this.props.parentDetailsPayload.endpoint,
+									book_endpoint: endpoint,
 								})
 							.then(function (response) {
 								console.log(response.data) // current blogpost screen data
 								
 								// set to current parent object
-								setResponseInCurrentBook(response.data)
+								setResponseInCurrentBook({...response.data, endpoint: endpoint})
 
 								// change route to current_blogpost	
 								if (redirectToNew){

@@ -197,14 +197,14 @@ class CreatePage extends Component {
 
 					<div style={styles.buttonsContainer}>
 						<div>
-							<label htmlFor="myInput">
+							<label htmlFor="myInputPage">
 								{/* below div will act as myInput button*/}
 								<div style={styles.uploadImageButton}>
 									Upload Image
 								</div>
 							</label>
 							<input
-								id="myInput"
+								id="myInputPage"
 								style={{display:'none'}}
 								name="ad_image" // name of input field or fieldName simply
 								type={"file"}

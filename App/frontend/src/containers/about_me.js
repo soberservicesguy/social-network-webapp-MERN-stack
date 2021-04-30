@@ -273,9 +273,11 @@ class AboutMeContainer extends Component {
 
 		// let all_friends = this.props.all_friends
 		// let all_friends = [1,2,3,4,5,6,7,8,9,10]
-		// let total_books = this.props.total_books
-		let total_books = [1,2,3,4,5,6,7,8,9,10]
+		let total_books = this.props.total_books
+		// let total_books = [1,2,3,4,5,6,7,8,9,10]
 
+		let total_sports = this.props.total_sport
+		
 		return (
 
 			<Grid container direction="column">
@@ -562,7 +564,7 @@ class AboutMeContainer extends Component {
 							</Grid>
 
 							<Grid container direction="row">
-								{total_books.map((item, index) => {
+								{total_sports.map((item, index) => {
 									return (
 										<Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
 											<div style={{...styles.blockChildrenInnerContainer, paddingLeft:0,}}>

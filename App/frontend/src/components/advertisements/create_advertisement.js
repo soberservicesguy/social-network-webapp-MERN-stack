@@ -32,8 +32,8 @@ class CreateAdvertisement extends Component {
 			redirectToRoute: false,
 
 			ad_name: '',
-			ad_image: '',
 			ad_description: '',
+			ad_image: null,
 
 			tracked_width1: 0,
 			tracked_height1: 0,
@@ -133,7 +133,7 @@ class CreateAdvertisement extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Advertisement" }} />
+			return <Redirect to = {{ pathname: "/about-me" }} />
 
 		} else {
 
@@ -174,14 +174,14 @@ class CreateAdvertisement extends Component {
 
 					<div style={styles.buttonsContainer}>
 						<div>
-							<label htmlFor="myInput">
-								{/* below div will act as myInput button*/}
+							<label htmlFor="myInputAd">
+								{/* below div will act as myInputAd button*/}
 								<div style={styles.uploadImageButton}>
-									Upload Image
+									Upload Images
 								</div>
 							</label>
 							<input
-								id="myInput"
+								id="myInputAd"
 								style={{display:'none'}}
 								name="ad_image" // name of input field or fieldName simply
 								type={"file"}
@@ -189,9 +189,10 @@ class CreateAdvertisement extends Component {
 								enctype="multipart/form-data"
 								onChange={(event) => {
 									// console logging selected file from menu
-									console.log( event.target.files[0] ) // gives first file
+									// console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
 									this.setState(prev => ({...prev, ad_image: event.target.files[0]}))
+									// console.log(`state is ${JSON.stringify(this.state)}`)
 								}}
 							/>
 						</div>
@@ -210,11 +211,14 @@ class CreateAdvertisement extends Component {
 								if (this.state.ad_name !== ''){
 									formData.append('ad_name', this.state.ad_name)
 								}
-								if (this.state.ad_image !== ''){
-									formData.append('ad_image', this.state.ad_image, this.state.ad_image.name)
-								}
 
-								axios.post(utils.baseUrl + '/advertisements/create-ad-with-user', formData)
+								// if (this.state.ad_image !== ''){
+									console.log('added ad_image')
+									console.log(this.state.ad_image)
+									formData.append('ad_image', this.state.ad_image, this.state.ad_image.name)
+								// }
+
+								axios.post(utils.baseUrl + '/ad/create-advertisement-with-user', formData)
 								.then(function (response) {
 									console.log(response.data) // current advertisement screen data
 									

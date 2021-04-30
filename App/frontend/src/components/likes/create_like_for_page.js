@@ -104,15 +104,18 @@ class CreateLikeForPage extends Component {
 							let redirectToNewPage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 							let redirectToNew = this.props.redirectToNew
 
+							let endpoint = (this.props.parentDetailsPayload.endpoint) ? this.props.parentDetailsPayload.endpoint : this.props.current_page.endpoint
+
 							axios.post(utils.baseUrl + '/pages/create-interest-for-page', 
 								{
-									page_endpoint: this.props.parentDetailsPayload.endpoint,
+									// page_endpoint: this.props.parentDetailsPayload.endpoint,
+									page_endpoint: endpoint,
 								})
 							.then(function (response) {
-								console.log(response.data) // current blogpost screen data
+								// console.log(response.data) // current blogpost screen data
 								
 								// set to current parent object
-								setResponseInCurrentPage(response.data)
+								setResponseInCurrentPage({...response.data, endpoint: endpoint})
 
 								// change route to current_blogpost	
 								if (redirectToNew){

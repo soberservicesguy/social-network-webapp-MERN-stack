@@ -7,7 +7,8 @@ router.use('/notifications', require('./notification/push_notifications'));
 router.use('/video-stream', require('./video_routes/video_serve'));
 
 router.use('/socialposts', require('./social_post/socialposts'));
-router.use('/advertisements', require('./advertisement/advertisements'));
+router.use('/ad', require('./advertisement/advertisement_routes'));
+router.use('/ads', require('./advertisement/ads'));
 router.use('/pages', require('./page/pages'));
 router.use('/books', require('./book/books'));
 router.use('/sports', require('./sport/sports'));

@@ -173,18 +173,21 @@ class CreateCommentForSocialpost extends Component {
 									let redirectToNewSocialpost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
 									let redirectToNew = this.props.redirectToNew
 
+									let endpoint = (this.props.parentDetailsPayload.endpoint) ? this.props.parentDetailsPayload.endpoint : this.props.current_socialpost.endpoint
+
 									// first create child object
 									axios.post(utils.baseUrl + '/socialposts/create-comment-for-socialpost', 
 										{
 											comment_text: this.state.text,
-											socialpost_endpoint: this.props.parentDetailsPayload.endpoint,
+											// socialpost_endpoint: this.props.parentDetailsPayload.endpoint,
+											socialpost_endpoint: endpoint,
 										})
 									.then(function (response) {
-										console.log('COMMENTED')
-										console.log(response.data) // current image screen data
+										// console.log('COMMENTED')
+										// console.log(response.data) // current image screen data
 										
 										// set to current parent object
-										setResponseInCurrentSocialpost(response.data)
+										setResponseInCurrentSocialpost({...response.data, endpoint:endpoint})
 
 										// change route to current_image	
 										if (redirectToNew){

@@ -20,7 +20,23 @@ spec:
                 port:
                   number: 5001
 
-          - path: /advertisements/
+          # - path: /advertisements/
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: advertisements-service
+          #       port:
+          #         number: 5002
+
+          - path: /ad/
+            pathType: Prefix
+            backend:
+              service:
+                name: advertisements-service
+                port:
+                  number: 5002
+
+          - path: /ads/
             pathType: Prefix
             backend:
               service:

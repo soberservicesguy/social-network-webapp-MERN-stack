@@ -84,7 +84,7 @@ export const mapStateToProps = state => {
 		total_books: state.books.totalBook,
 		current_book: state.books.currentBook,
 
-		total_sports: state.sports.totalSport,
+		total_sport: state.sports.totalSport,
 		current_sport: state.sports.currentSport,
 
 

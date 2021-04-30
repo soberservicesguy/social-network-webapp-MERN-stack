@@ -63,7 +63,7 @@ class SportContainer extends Component {
 // RENDER METHOD
 	render() {
 			
-		const total_sports = this.props.total_sports
+		const total_sports = this.props.total_sport
 
 		const { classes } = this.props;
 	  	const {_xs, _sm, _md, _lg, _xl} = this.props
