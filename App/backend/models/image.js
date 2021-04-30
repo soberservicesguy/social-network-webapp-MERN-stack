@@ -34,12 +34,12 @@ ImageSchema.pre('save', function(next) {
 	endpoint_number += 1
 
 	// adding timestamp and endpoint when image is created ie likes, comments, shares are 0
-	if ( this.total_comments.length === 0 && this.likes.length === 0  ){
+	// if ( this.comments.length === 0 && this.likes.length === 0  ){
 
 		this.timestamp_of_uploading = String( Date.now() )
 		this.endpoint = String( endpoint_number )
 
-	}
+	// }
 
 	this.total_comments = this.comments.length
 	this.total_likes = this.likes.length
