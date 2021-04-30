@@ -15,6 +15,9 @@ import { withRouter } from "react-router-dom";
 
 import {
 	ConnectedComponentForShowingSocialPost,
+	ConnectedCreateLikeForSocialpost,
+	ConnectedCreateCommentForSocialpost,
+	ConnectedCreateShareForSocialpost,
 } from "../redux_stuff/connected_components"
 
 import {
@@ -53,36 +56,36 @@ class IndividualSocialPost extends Component {
 
 // FETCHING DATA FOR COMPONENT
 	// if id was set by previous route
-		// var { id } = this.props.match.params // use in render method to access param
-		// if (typeof id !== 'undefined'){
-		// 	id = id.replace(":id=", "")
+		var { id } = this.props.match.params // use in render method to access param
+		if (typeof id !== 'undefined'){
+			id = id.replace(":id=", "")
 
-		// 	console.log('MAKING REQEST')
-		// 	axios.get(utils.baseUrl + '/socialposts/get-socialpost', 
-		// 		{
-		// 		    params: {
-		// 				endpoint: id,
-		// 		    }
-		// 		})
-		// 	.then((response) => {
+			console.log('MAKING REQEST')
+			axios.get(utils.baseUrl + '/socialposts/get-socialpost', 
+				{
+				    params: {
+						endpoint: id,
+				    }
+				})
+			.then((response) => {
 
-		// 		// console.log('RESPONSE')
-		// 		// console.log(response.data)
-		// 		this.props.set_current_socialpost(response.data)
-		// 		console.log('this.props.current_socialpost')		
-		// 		console.log(this.props.current_socialpost)		
-		// 		// this.setState( prev => ({...prev, 
-		// 		// 	comments: response.data,
-		// 		// 	show_comments: ( prev.show_comments === true ) ? false : true,
-		// 		// 	show_shares: false,
-		// 		// 	show_likes: false,
-		// 		// }))
+				// console.log('RESPONSE')
+				// console.log(response.data)
+				this.props.set_current_socialpost(response.data)
+				console.log('this.props.current_socialpost')		
+				console.log(this.props.current_socialpost)		
+				// this.setState( prev => ({...prev, 
+				// 	comments: response.data,
+				// 	show_comments: ( prev.show_comments === true ) ? false : true,
+				// 	show_shares: false,
+				// 	show_likes: false,
+				// }))
 				
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log(error);
-		// 	})
-		// }
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+		}
 		
 	}
 
@@ -175,10 +178,10 @@ class IndividualSocialPost extends Component {
 	  			margin:'auto',
 	  			marginTop:10,
 
-	  			borderWidth:0,
-	  			borderTopWidth:1,
-	  			borderStyle:'solid',
-	  			borderColor:utils.maroonColor,
+	  			// borderWidth:0,
+	  			// borderTopWidth:1,
+	  			// borderStyle:'solid',
+	  			// borderColor:utils.maroonColor,
 	  			paddingTop:10,
 	  		},
 	  		showSocialsButton:{
@@ -186,6 +189,23 @@ class IndividualSocialPost extends Component {
 	  			borderStyle:'solid',
 	  			borderColor:'white',
 	  			backgroundColor:'white',
+	  		},
+
+	  		createSocialObjectsContainer:{
+	  			width:'70%',
+	  			margin:'auto',
+	  			display:'flex',
+	  			flexDirection:'row',
+	  			justifyContent: 'space-between',
+	  			alignItems: 'center',
+	  			marginTop:20,
+	  			paddingBottom:20,
+
+	  			borderWidth:0,
+	  			borderTopWidth:1,
+	  			borderStyle:'solid',
+	  			borderColor:utils.maroonColor,
+	  			paddingTop:10,
 	  		},
 
 
@@ -284,6 +304,24 @@ class IndividualSocialPost extends Component {
 						</button>
 					</div>
 				</div>
+
+
+				<div style={styles.createSocialObjectsContainer}>
+					{/* 4th create individual child options like comment / like */}					
+					<ConnectedCreateLikeForSocialpost
+						parentDetailsPayload = { data }
+	  					redirectToNew = { false }
+					/>					
+					<ConnectedCreateCommentForSocialpost
+						parentDetailsPayload = { data }
+	  					redirectToNew = { false }
+					/>					
+					<ConnectedCreateShareForSocialpost
+						parentDetailsPayload = { data }
+	  					redirectToNew = { false }
+					/>
+				</div>
+
 
 
 		  		{(this.state.show_likes )?(

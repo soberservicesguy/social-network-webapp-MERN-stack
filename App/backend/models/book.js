@@ -28,8 +28,13 @@ BookSchema.pre('save', function(next) {
 
 	endpoint_number += 1
 
-	this.endpoint = String( endpoint_number )
-	this.timestamp = String( Date.now() )
+	// adding timestamp and endpoint when book is created ie likes are 0
+	if ( this.interested_users.length === 0 ){
+
+		this.endpoint = String( endpoint_number )
+		this.timestamp = String( Date.now() )
+
+	}
 	
     next();
 

@@ -106,6 +106,7 @@ class LoginContainer extends Component {
 				redirectToHomeCallback()
 				
 			} else {
+				console.log(response.data.msg)
 				console.log('couldnt login')
 			}
 

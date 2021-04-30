@@ -71,35 +71,40 @@ class SettingsContainer extends Component {
 			formData.append('cover_image', this.state.user_cover_image, this.state.user_cover_image.name)
 		}
 
-		axios.post(utils.baseUrl + '/users/update-settings', formData, 
-		// {
-		// 	onUploadProgress: progressEvent => {
-		// 		console.log( 'upload progress: ' + Math.round((progressEvent.loaded / progressEvent.total)*100) + '%' )
-		// }}
-		)
-		.then(function (response) {
 
-			if (response.data.success === true){
-				console.log('UPDATED SUCCESSFULLY')
+		if(this.state.user_avatar_image !== '' && this.state.user_cover_image !== ''){
 
-				console.log(response.data)
+			axios.post(utils.baseUrl + '/users/update-settings', formData, 
+			// {
+			// 	onUploadProgress: progressEvent => {
+			// 		console.log( 'upload progress: ' + Math.round((progressEvent.loaded / progressEvent.total)*100) + '%' )
+			// }}
+			)
+			.then(function (response) {
 
-				set_user_name_in_profile_callback(response)
-				set_user_avatar_image_callback(response)
-				set_user_cover_image_callback(response)
-				set_user_brief_intro_callback(response)
-				set_user_about_me_callback(response)
-				set_user_working_zone_callback(response)
-				set_user_education_callback(response)
-				set_user_contact_details_callback(response)
+				if (response.data.success === true){
+					console.log('UPDATED SUCCESSFULLY')
 
-				redirectToHomeCallback()
-			}
+					console.log(response.data)
 
-		})
-		.catch(function (error) {
-			console.log(error);
-		});	
+					set_user_name_in_profile_callback(response)
+					set_user_avatar_image_callback(response)
+					set_user_cover_image_callback(response)
+					set_user_brief_intro_callback(response)
+					set_user_about_me_callback(response)
+					set_user_working_zone_callback(response)
+					set_user_education_callback(response)
+					set_user_contact_details_callback(response)
+
+					redirectToHomeCallback()
+				}
+
+			})
+			.catch(function (error) {
+				console.log(error);
+			});	
+		}
+
 	}
 
 	render() {

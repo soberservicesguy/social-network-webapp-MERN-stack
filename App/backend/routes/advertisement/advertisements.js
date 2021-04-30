@@ -1,3 +1,5 @@
+// 
+
 require('../../models/advertisement');
 require('../../models/user');
 
@@ -195,34 +197,28 @@ router.get('/advertisements-list-with-children', function(req, res, next){
 	find().
 	limit(10).
 	then((advertisements)=>{
-		var newAdvertisements_list = []
-		advertisements.map((advertisement, index)=>{
-			var newAdvertisement = {}
 
-			newAdvertisement.ad_name = advertisement[ 'ad_name' ]
-			newAdvertisement.ad_image = base64_encode( advertisement[ 'ad_image' ] )
-			newAdvertisement.ad_description = advertisement[ 'ad_description' ]
-			newAdvertisement.endpoint = advertisement[ 'endpoint' ]
+		if (advertisements){
 
-			newAdvertisements_list.push({...newAdvertisement})
-			newAdvertisement = {}
-		});
+			var newAdvertisements_list = []
+			advertisements.map((advertisement, index)=>{
+				var newAdvertisement = {}
 
-		return newAdvertisements_list
-	})
+				newAdvertisement.ad_name = advertisement[ 'ad_name' ]
+				newAdvertisement.ad_image = base64_encode( advertisement[ 'ad_image' ] )
+				newAdvertisement.ad_description = advertisement[ 'ad_description' ]
+				newAdvertisement.endpoint = advertisement[ 'endpoint' ]
 
-	.then((newAdvertisements_list) => {
-
-		if (!newAdvertisements_list) {
-
-			res.status(401).json({ success: false, msg: "could not find Advertisements_list" });
-
-		} else {
+				newAdvertisements_list.push({...newAdvertisement})
+				newAdvertisement = {}
+			});
 
 			res.status(200).json(newAdvertisements_list);
 
-		}
+		} else {
+			res.status(401).json({ success: false, msg: "could not find Advertisements_list" });
 
+		}
 	})
 	.catch((err) => {
 

@@ -187,7 +187,7 @@ class NotificationsContainer extends Component {
 						{total_notifications.map((item, index)=>{
 
 							return (
-								<Grid item>
+								<Grid key={String(index)} item>
 									<ConnectedComponentForShowingNotification
 										dataPayloadFromParent = { item }
 									/>
@@ -206,7 +206,8 @@ class NotificationsContainer extends Component {
 								width:'100%',
 								color:utils.maroonColor,
 								paddingBottom:30,
-								fontWeight:'bold'
+								fontWeight:'bold',
+								marginTop:20,
 							}}
 						>
 							Show more

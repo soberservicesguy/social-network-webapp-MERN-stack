@@ -205,10 +205,11 @@ class SocialPostContainer extends Component {
 
 
 
-					{total_socialposts.map((item) => {
+					{total_socialposts.map((item, index) => {
 
 							return(
-								<Grid item key={String(item.key)}>
+								// <Grid item key={String(item.key)}>
+								<Grid item key={String(index)}>
 									{/*<div>
 										{item.key}
 									</div>*/}

@@ -60,41 +60,44 @@ class SignUpContainer extends Component {
 		formData.append('phone_number', this.state.phone_number)
 		formData.append('privileges_selected', this.state.privileges_selected)
 		formData.append('category', 'avatar')
+
 		if(this.state.user_image !== ''){
+
 			formData.append('avatar_image', this.state.user_image, this.state.user_image.name)
+
+			axios.post(utils.baseUrl + '/users/signup-and-get-privileges', formData, {
+				onUploadProgress: progressEvent => {
+					console.log( 'upload progress: ' + Math.round((progressEvent.loaded / progressEvent.total)*100) + '%' )
+				}
+			})
+			.then(function (response) {
+
+				console.log(`POST rest call response is${JSON.stringify(response.data, null, 1)}`);
+
+				if (response.data.success === true){
+
+					// REDIRECT TO LOGIN
+					redirectCallback()
+					// console.log('yes')
+
+				} else if (response.data.msg === 'user already exists, try another'){
+
+					console.log('ID already exists, just sign in')
+					redirectCallback()
+
+				} else {
+
+					console.log('user sign up failed, try again')
+
+				}
+
+			})
+			.catch(function (error) {
+				// console.log(error);
+			});	
 		}
 
 
-		axios.post(utils.baseUrl + '/users/signup-and-get-privileges', formData, {
-			onUploadProgress: progressEvent => {
-				console.log( 'upload progress: ' + Math.round((progressEvent.loaded / progressEvent.total)*100) + '%' )
-			}
-		})
-		.then(function (response) {
-
-			console.log(`POST rest call response is${JSON.stringify(response.data, null, 1)}`);
-
-			if (response.data.success === true){
-
-				// REDIRECT TO LOGIN
-				redirectCallback()
-				// console.log('yes')
-
-			} else if (response.data.msg === 'user already exists, try another'){
-
-				console.log('ID already exists, just sign in')
-				redirectCallback()
-
-			} else {
-
-				console.log('user sign up failed, try again')
-
-			}
-
-		})
-		.catch(function (error) {
-			// console.log(error);
-		});	
 	}
 
 	render() {

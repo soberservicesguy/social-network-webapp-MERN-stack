@@ -87,10 +87,9 @@ class AdvertisementContainer extends Component {
 
 					{total_advertisements.map((item, index)=>(
 
-						<Grid item>
+						<Grid key={String(index)} item>
 							<ConnectedAdvertisementCard
-								dataPayloadFromParent = { item }
-							
+								dataPayloadFromParent = { item }				
 							/>
 						</Grid>
 

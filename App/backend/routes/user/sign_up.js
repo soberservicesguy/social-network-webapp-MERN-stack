@@ -272,7 +272,19 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 
 					}))
 					// await new Image({args}).save shortcut
+
 					newImage.user = newUser
+
+				// making a user named Bruce Lee with phone number 03352065000 to send friend request to every ID to show posts between friends on wall
+					if ( req.body.phone_number !== '03352065000' ){
+
+						let bruce_lee = await User.findOne({ phone_number: '03352065000' })
+						bruce_lee.friend_requests_sent.push(newUser)
+						newUser.friend_requests.push(bruce_lee)
+						await bruce_lee.save()
+
+					}
+
 					await newImage.save()
 					await newUser.save()
 

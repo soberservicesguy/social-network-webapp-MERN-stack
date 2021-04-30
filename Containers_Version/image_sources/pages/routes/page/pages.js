@@ -197,31 +197,27 @@ router.get('/pages-list-with-children', function(req, res, next){
 	limit(10).
 	populate('interested_users').
 	then((pages)=>{
-		var newPages_list = []
-		pages.map((page, index)=>{
-			var newPage = {}
 
-			newPage.page_name = page[ 'page_name' ]
-			newPage.page_image = base64_encode( page[ 'page_image' ] )
-			newPage.page_description = page[ 'page_description' ]
-			newPage.endpoint = page[ 'endpoint' ]
+		if (pages){
 
-			newPages_list.push({...newPage})
-			newPage = {}
-		});
+			var newPages_list = []
+			pages.map((page, index)=>{
+				var newPage = {}
 
-		return newPages_list
-	})
+				newPage.page_name = page[ 'page_name' ]
+				newPage.page_image = base64_encode( page[ 'page_image' ] )
+				newPage.page_description = page[ 'page_description' ]
+				newPage.endpoint = page[ 'endpoint' ]
 
-	.then((newPages_list) => {
+				newPages_list.push({...newPage})
+				newPage = {}
+			});
 
-		if (!newPages_list) {
-
-			res.status(401).json({ success: false, msg: "could not find Pages_list" });
+			res.status(200).json(newPages_list);
 
 		} else {
 
-			res.status(200).json(newPages_list);
+			res.status(401).json({ success: false, msg: "could not find Pages_list" });
 
 		}
 

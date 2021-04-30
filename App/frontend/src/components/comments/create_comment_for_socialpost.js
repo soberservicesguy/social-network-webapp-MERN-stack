@@ -171,6 +171,7 @@ class CreateCommentForSocialpost extends Component {
 								onClick={ () => {
 									let setResponseInCurrentSocialpost = (arg) => this.props.set_current_socialpost(arg)
 									let redirectToNewSocialpost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+									let redirectToNew = this.props.redirectToNew
 
 									// first create child object
 									axios.post(utils.baseUrl + '/socialposts/create-comment-for-socialpost', 
@@ -186,7 +187,9 @@ class CreateCommentForSocialpost extends Component {
 										setResponseInCurrentSocialpost(response.data)
 
 										// change route to current_image	
-										redirectToNewSocialpost()							
+										if (redirectToNew){
+											redirectToNewSocialpost()							
+										}
 
 									})
 									.catch(function (error) {

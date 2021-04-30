@@ -106,7 +106,7 @@ class ComponentForShowingNotification extends Component {
 	  			to={`/socialposts/:id=${data.endpoint}`} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
 			>
-				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, }}>
+				<div style={{...styles.avatarAndUsernameContainer, alignItems:'center', marginBottom:30, width:'70%', margin:'auto'}}>
 					<div style={{...styles.avatarContainer}}>
 						<img 
 							alt="" 

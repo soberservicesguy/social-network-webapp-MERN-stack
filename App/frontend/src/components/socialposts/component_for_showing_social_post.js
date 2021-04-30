@@ -96,7 +96,11 @@ class ComponentForShowingSocialPost extends Component {
 		// const data = {type_of_post:'text_post', notification_type:'created_page'} 
 
 		const data = this.props.dataPayloadFromParent
-
+		console.log('data while going')
+		console.log(data)
+		if (typeof data === 'undefined' || data === null){
+			data = this.props.current_socialpost
+		}
 		// var base64Image = "data:image/jpeg;base64," + data.image_for_post
 
 
@@ -396,7 +400,9 @@ class ComponentForShowingSocialPost extends Component {
 	/* username and avatar start here */
 
 		let avatar_to_use = (typeof data.friends_user_avatar_image === "undefined" || data.friends_user_avatar_image === null) ? this.props.friends_user_avatar_image : data.friends_user_avatar_image
-		// avatar_to_use = data.friends_user_avatar_image
+		if (!avatar_to_use){
+			avatar_to_use = this.props.user_avatar_image
+		}
 		 
 
 		let username_avatar_in_created_post_type = (
@@ -416,7 +422,7 @@ class ComponentForShowingSocialPost extends Component {
 					</div>
 					<div style={styles.usernameContainer}>
 						<p style={styles.usernameText}>
-							{data.friends_user_name}
+							{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}
 						</p>
 					</div>
 				</div>
@@ -440,7 +446,7 @@ class ComponentForShowingSocialPost extends Component {
 					</div>
 					<div style={styles.usernameContainer}>
 						<p style={styles.usernameText}>
-							{data.user_name}
+							{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}
 						</p>
 					</div>
 				</div>
@@ -515,7 +521,7 @@ class ComponentForShowingSocialPost extends Component {
 
 			// video_source = `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`
 			console.log('socialpost_endpoint')
-			console.log(data.socialpost_endpoint)
+			console.log(data.endpoint)
 			// video_source = `http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`
 			// video_source = {uri: video_source}
 			// console.log(`http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`)
@@ -526,7 +532,7 @@ class ComponentForShowingSocialPost extends Component {
 						width="100%" 
 						height="300" 
 						controls
-						src={`http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`} // FOR REACT 
+						src={`http://localhost:3001/video-stream/video?endpoint=${ data.endpoint }`} // FOR REACT 
 						// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`}}  // FOR NATIVE
 						// src={{uri: `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`}} 
 					/>

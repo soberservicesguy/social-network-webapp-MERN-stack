@@ -159,7 +159,7 @@ class FriendsContainer extends Component {
 
 					{data_to_use.map((item, index)=>(
 
-						<Grid item>
+						<Grid key={String(index)} item>
 							<ConnectedComponentForShowingFriend
 								dataPayloadFromParent = { item }
 								showFriendsSuggestionsInstead = {this.props.showFriendsSuggestionsInstead}

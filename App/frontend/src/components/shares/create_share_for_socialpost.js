@@ -73,7 +73,7 @@ class CreateShareForSocialpost extends Component {
 						onClick={ () => {
 							let setResponseInCurrentSocialpost = (arg) => this.props.set_current_socialpost(arg)
 							let redirectToNewSocialpost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
-
+							let redirectToNew = this.props.redirectToNew
 							axios.post(utils.baseUrl + '/socialposts/create-share-for-socialpost', 
 								{
 									socialpost_endpoint: this.props.parentDetailsPayload.endpoint,
@@ -85,7 +85,10 @@ class CreateShareForSocialpost extends Component {
 								setResponseInCurrentSocialpost(response.data)
 
 								// change route to current_socialpost	
-								redirectToNewSocialpost()							
+
+								if (redirectToNew){
+									redirectToNewSocialpost()							
+								}
 
 							})
 							.catch(function (error) {

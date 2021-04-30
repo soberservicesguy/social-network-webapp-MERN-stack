@@ -102,6 +102,7 @@ class CreateLikeForPage extends Component {
 
 							let setResponseInCurrentPage = (arg) => this.props.set_current_page(arg)
 							let redirectToNewPage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+							let redirectToNew = this.props.redirectToNew
 
 							axios.post(utils.baseUrl + '/pages/create-interest-for-page', 
 								{
@@ -114,7 +115,9 @@ class CreateLikeForPage extends Component {
 								setResponseInCurrentPage(response.data)
 
 								// change route to current_blogpost	
-								redirectToNewPage()							
+								if (redirectToNew){
+									redirectToNewPage()							
+								}
 
 							})
 							.catch(function (error) {

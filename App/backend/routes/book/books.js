@@ -346,32 +346,27 @@ router.get('/books-list-with-children', function(req, res, next){
 	limit(10).
 	populate('interested_users').
 	then((books)=>{
-		var newBooks_list = []
-		books.map((book, index)=>{
-			var newBook = {}
 
-			newBook.book_name = book[ 'book_name' ]
-			newBook.book_image = base64_encode( book[ 'book_image' ] )
-			newBook.book_description = book[ 'book_description' ]
-			newBook.endpoint = book[ 'endpoint' ]
+		if (books){
 
-			newBooks_list.push({...newBook})
-			newBook = {}
-		});
+			var newBooks_list = []
+			books.map((book, index)=>{
+				var newBook = {}
 
-		return newBooks_list
-	})
+				newBook.book_name = book[ 'book_name' ]
+				newBook.book_image = base64_encode( book[ 'book_image' ] )
+				newBook.book_description = book[ 'book_description' ]
+				newBook.endpoint = book[ 'endpoint' ]
 
-	.then((newBooks_list) => {
-
-		if (!newBooks_list) {
-
-			res.status(401).json({ success: false, msg: "could not find Books_list" });
-
-		} else {
+				newBooks_list.push({...newBook})
+				newBook = {}
+			});
 
 			res.status(200).json(newBooks_list);
 
+		} else {
+
+			res.status(401).json({ success: false, msg: "could not find Books_list" });
 		}
 
 	})

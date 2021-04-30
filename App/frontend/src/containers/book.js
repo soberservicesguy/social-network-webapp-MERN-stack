@@ -67,7 +67,7 @@ class BookContainer extends Component {
 
 				{total_books.map((item, index)=>(
 
-					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+					<Grid  key={String(index)} item xs={12} sm={12} md={4} lg={4} xl={4}>
 						<ConnectedBookCard
 							dataPayloadFromParent = { item }
 							likes = { item.likes || [] }						

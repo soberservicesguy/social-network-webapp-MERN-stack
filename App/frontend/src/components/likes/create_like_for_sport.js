@@ -115,6 +115,7 @@ class CreateLikeForSport extends Component {
 
 							let setResponseInCurrentSport = (arg) => this.props.set_current_sport(arg)
 							let redirectToNewSport = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+							let redirectToNew = this.props.redirectToNew
 
 							axios.post(utils.baseUrl + '/sports/create-interest-for-sport', 
 								{
@@ -127,7 +128,10 @@ class CreateLikeForSport extends Component {
 								setResponseInCurrentSport(response.data)
 
 								// change route to current_blogpost	
-								redirectToNewSport()							
+								if (redirectToNew){
+									redirectToNewSport()							
+								}
+
 
 							})
 							.catch(function (error) {

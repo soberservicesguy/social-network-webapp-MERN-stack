@@ -256,31 +256,26 @@ router.get('/sports-list', function(req, res, next){
 	find().
 	limit(10).
 	then((sports)=>{
-		var newSports_list = []
-		sports.map((sport, index)=>{
-			var newSport = {}
+		if (sports){
 
-			newSport.sport_name = sport[ 'sport_name' ]
-			newSport.sport_image = base64_encode( sport[ 'sport_image' ] )
-			newSport.sport_description = sport[ 'sport_description' ]
-			newSport.endpoint = sport[ 'endpoint' ]
+			var newSports_list = []
+			sports.map((sport, index)=>{
+				var newSport = {}
 
-			newSports_list.push({...newSport})
-			newSport = {}
-		});
+				newSport.sport_name = sport[ 'sport_name' ]
+				newSport.sport_image = base64_encode( sport[ 'sport_image' ] )
+				newSport.sport_description = sport[ 'sport_description' ]
+				newSport.endpoint = sport[ 'endpoint' ]
 
-		return newSports_list
-	})
+				newSports_list.push({...newSport})
+				newSport = {}
+			});
 
-	.then((newSports_list) => {
-
-		if (!newSports_list) {
-
-			res.status(401).json({ success: false, msg: "could not find Sports_list" });
+			res.status(200).json(newSports_list);
 
 		} else {
 
-			res.status(200).json(newSports_list);
+			res.status(401).json({ success: false, msg: "could not find Sports_list" });
 
 		}
 

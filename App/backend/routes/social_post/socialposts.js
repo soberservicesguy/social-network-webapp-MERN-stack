@@ -458,10 +458,10 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 				let friends_user_avatar_image_to_use
 				let cloud_resp
 
-				console.log('friends_user_avatar_image')
-				console.log(friends_user_avatar_image)
-				console.log('object_files_hosted_at')
-				console.log(object_files_hosted_at)
+				// console.log('friends_user_avatar_image')
+				// console.log(friends_user_avatar_image)
+				// console.log('object_files_hosted_at')
+				// console.log(object_files_hosted_at)
 				friends_user_avatar_image_to_use = await get_image_to_display(friends_user_avatar_image, object_files_hosted_at)
 
 // DRYed OUT
@@ -502,8 +502,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 				}
 
-				console.log('req.query.request_number')
-				console.log(req.query.request_number)
+				// console.log('req.query.request_number')
+				// console.log(req.query.request_number)
 
 				let activities_for_first_request = last_n_activities_of_friend.slice(1).slice(-posts_to_show_per_friend)
 				let activities_for_subsequent_request = last_n_activities_of_friend.slice(1).slice( -posts_to_show_per_friend * req.query.request_number, -posts_to_show_per_friend * (req.query.request_number-1)  )
@@ -521,6 +521,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 					res.status(200).json([])
 					send_posts = false
 					break
+					// return
 				}
 
 
@@ -530,15 +531,22 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 				// let all_activities = await Promise.all(friend.activities.map(async (activity) => {
 				let all_activities = await Promise.all(last_n_activities_of_friend.map(async (activity) => {
 
-					if (typeof activity === 'object' && activity !== null){
-						activity = activity
-					} else {
-						activity = await Activity.findOne({_id: activity})
-					}
+					// if (typeof activity === 'object' && activity !== null){
+					// 	activity = activity
+					// } else {
+					// 	activity = await Activity.findOne({_id: activity})
+					// }
 
+					// if (typeof activity === 'String' && activity !== null){
+					// 	activity = await Activity.findOne({_id: activity})
+					// } else {
+					// 	activity = activity
+					// }
 
-					// console.log('activity.timestamp')
-					// console.log(activity.timestamp)
+					activity = await Activity.findOne({_id: activity})
+
+					// console.log('activity')
+					// console.log(activity)
 
 					// console.log({last_timestamp_of_checking_notification})
 
@@ -782,7 +790,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 			if(send_posts){
 				user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
 
-				console.log('activities_to_send')
+				console.log('activities_to_send in socialposts')
 				console.log(activities_to_send.length)
 
 				res.status(200).json(activities_to_send)
@@ -1139,6 +1147,8 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 // get posts from friends for wall
 router.get('/get-notifications-from-friends', passport.authenticate('jwt', { session: false }), async function(req, res, next){
 
+	console.log('GET NOTICATIONS TRIGGERED')
+
 	let posts_to_show_per_friend = 5
 
 	try{
@@ -1244,8 +1254,8 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 
 				activity = await Activity.findOne({_id: activity})
 
-				console.log('activity.timestamp')
-				console.log(activity.timestamp)
+				// console.log('activity.timestamp')
+				// console.log(activity.timestamp)
 
 				console.log({last_timestamp_of_checking_notification})
 
@@ -1392,7 +1402,7 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 			if(send_posts){
 				user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
 
-				console.log('activities_to_send')
+				console.log('activities_to_send in notification')
 				console.log(activities_to_send.length)
 
 				res.status(200).json(activities_to_send)
@@ -1619,15 +1629,28 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 
 	var socialpost_endpoint = req.body.socialpost_endpoint
 
+	console.log('socialpost_endpoint')
+	console.log(socialpost_endpoint)
+
 	var newLike = new Like({
 		_id: new mongoose.Types.ObjectId(),
 	})
+
+	SocialPost.find()
+	.then((posts) => {
+		posts.map((post) => console.log(`endpoint is ${post.endpoint}`))
+	})
+
+	let post = await SocialPost.findOne({endpoint: socialpost_endpoint})
+	console.log(post)
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
 	.then(async (user) => {
 					
 		newLike.user = user
 		user.socialpost_likes.push(newLike)
+
+
 
 	// finding BlogPost object
 		SocialPost.findOne({endpoint: socialpost_endpoint})

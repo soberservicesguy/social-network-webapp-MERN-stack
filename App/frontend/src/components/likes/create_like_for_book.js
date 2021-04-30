@@ -117,6 +117,7 @@ class CreateLikeForBook extends Component {
 
 							let setResponseInCurrentBook = (arg) => this.props.set_current_book(arg)
 							let redirectToNewBook = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+							let redirectToNew = this.props.redirectToNew
 
 							axios.post(utils.baseUrl + '/books/create-interest-for-book', 
 								{
@@ -129,7 +130,9 @@ class CreateLikeForBook extends Component {
 								setResponseInCurrentBook(response.data)
 
 								// change route to current_blogpost	
-								redirectToNewBook()							
+								if (redirectToNew){
+									redirectToNewBook()							
+								}
 
 							})
 							.catch(function (error) {

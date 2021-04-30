@@ -189,7 +189,7 @@ router.post('/login', async function(req, res, next){
 
 		} else {
 
-			res.status(401).json({ success: false, msg: "you entered the wrong password" });
+			res.status(200).json({ success: false, msg: "you entered the wrong password" });
 
 		}
 	    // console.log(user);
@@ -317,8 +317,17 @@ router.post('/accept-friend-request', passport.authenticate(['jwt'], { session: 
 	// console.log('req.body.endpoint')
 	// console.log(req.body.endpoint)
 
+	console.log('req.user.user_object.phone_number')
+	console.log(req.user.user_object.phone_number)
+
+	console.log('req.body.endpoint')
+	console.log(req.body.endpoint)
+
 	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
 	let user_to_accept_request = await User.findOne({ endpoint: req.body.endpoint })
+
+	console.log('user_to_accept_request')
+	console.log(user_to_accept_request)
 
 	user.friends.push(user_to_accept_request)
 
@@ -431,26 +440,43 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 
 	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
 
+	// console.log('user._id')
+	// console.log(user._id)
+
 	list_of_promises.push(user)
 
 	let { friends } = user
 	let non_friends_ids = []
 
+	// console.log('friends')
+	// console.log(friends)
 
-	let all_users_ids = await User.find({})
 
-	let last_n_users_ids = all_users_ids.slice(1).slice(-users_count_to_show_for_suggestion)
+	let all_users = await User.find({})
+
+	// console.log('all_users')
+	// console.log(all_users)
+
+	let last_n_users_ids = all_users.slice(1).slice(-users_count_to_show_for_suggestion)
 	
-	non_friends_ids = last_n_users_ids.filter(
-		function(some_user_id){
-			return !friends.includes(some_user_id) || some_user_id !== user._id
+	non_friends = last_n_users_ids.filter(
+		function(some_user){
+			// console.log({some_user:some_user._id, user:user._id})
+			return !friends.includes(some_user._id) && String(some_user._id) !== String(user._id) 
 		}
 	)
 
-	let friend_suggestions = []
-	await Promise.all( non_friends_ids.map(async (non_friend_id) => {
+	// console.log('non_friends')
+	// console.log(non_friends)
 
-		let non_friend = await User.findOne({ _id: non_friend_id })
+
+	let friend_suggestions = []
+	await Promise.all( non_friends.map(async (non_friend_object) => {
+
+		// console.log('non_friend')
+		// console.log(non_friend_object)
+
+		let non_friend = await User.findOne({ _id: non_friend_object._id })
 
 		// console.log('non_friend')
 		// console.log(non_friend)
@@ -468,6 +494,7 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 			endpoint: endpoint,
 			user_name_in_profile: user_name_in_profile, 
 		})
+
 
 	}))
 

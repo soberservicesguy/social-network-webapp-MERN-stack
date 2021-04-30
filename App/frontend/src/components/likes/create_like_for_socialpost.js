@@ -74,20 +74,27 @@ class CreateLikeForSocialpost extends Component {
 
 							let setResponseInCurrentSocialpost = (arg) => this.props.set_current_socialpost(arg)
 							let redirectToNewSocialpost = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+							let redirectToNew = this.props.redirectToNew
+
+							let endpoint = (this.props.parentDetailsPayload.endpoint) ? this.props.parentDetailsPayload.endpoint : this.props.current_socialpost.endpoint
+
+							console.log(`GOING TO USE ${endpoint} AS ENDPOINT`)
 
 							axios.post(utils.baseUrl + '/socialposts/create-like-for-socialpost', 
 								{
-									socialpost_endpoint: this.props.parentDetailsPayload.endpoint,
+									socialpost_endpoint: endpoint,
 								})
 							.then(function (response) {
 								console.log('LIKED')
 								console.log(response.data) // current blogpost screen data
 								
 								// set to current parent object
-								setResponseInCurrentSocialpost(response.data)
+								setResponseInCurrentSocialpost({...response.data, endpoint: endpoint})
 
 								// change route to current_blogpost	
-								redirectToNewSocialpost()							
+								if (redirectToNew){
+									redirectToNewSocialpost()
+								}
 
 							})
 							.catch(function (error) {
