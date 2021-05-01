@@ -266,6 +266,15 @@ class RootRouterContainer extends Component {
 							)
 						)}/>
 
+						<Route exact path="/" render={() => (
+							(this.props.isSignedIn) ? (
+								<Redirect to="/socialposts"/>
+							) : (
+								<Redirect to="/login"/>
+							)
+						)}/>
+
+
 						<Route exact path="/*" render={() => (
 							(this.props.isSignedIn) ? (
 								<Redirect to="/socialposts"/>
