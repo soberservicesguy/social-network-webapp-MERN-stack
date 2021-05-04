@@ -33,6 +33,7 @@ class CreateBook extends Component {
 			book_name: '',
 			book_image: '',
 			book_description: '',
+			new_book_id: '',
 		}
 
 	}
@@ -114,7 +115,7 @@ class CreateBook extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Book" }} />
+			return <Redirect to = {{ pathname: `/books/:id=${this.state.new_book_id}` }} />
 
 		} else {
 
@@ -183,6 +184,8 @@ class CreateBook extends Component {
 							onClick={ () => {
 								let setResponseInCurrentBook = (arg) => this.props.set_current_book(arg)
 								let redirectToNewBook = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+								let setNewBookIDToState = (response) => this.setState(prev => ({...prev, new_book_id: response.data.new_book.book_endpoint }))
+
 
 								const formData = new FormData()
 								formData.append('book_name', this.state.book_name)
@@ -191,10 +194,14 @@ class CreateBook extends Component {
 
 								axios.post(utils.baseUrl + '/books/create-book-with-user', formData)
 								.then(function (response) {
-									console.log(response.data) // current book screen data
+									// console.log(response.data) // current book screen data
+									console.log('response.data.book_endpoint')
+									console.log(response.data.book_endpoint)
+
+									setNewBookIDToState(response)
 									
 									// set to current parent object
-									setResponseInCurrentBook(response.data)
+									setResponseInCurrentBook(response.data.new_book)
 
 									// change route to current_book
 									redirectToNewBook()

@@ -19,6 +19,8 @@ const multer = require('multer');
 const path = require('path')
 
 const { 
+	get_image_to_display,
+
 	get_multer_storage_to_use,
 	get_file_storage_venue,
 	get_file_path_to_use,
@@ -101,6 +103,7 @@ router.post('/create-page-with-user', passport.authenticate('jwt', { session: fa
 						// page_image: `./assets/images/uploads/page_images/${filename_used_to_store_image_in_assets}`,
 						page_description: req.body.page_description,
 						// endpoint: req.body.endpoint,
+						object_files_hosted_at: get_file_storage_venue(),
 
 					});
 
@@ -112,44 +115,47 @@ router.post('/create-page-with-user', passport.authenticate('jwt', { session: fa
 						}
 						// assign user object then save
 						User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-						.then((user) => {
+						.then(async (user) => {
 							if (user){
 
 								newPage.page_created_by_user = user
 								newPage.save()
 
 								let base64_encoded_image
+								base64_encoded_image = await get_image_to_display(newPage.page_image, newPage.object_files_hosted_at)
 
 								// in response sending new image too with base64 encoding
-								if (use_gcp_storage){
+								// if (use_gcp_storage){
 
-									{(async () => {
+								// 	{(async () => {
 
-										cloud_resp = await axios.get(newPage.page_image)
-										base64_encoded_image = base64_encode( cloud_resp.data )
+								// 		cloud_resp = await axios.get(newPage.page_image)
+								// 		base64_encoded_image = base64_encode( cloud_resp.data )
 
-									})()}
+								// 	})()}
 
-								} else if (use_aws_s3_storage) {
+								// } else if (use_aws_s3_storage) {
 
-									{(async () => {
+								// 	{(async () => {
 
-										cloud_resp = await axios.get(newPage.page_image)
-										base64_encoded_image = base64_encode( cloud_resp.data )
+								// 		cloud_resp = await axios.get(newPage.page_image)
+								// 		base64_encoded_image = base64_encode( cloud_resp.data )
 
-									})()}
+								// 	})()}
 
 
-								} else {
+								// } else {
 
-									base64_encoded_image = base64_encode( newPage.page_image )
+								// 	base64_encoded_image = base64_encode( newPage.page_image )
 
-								}
+								// }
 
 								let new_page = {
-									page_name: newPage,
+									page_name: newPage.page_name,
 									page_image: base64_encoded_image,
-									page_description: newPage,
+									page_description: newPage.page_description,
+									page_endpoint: newPage.endpoint,
+
 								}
 
 								res.status(200).json({ success: true, msg: 'new page saved', new_page: new_page});	
@@ -190,28 +196,28 @@ router.post('/create-page-with-user', passport.authenticate('jwt', { session: fa
 })
 
 // USED
-router.get('/pages-list-with-children', function(req, res, next){
+router.get('/pages-list-with-children', async function(req, res, next){
 
 	Page.
 	find().
 	limit(10).
 	populate('interested_users').
-	then((pages)=>{
+	then(async (pages)=>{
 
 		if (pages){
 
 			var newPages_list = []
-			pages.map((page, index)=>{
+			let all_pages = await Promise.all(pages.map(async (page, index)=>{
 				var newPage = {}
 
 				newPage.page_name = page[ 'page_name' ]
-				newPage.page_image = base64_encode( page[ 'page_image' ] )
+				newPage.page_image = await get_image_to_display(page.page_image, page.object_files_hosted_at)
 				newPage.page_description = page[ 'page_description' ]
 				newPage.endpoint = page[ 'endpoint' ]
 
 				newPages_list.push({...newPage})
 				newPage = {}
-			});
+			}));
 
 			res.status(200).json(newPages_list);
 

@@ -57,12 +57,24 @@ class SettingsContainer extends Component {
 
 		// upload file with axios request
 		const formData = new FormData()
-		formData.append('user_name_in_profile', this.state.user_name_in_profile)
-		formData.append('user_brief_intro', this.state.user_brief_intro)
-		formData.append('user_about_me', this.state.user_about_me)
-		formData.append('user_working_zone', this.state.user_working_zone)
-		formData.append('user_education', this.state.user_education)
-		formData.append('user_contact_details', this.state.user_contact_details)
+		if (this.state.user_name_in_profile !== ''){
+			formData.append('user_name_in_profile', this.state.user_name_in_profile)
+		}
+		if (this.state.user_brief_intro !== ''){
+			formData.append('user_brief_intro', this.state.user_brief_intro)
+		}
+		if (this.state.user_about_me !== ''){
+			formData.append('user_about_me', this.state.user_about_me)
+		}
+		if (this.state.user_working_zone !== ''){
+			formData.append('user_working_zone', this.state.user_working_zone)
+		}
+		if (this.state.user_education !== ''){
+			formData.append('user_education', this.state.user_education)
+		}
+		if (this.state.user_contact_details !== ''){
+			formData.append('user_contact_details', this.state.user_contact_details)
+		}
 
 		if(this.state.user_avatar_image !== ''){
 			formData.append('avatar_image', this.state.user_avatar_image, this.state.user_avatar_image.name)

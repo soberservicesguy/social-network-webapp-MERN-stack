@@ -10,9 +10,11 @@ import {
 import axios from 'axios';
 import firebase from 'firebase';
 
+
 import {
-	ComponentForShowingAdvertisement
-} from "."
+	ConnectedComponentForShowingAdvertisement,
+} from "../../redux_stuff/connected_components"
+
 
 import utils from "../../utilities";
 
@@ -41,7 +43,7 @@ class AdvertisementCard extends Component {
 		  	<div>
 
 				{/* first the parent / card component */}
-		  		<ComponentForShowingAdvertisement
+		  		<ConnectedComponentForShowingAdvertisement
 					dataPayloadFromParent = { this.props.dataPayloadFromParent }
 		  		/>
 

@@ -20,6 +20,8 @@ require('../../models/activity');
 const Activity = mongoose.model('Activity');
 
 const {
+	get_image_to_display,
+
 	get_multer_storage_to_use,
 	get_file_storage_venue,
 	get_file_path_to_use,
@@ -104,7 +106,7 @@ router.post('/create-book-with-user', passport.authenticate('jwt', { session: fa
 						// book_image: `./assets/images/uploads/book_images/${filename_used_to_store_image_in_assets}`,
 						book_description: req.body.book_description,
 						// endpoint: req.body.parent.endpoint,
-
+						object_files_hosted_at: get_file_storage_venue(),
 					});
 
 					newBook.save(function (err, newBook) {
@@ -115,7 +117,7 @@ router.post('/create-book-with-user', passport.authenticate('jwt', { session: fa
 						}
 						// assign user object then save
 						User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-						.then((user) => {
+						.then(async (user) => {
 							if (user){
 
 								newBook.book_uploaded_by_user = user
@@ -123,37 +125,46 @@ router.post('/create-book-with-user', passport.authenticate('jwt', { session: fa
 
 								let base64_encoded_image
 
+								base64_encoded_image = await get_image_to_display(newBook.book_image, newBook.object_files_hosted_at)
+
 								// in response sending new image too with base64 encoding
-								if (use_gcp_storage){
 
-									{(async () => {
+// DRYed OUT
+								// if (use_gcp_storage){
 
-										cloud_resp = await axios.get(newBook.book_image)
-										base64_encoded_image = base64_encode( cloud_resp.data )
+								// 	{(async () => {
 
-									})()}
-
-								} else if (use_aws_s3_storage) {
-
-									{(async () => {
-
-										cloud_resp = await axios.get(newBook.book_image)
-										base64_encoded_image = base64_encode( cloud_resp.data )
-
-									})()}
+								// 		cloud_resp = await axios.get(newBook.book_image)
+								// 		base64_encoded_image = base64_encode( cloud_resp.data )
 
 
-								} else {
+								// 	})()}
 
-									base64_encoded_image = base64_encode( newBook.book_image )
+								// } else if (use_aws_s3_storage) {
 
-								}
+								// 	{(async () => {
+
+								// 		cloud_resp = await axios.get(newBook.book_image)
+								// 		base64_encoded_image = base64_encode( cloud_resp.data )
+
+								// 	})()}
+
+
+								// } else {
+
+								// 	base64_encoded_image = base64_encode( newBook.book_image )
+
+								// }
 
 								let new_book = {
 									book_name: newBook.book_name,
 									book_image: base64_encoded_image,
 									book_description: newBook.book_description,
+									book_endpoint: newBook.endpoint,
 								}
+
+								console.log('newBook.endpoint')
+								console.log(newBook.endpoint)
 
 								res.status(200).json({ success: true, msg: 'new book saved', new_book: new_book});	
 
@@ -277,10 +288,13 @@ router.get('/get-all-likes-of-book',async function(req, res, next){
 
 		// 	if (user_object){
 
+				let base64_encoded_image = await get_image_to_display(user_object.user_avatar_image, user_object.object_files_hosted_at)
+
 				// return user_object
 				return {
 					user_name:user_object.user_name_in_profile,
-					user_avatar_image:base64_encode(user_object.user_avatar_image),
+					// user_avatar_image:base64_encode(user_object.user_avatar_image),
+					user_avatar_image: base64_encoded_image,
 				}
 
 		// 	} else {
@@ -339,28 +353,29 @@ router.get('/get-all-likes-of-book',async function(req, res, next){
 
 // get books_list_with_children
 // USED
-router.get('/books-list-with-children', function(req, res, next){
+router.get('/books-list-with-children', async function(req, res, next){
 
 	Book.
 	find().
 	limit(10).
 	populate('interested_users').
-	then((books)=>{
+	then(async (books)=>{
 
 		if (books){
 
 			var newBooks_list = []
-			books.map((book, index)=>{
+			let all_books = await Promise.all(books.map(async (book, index)=>{
 				var newBook = {}
 
 				newBook.book_name = book[ 'book_name' ]
-				newBook.book_image = base64_encode( book[ 'book_image' ] )
+
+				newBook.book_image = await get_image_to_display(book.book_image, book.object_files_hosted_at)
 				newBook.book_description = book[ 'book_description' ]
 				newBook.endpoint = book[ 'endpoint' ]
 
 				newBooks_list.push({...newBook})
 				newBook = {}
-			});
+			}));
 
 			res.status(200).json(newBooks_list);
 

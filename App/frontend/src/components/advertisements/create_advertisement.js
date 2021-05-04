@@ -35,6 +35,8 @@ class CreateAdvertisement extends Component {
 			ad_description: '',
 			ad_image: null,
 
+			new_ad_id:'',
+
 			tracked_width1: 0,
 			tracked_height1: 0,
 
@@ -133,7 +135,8 @@ class CreateAdvertisement extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/about-me" }} />
+			return <Redirect to = {{ pathname: `/advertisements/:id=${this.state.new_ad_id}` }} />
+
 
 		} else {
 
@@ -203,6 +206,8 @@ class CreateAdvertisement extends Component {
 
 								let setResponseInCurrentAdvertisement = (arg) => this.props.set_current_advertisement(arg)
 								let redirectToNewAdvertisement = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+								let setNewAdIDToState = (response) => this.setState(prev => ({...prev, new_ad_id: response.data.new_advertisement.ad_endpoint }))	
+
 
 								const formData = new FormData()
 								if (this.state.ad_description !== ''){
@@ -220,10 +225,12 @@ class CreateAdvertisement extends Component {
 
 								axios.post(utils.baseUrl + '/ad/create-advertisement-with-user', formData)
 								.then(function (response) {
-									console.log(response.data) // current advertisement screen data
+									// console.log(response.data) // current advertisement screen data
 									
+									setNewAdIDToState(response)
+
 									// set to current parent object
-									setResponseInCurrentAdvertisement(response.data)
+									setResponseInCurrentAdvertisement(response.data.new_advertisement)
 
 									// change route to current_advertisement
 									redirectToNewAdvertisement()

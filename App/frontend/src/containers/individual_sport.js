@@ -14,15 +14,18 @@ import withResponsiveness from "../responsiveness_hook";
 
 import { withRouter } from "react-router-dom";
 
-const styles = theme => ({
-  root: {
-    height: 48,
-    // color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
+
+
+import {
+	SummarizeLikesOfSport,
+	ShowLikesOfSport,
+} from "../components/likes/"
+
+import {
+	ConnectedComponentForShowingSport,
+	ConnectedCreateLikeForSport,
+} from "../redux_stuff/connected_components"
+
 
 
 class IndividualIndividualSport extends Component {
@@ -41,46 +44,71 @@ class IndividualIndividualSport extends Component {
 
 // RENDER METHOD
 	render() {
-		const { classes } = this.props;
-	  	const {_xs, _sm, _md, _lg, _xl} = this.props
+
+		const styles = {
+			showSocialsContainer:{
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				width:'95%',
+				margin:'auto',
+				marginTop:10,
+			},
+			showSocialsButton:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white'
+			},
+			createSocialObjectsContainer:{
+				width:'90%',
+				margin:'auto',
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+				marginTop:20,
+				paddingBottom:20,
+
+				borderWidth:0,
+				borderTopWidth:1,
+				borderStyle:'solid',
+				borderColor:utils.maroonColor,
+				paddingTop:10,
+			},
+		}
+
+
+
+	  	let data = this.props.current_sport
 
 	  	return (
-	  		<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+	  		<div>
 
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
+		  		<div>
+					{/* first the parent / card component */}
+			  		<ConnectedComponentForShowingSport
+						dataPayloadFromParent = { this.props.dataPayloadFromParent }
+			  		/>
+		  		</div>
 
-	  				<Grid item>
-	  				</Grid>
+	  			<React.Fragment>
 
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
+					<div style={styles.showSocialsContainer}>
+						<ShowLikesOfSport
+							dataPayloadFromParent = { data }
+							likes_quantity = { data.likes_quantity }
+						/>
+						<ConnectedCreateLikeForSport
+							parentDetailsPayload = { data }
+		  					redirectToNew = { true }
+						/>					
+					</div>
 
-	  			<Grid item container direction="column" xs={12} sm={12} md={8} lg={6}>
-	  				<Grid item>
-	  				</Grid>
+				</React.Fragment>
 
-	  				<Grid item>
-	  				</Grid>
+	  		</div>
 
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  		</Grid>
 		);
 	}
 }
@@ -89,4 +117,4 @@ IndividualIndividualSport.defaultProps = {
 	//:,
 };
 
-export default withRouter(withResponsiveness(withStyles(styles)(IndividualIndividualSport)));
+export default withRouter(IndividualIndividualSport);

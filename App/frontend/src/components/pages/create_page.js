@@ -73,6 +73,7 @@ class CreatePage extends Component {
 			page_name: '',
 			page_image: '',
 			page_description: '',
+			new_page_id:'',
 		}
 
 	}
@@ -154,7 +155,8 @@ class CreatePage extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Page" }} />
+			return <Redirect to = {{ pathname: `/pages/:id=${this.state.new_page_id}` }} />
+
 
 		} else {
 
@@ -228,6 +230,8 @@ class CreatePage extends Component {
 
 								let setResponseInCurrentPage = (arg) => this.props.set_current_page(arg)
 								let redirectToNewPage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+								let setNewPageIDToState = (response) => this.setState(prev => ({...prev, new_page_id: response.data.page_endpoint }))	
+
 
 								const formData = new FormData()
 								if (this.state.page_description !== ''){
@@ -242,7 +246,9 @@ class CreatePage extends Component {
 
 								axios.post(utils.baseUrl + '/pages/create-page-with-user', formData)
 								.then(function (response) {
-									console.log(response.data) // current page screen data
+									// console.log(response.data) // current page screen data
+
+									setNewPageIDToState(response)
 									
 									// set to current parent object
 									setResponseInCurrentPage(response.data)

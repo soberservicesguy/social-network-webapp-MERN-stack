@@ -1,3 +1,8 @@
+import { 
+	// withRouter,
+	Link,
+} from "react-router-dom";
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 					
@@ -81,14 +86,20 @@ class ComponentForShowingPage extends Component {
 
 		return (
 			<div style={styles.outerContainer}>
-				<div style={styles.imageContainer}>
-					<img 
-						src={base64Image} 
-						// src = {utils.image}
-						alt="" 
-						style={styles.imageStyle}
-					/>
-				</div>
+
+		  		<Link 
+		  			to={{pathname:`/pages/:id=${data.endpoint}`}} 
+		  			style={{color: 'inherit', textDecoration: 'inherit'}}
+				>
+					<div style={styles.imageContainer}>
+						<img 
+							src={base64Image} 
+							// src = {utils.image}
+							alt="" 
+							style={styles.imageStyle}
+						/>
+					</div>
+				</Link>
 
 				<div style={styles.textContainer}>
 					<p style={styles.heading}>

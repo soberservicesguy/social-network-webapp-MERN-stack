@@ -44,9 +44,9 @@ class ProfileHeader extends Component {
 			backgroundImage:{
 				height:200,
 				width:'95%',
-				backgroundImage: `url("data:image/jpeg;base64,${this.props.user_cover_image}")`,
+				backgroundImage: (this.props.user_cover_image) ? `url("data:image/jpeg;base64,${this.props.user_cover_image}")` : `url("${utils.image}")`,
 				// backgroundColor: '#cccccc', // Used if the image is unavailable
-				backgroundPosition: 'center',
+				backgroundPosition: (this.props.user_cover_image) ? 'center' : 'stretch',
 				backgroundRepeat: 'no-repeat',
 				backgroundSize: 'auto', // '300px 100px' | '75% 50%' | 'cover' | 'contain' | 'none'
 			},

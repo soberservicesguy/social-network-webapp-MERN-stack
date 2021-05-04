@@ -81,7 +81,7 @@ export const mapStateToProps = state => {
 		total_pages: state.pages.totalPage,
 		current_page: state.pages.currentPage,
 
-		total_books: state.books.totalBook,
+		total_books: state.books.totalBooks,
 		current_book: state.books.currentBook,
 
 		total_sport: state.sports.totalSport,

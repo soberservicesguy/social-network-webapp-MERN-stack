@@ -82,9 +82,6 @@ class PageContainer extends Component {
 						</div>
 					</div>
 
-					<Grid item>
-			  			<ConnectedCreatePage/>
-			  		</Grid>
 
 					{total_pages.map((item, index)=>(
 
@@ -96,6 +93,10 @@ class PageContainer extends Component {
 						</Grid>
 
 					))}
+
+					<Grid item>
+			  			<ConnectedCreatePage/>
+			  		</Grid>
 					
 				</div>
 				

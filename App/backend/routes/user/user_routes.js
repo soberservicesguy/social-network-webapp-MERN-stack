@@ -82,11 +82,38 @@ router.get('/protected', passport.authenticate(['facebook', 'google', 'jwt'], { 
 router.get('/user-details', async function(req, res, next){
 	
 	let user = await User.findOne({ endpoint: req.query.user_id })
+
+	let user_cover_image_to_use
+	let user_avatar_image
+
+	try{
+		user_cover_image_to_use = await get_image_to_display(user.user_cover_image, user.object_files_hosted_at)
+	} catch {
+
+	}
+
+	try{
+		user_avatar_image = await get_image_to_display(user.user_avatar_image, user.object_files_hosted_at)
+	} catch {
+
+	}
+
+	let user_details = {}
+
+	if (user_cover_image_to_use) {
+		user_details['user_cover_image'] = user_cover_image_to_use 
+	}
+
+	if (user_avatar_image) {
+		user_details['user_avatar_image'] = user_avatar_image 
+	}
+
 	res.status(200).json({
+		...user_details,
 		user_name_in_profile: user.user_name_in_profile,
-		user_avatar_image: base64_encode(user.user_avatar_image),
-		user_cover_image: base64_encode(user.user_cover_image),
 		total_friends: user.total_friends,
+		// user_avatar_image: base64_encode(user.user_avatar_image),
+		// user_cover_image: base64_encode(user.user_cover_image),
 	});
 
 })
@@ -165,25 +192,59 @@ router.post('/login', async function(req, res, next){
 			// console.log(privileges_list)
 
 		// we need to look where image is hosted and then get it from there
-			// let user_cover_image_to_use
 
 			let user_avatar_image_to_use = await get_image_to_display(user.user_avatar_image, user.object_files_hosted_at)
+			let user_cover_image_to_use
 
-			let user_details = {
-				// user_cover_image: user_cover_image_to_use,
-				user_avatar_image: user_avatar_image_to_use,
+			try {
 
-				user_name_in_profile: user.user_name_in_profile,
-				user_brief_intro: user.user_brief_intro,
-				user_about_me: user.user_about_me,
-				user_working_zone: user.user_working_zone,
-				user_education: user.user_education,
-				user_contact_details: user.user_contact_details,
+				user_cover_image_to_use = await get_image_to_display(user.user_cover_image, user.object_files_hosted_at)
 
-				total_friends: user.total_friends,
-		
-				endpoint: user.endpoint,
+			} catch (err) {
+
+				console.log('No cover image available, fetching only avatar image')
+
 			}
+
+			let user_details
+			(user_cover_image_to_use) ? (
+
+				user_details = {
+					user_cover_image: user_cover_image_to_use,
+					user_avatar_image: user_avatar_image_to_use,
+
+					user_name_in_profile: user.user_name_in_profile,
+					user_brief_intro: user.user_brief_intro,
+					user_about_me: user.user_about_me,
+					user_working_zone: user.user_working_zone,
+					user_education: user.user_education,
+					user_contact_details: user.user_contact_details,
+
+					total_friends: user.total_friends,
+				
+					endpoint: user.endpoint,
+				}
+
+			) : (
+
+				user_details = {
+					// user_cover_image: user_cover_image_to_use,
+					user_avatar_image: user_avatar_image_to_use,
+
+					user_name_in_profile: user.user_name_in_profile,
+					user_brief_intro: user.user_brief_intro,
+					user_about_me: user.user_about_me,
+					user_working_zone: user.user_working_zone,
+					user_education: user.user_education,
+					user_contact_details: user.user_contact_details,
+
+					total_friends: user.total_friends,
+				
+					endpoint: user.endpoint,
+				}
+
+			)
+
 
 			res.status(200).json({ success: true, token: tokenObject.token, expiresIn: tokenObject.expires, privileges: privileges_list, user_details: user_details })
 

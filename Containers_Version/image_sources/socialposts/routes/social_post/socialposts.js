@@ -3,6 +3,11 @@ require('../../models/comment');
 require('../../models/like');
 require('../../models/share');
 require('../../models/user');
+require('../../models/advertisement');
+require('../../models/book');
+require('../../models/page');
+require('../../models/sport');
+
 
 const passport = require('passport');
 const { isAllowedSurfing } = require('../authMiddleware/isAllowedSurfing')
@@ -18,6 +23,10 @@ const Comment = mongoose.model('Comment');
 const Like = mongoose.model('Like');
 const Share = mongoose.model('Share');
 const User = mongoose.model('User');
+const Advertisement = mongoose.model('Advertisement');
+const Book = mongoose.model('Book');
+const Page = mongoose.model('Page');
+const Sport = mongoose.model('Sport');
 
 
 require('../../models/activity');
@@ -883,13 +892,14 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 		// }
 
 
-		console.log('user_owning_socialposts')
-		console.log(user_owning_socialposts)
+		// console.log('user_owning_socialposts')
+		// console.log(user_owning_socialposts)
+
 		// we have reduced activities link for each user to last 50 in user model
 		let last_n_activities_of_friend = user_owning_socialposts.activities
 
-		console.log('last_n_activities_of_friend')
-		console.log(last_n_activities_of_friend)
+		// console.log('last_n_activities_of_friend')
+		// console.log(last_n_activities_of_friend)
 
 		if ( req.query.request_number === 1 ){
 			
@@ -929,7 +939,6 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 			let image_in_base64_encoding
 
 			switch (activity_type) {
-
 				case "created_post":
 
 					var { post_created } = activity
@@ -937,6 +946,31 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 					var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_created
 					// incorporating notification_type
 					post_details = { ...post_details, notification_type:'created_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
+				// DRYed out
+					// switch (type_of_post) {
+					// 	case "text_post":
+					// 		let { post_text } = post_created
+					// 		post_details = { ...post_details, post_text }
+					// 		break
+					// 	case "image_post":
+					// 		let { image_for_post } = post_created
+					// 		post_details = { ...post_details, image_for_post }
+					// 		break
+					// 	case "video_post":
+					// 		let { video_for_post, video_thumbnail_image } = post_created
+					// 		post_details = { ...post_details, video_for_post, video_thumbnail_image }									
+					// 		break
+					// 	case "text_with_image_post":
+					// 		let { post_text, image_for_post } = post_created
+					// 		post_details = { ...post_details, post_text, image_for_post }									
+					// 		break
+					// 	case "text_with_video_post":
+					// 		let { post_text, video_for_post, video_thumbnail_image } = post_created
+					// 		post_details = { ...post_details, post_text, video_for_post, video_thumbnail_image }									
+					// 		break
+					// 	default:
+					// 		null
+					// }			
 					post_details = await get_post_details(type_of_post, post_created, post_details)
 					// console.log('post_details')
 					// console.log(post_details)
@@ -985,15 +1019,16 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 
 				case "commented_on_post":
 
-					var { post_commented, comment_link } = activity
-					let original_post = await SocialPost.findOne({_id: post_commented})
-					let comment_object = await Comment.findOne({_id: comment_link})
-					var { comment_text } = comment_object
+					var { post_commented } = activity
+					post_commented = await Comment.findOne({_id: post_commented})
+					let original_post = post_commented.socialpost
+					original_post = await SocialPost.findOne({_id: original_post})
+					var { comment_text } = post_commented
 					var { type_of_post, total_likes, total_shares, total_comments, endpoint } = original_post
 					// incorporating notification_type
 					post_details = { ...post_details, notification_type:'commented_on_post', activity_type, comment_text, type_of_post, total_likes, total_shares, total_comments, endpoint }
 					// incorporating user_owning_post user_name and user_avatar_image
-					user_owning_post = await User.findOne({_id: original_post.user})
+					user_owning_post = await User.findOne({_id: post_commented.user})
 					var { user_name, user_avatar_image, object_files_hosted_at } = user_owning_post
 
 					image_in_base64_encoding = await get_image_to_display(user_avatar_image, object_files_hosted_at)
@@ -1025,7 +1060,7 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 
 					image_in_base64_encoding = await get_image_to_display(book_image, object_files_hosted_at)
 
-					post_details = { ...post_details, notification_type:'got_interested_in_book', activity_type, book_name, book_image: image_in_base64_encoding, book_description, endpoint }
+					post_details = { ...post_details, notification_type:'got_interested_in_book', activity_type, book_name, book_image: get_image_to_display, book_description, endpoint }
 					activities_to_send.push(post_details)
 					break
 
@@ -1109,6 +1144,187 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 
 				default:
 					null
+
+// OLD cases for social posts, above are copied from other socialposts route
+				// case "created_post":
+
+				// 	var { post_created } = activity
+				// 	post_created = await SocialPost.findOne({_id: post_created})
+				// 	var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_created
+				// 	// incorporating notification_type
+				// 	post_details = { ...post_details, notification_type:'created_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
+				// 	post_details = await get_post_details(type_of_post, post_created, post_details)
+				// 	// console.log('post_details')
+				// 	// console.log(post_details)
+				// 	console.log('PUSHED')
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "liked_post":
+
+				// 	var { post_liked } = activity
+				// 	// console.log('post_liked')
+				// 	// console.log(post_liked)
+				// 	post_liked = await SocialPost.findOne({_id: post_liked})
+				// 	// console.log(post_liked)
+				// 	var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_liked
+				// 	// incorporating notification_type
+				// 	post_details = { ...post_details, notification_type:'liked_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
+				// 	// incorporating user_owning_post user_name and user_avatar_image
+				// 	user_owning_post = await User.findOne({_id: post_liked.user})
+				// 	var { user_name, user_avatar_image, object_files_hosted_at } = user_owning_post
+
+				// 	image_in_base64_encoding = await get_image_to_display(user_avatar_image, object_files_hosted_at)
+
+				// 	post_details = {...post_details, user_name, user_avatar_image: image_in_base64_encoding}
+				// 	post_details = await get_post_details(type_of_post, post_liked, post_details)
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "shared_post":
+
+				// 	var { post_share } = activity
+				// 	post_share = await SocialPost.findOne({_id: post_share})
+				// 	var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_share
+				// 	// incorporating notification_type
+				// 	post_details = { ...post_details, notification_type:'shared_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
+				// 	// incorporating user_owning_post user_name and user_avatar_image
+				// 	user_owning_post = await User.findOne({_id: post_share.user})
+				// 	var { user_name, user_avatar_image, object_files_hosted_at } = user_owning_post
+
+				// 	image_in_base64_encoding = await get_image_to_display(user_avatar_image, object_files_hosted_at)
+
+				// 	post_details = {...post_details, user_name, user_avatar_image: image_in_base64_encoding}
+				// 	post_details = await get_post_details(type_of_post, post_share, post_details)
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "commented_on_post":
+
+				// 	var { post_commented, comment_link } = activity
+				// 	let original_post = await SocialPost.findOne({_id: post_commented})
+				// 	let comment_object = await Comment.findOne({_id: comment_link})
+				// 	var { comment_text } = comment_object
+				// 	var { type_of_post, total_likes, total_shares, total_comments, endpoint } = original_post
+				// 	// incorporating notification_type
+				// 	post_details = { ...post_details, notification_type:'commented_on_post', activity_type, comment_text, type_of_post, total_likes, total_shares, total_comments, endpoint }
+				// 	// incorporating user_owning_post user_name and user_avatar_image
+				// 	user_owning_post = await User.findOne({_id: original_post.user})
+				// 	var { user_name, user_avatar_image, object_files_hosted_at } = user_owning_post
+
+				// 	image_in_base64_encoding = await get_image_to_display(user_avatar_image, object_files_hosted_at)
+
+				// 	post_details = {...post_details, user_name, user_avatar_image: image_in_base64_encoding}
+				// 	post_details = await get_post_details(type_of_post, post_commented, post_details)
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "created_book":
+
+				// 	let { book_created } = activity
+				// 	book_created = await Book.findOne({_id: book_created})
+				// 	var { book_name, book_image, book_description, interested_users, endpoint, object_files_hosted_at } = book_created
+				// 	// incorporating notification_type
+
+				// 	image_in_base64_encoding = await get_image_to_display(book_image, object_files_hosted_at)
+
+				// 	post_details = { ...post_details, notification_type:'created_book', activity_type, book_name, book_image: image_in_base64_encoding, book_description, endpoint }
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "got_interested_in_book":
+
+				// 	let { book_liked } = activity
+				// 	book_liked = await Book.findOne({_id: book_liked})
+				// 	var { book_name, book_image, book_description, endpoint, object_files_hosted_at } = book_liked
+				// 	// incorporating notification_type
+
+				// 	image_in_base64_encoding = await get_image_to_display(book_image, object_files_hosted_at)
+
+				// 	post_details = { ...post_details, notification_type:'got_interested_in_book', activity_type, book_name, book_image: image_in_base64_encoding, book_description, endpoint }
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "created_page":
+
+				// 	let { page_created } = activity
+				// 	page_created = await Page.findOne({_id: page_created})
+				// 	var { page_name, page_image, page_description, endpoint, object_files_hosted_at } = page_created
+				// 	// incorporating notification_type
+
+				// 	image_in_base64_encoding = await get_image_to_display(page_image, object_files_hosted_at)
+
+				// 	post_details = { ...post_details, notification_type:'created_page', activity_type, page_name, page_image: image_in_base64_encoding, page_description, endpoint }
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "got_interested_in_page":
+
+				// 	let { page_liked } = activity
+				// 	page_liked = await Page.findOne({_id: page_liked})
+				// 	var { page_name, page_image, page_description, endpoint, object_files_hosted_at } = page_liked
+				// 	// incorporating notification_type
+
+				// 	image_in_base64_encoding = await get_image_to_display(page_image, object_files_hosted_at)
+
+				// 	post_details = { ...post_details, notification_type:'got_interested_in_page', activity_type, page_name, page_image: image_in_base64_encoding, page_description, endpoint }
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "created_sport":
+
+				// 	let { sport_created } = activity
+				// 	sport_created = await Sport.findOne({_id: sport_created})
+				// 	var { sport_name, sport_image, sport_description, endpoint, object_files_hosted_at } = sport_created
+				// 	// incorporating notification_type
+
+				// 	image_in_base64_encoding = await get_image_to_display(sport_image, object_files_hosted_at)
+
+				// 	post_details = { ...post_details, notification_type:'created_sport', activity_type, sport_name, sport_image: image_in_base64_encoding, sport_description, endpoint }
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "got_interested_in_sport":
+
+				// 	let { sport_liked } = activity
+				// 	sport_liked = await Sport.findOne({_id: sport_liked})
+				// 	var { sport_name, sport_image, sport_description, endpoint, object_files_hosted_at } = sport_created
+				// 	// incorporating notification_type
+
+				// 	image_in_base64_encoding = await get_image_to_display(sport_image, object_files_hosted_at)
+
+				// 	post_details = { ...post_details, notification_type:'got_interested_in_sport', activity_type, sport_name, sport_image: image_in_base64_encoding, sport_description, endpoint }
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "created_advertisement":
+
+				// 	let { ad_created } = activity
+				// 	ad_created = await Advertisement.findOne({_id: ad_created})
+				// 	var { ad_name, ad_image, ad_description, endpoint, object_files_hosted_at } = ad_created
+				// 	// incorporating notification_type
+
+				// 	image_in_base64_encoding = await get_image_to_display(ad_image, object_files_hosted_at)
+
+				// 	post_details = { ...post_details, notification_type:'created_advertisement', activity_type, ad_name, ad_image: image_in_base64_encoding, ad_description, endpoint }
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// case "got_interested_in_advertisement":
+
+				// 	let { ad_liked } = activity
+				// 	ad_liked = await Advertisement.findOne({_id: ad_liked})
+				// 	var { ad_name, ad_image, ad_description, endpoint, object_files_hosted_at } = ad_liked
+				// 	// incorporating notification_type
+
+				// 	image_in_base64_encoding = await get_image_to_display(ad_image, object_files_hosted_at)
+
+				// 	post_details = { ...post_details, notification_type:'got_interested_in_advertisement', activity_type, ad_name, ad_image: image_in_base64_encoding, ad_description, endpoint }
+				// 	activities_to_send.push(post_details)
+				// 	break
+
+				// default:
+				// 	null
 			}
 
 		}))

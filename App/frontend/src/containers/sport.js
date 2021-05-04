@@ -72,10 +72,6 @@ class SportContainer extends Component {
 
 			<Grid container direction="row">
 				
-				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-		  			<ConnectedCreateSport/>
-		  		</Grid>
-
 				{total_sports.map((item, index)=>(
 
 					<Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
@@ -86,6 +82,11 @@ class SportContainer extends Component {
 					</Grid>
 
 				))}
+
+				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+		  			<ConnectedCreateSport/>
+		  		</Grid>
+
 
 			</Grid>
 

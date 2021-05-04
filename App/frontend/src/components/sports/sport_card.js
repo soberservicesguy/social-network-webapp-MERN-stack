@@ -10,9 +10,6 @@ import {
 import axios from 'axios';
 import firebase from 'firebase';
 
-import {
-	ComponentForShowingSport
-} from "."
 
 import utils from "../../utilities";
 
@@ -23,32 +20,12 @@ import {
 
 import {
 	ConnectedCreateLikeForSport,
+	ConnectedComponentForShowingSport,
 } from "../../redux_stuff/connected_components"
 
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
-
-const styles = theme => ({
-	root: {
-		maxWidth: 380,
-	},
-	media: {
-		height: 0,
-		paddingTop: '56.25%', // 16:9
-	},
-	expand: {
-		transform: 'rotate(0deg)',
-		marginLeft: 'auto',
-		transition: theme.transitions.create('transform', {
-			duration: theme.transitions.duration.shortest,
-		}),
-	},
-	expandOpen: {
-		transform: 'rotate(180deg)',
-	},
-
-});
 
 class SportCard extends Component {
 	constructor(props) {
@@ -135,12 +112,13 @@ class SportCard extends Component {
 
 		  		<div>
 					{/* first the parent / card component */}
-			  		<ComponentForShowingSport
+			  		<ConnectedComponentForShowingSport
 						dataPayloadFromParent = { this.props.dataPayloadFromParent }
 			  		/>
 		  		</div>
 
 	  			<React.Fragment>
+
 					<div style={styles.showSocialsContainer}>
 						<ShowLikesOfSport
 							dataPayloadFromParent = { this.props.dataPayloadFromParent }
@@ -150,11 +128,6 @@ class SportCard extends Component {
 							parentDetailsPayload = { this.props.dataPayloadFromParent }
 		  					redirectToNew = { true }
 						/>					
-					</div>
-
-
-					<div style={styles.createSocialObjectsContainer}>
-						{/* 4th create individual child options like comment / like */}					
 					</div>
 
 				</React.Fragment>
@@ -170,4 +143,4 @@ SportCard.defaultProps = {
 };
 
 // export default SportCard; // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(withStyles(styles)(SportCard));
+export default withResponsiveness(SportCard);

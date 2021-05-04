@@ -36,6 +36,8 @@ class ComponentForShowingSocialPost extends Component {
 
 	render() {
 
+		const {_xs, _sm, _md, _lg, _xl} = this.props
+
 		const styles = {
 			outerContainer:{
 				width:'100%',
@@ -84,7 +86,7 @@ class ComponentForShowingSocialPost extends Component {
 			},
 			postImage:{
 				width:'100%', 
-				height:300, 
+				height:380, 
 				resizeMode: "stretch"
 			},
 			postVideoContainer:{
@@ -421,7 +423,7 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={styles.usernameContainer}>
-						<p style={styles.usernameText}>
+						<p style={{...styles.usernameText, marginLeft:(_xs || _sm) ? 20 : -60}}>
 							{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}
 						</p>
 					</div>
@@ -445,7 +447,7 @@ class ComponentForShowingSocialPost extends Component {
 						/>
 					</div>
 					<div style={styles.usernameContainer}>
-						<p style={styles.usernameText}>
+						<p style={{...styles.usernameText, marginLeft:(_xs || _sm) ? 20 : -60}}>
 							{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}
 						</p>
 					</div>

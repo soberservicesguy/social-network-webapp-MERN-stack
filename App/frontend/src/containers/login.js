@@ -35,6 +35,8 @@ class LoginContainer extends Component {
 
 			redirectToHome:false,
 
+			showAdminControls: true,
+
 		}
 	}
 
@@ -433,80 +435,89 @@ class LoginContainer extends Component {
 					</div>
 
 
-					<div style={{
-						width:'90%',
-						margin:'auto',
-						display:'flex',
-						flexDirection:'row',
-						justifyContent: 'space-around',
-						alignItems:'center',
-						height:60,
-						marginBottom:20,
-					}}>
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
-							<button 
-								style={{...styles.roundButton, }}
-								onClick={ () => this.delete_all_users() }
-							>
-								Delete All Users
-							</button>
+					{(this.state.showAdminControls) ? (
+
+						<div style={{
+							width:'90%',
+							margin:'auto',
+							display:'flex',
+							flexDirection:'row',
+							justifyContent: 'space-around',
+							alignItems:'center',
+							height:60,
+							marginBottom:20,
+							opacity: 1,
+						}}>
+							<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+								<button 
+									style={{...styles.roundButton, }}
+									onClick={ () => this.delete_all_users() }
+								>
+									Delete All Users
+								</button>
+							</div>
+
+							<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+								<button 
+									style={{...styles.roundButton, }}
+									onClick={ () => this.delete_all_socialposts() }
+								>
+									Delete Socialposts
+								</button>
+							</div>
+
+							<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+								<button 
+									style={{...styles.roundButton, }}
+									onClick={ () => this.delete_all_books() }
+								>
+									Delete All Books
+								</button>
+							</div>
+
+							<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+								<button 
+									style={{...styles.roundButton, }}
+									onClick={ () => this.delete_all_sports() }
+								>
+									Delete All Sports
+								</button>
+							</div>
+
+							<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+								<button 
+									style={{...styles.roundButton, }}
+									onClick={ () => this.delete_all_pages() }
+								>
+									Delete All Pages
+								</button>
+							</div>
+
+							<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+								<button 
+									style={{...styles.roundButton, }}
+									onClick={ () => this.delete_all_ads() }
+								>
+									Delete All Ads
+								</button>
+							</div>
+
+							<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
+								<button 
+									style={{...styles.roundButton, }}
+									onClick={ () => this.delete_all_activities() }
+								>
+									Delete Activities
+								</button>
+							</div>
+
 						</div>
 
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
-							<button 
-								style={{...styles.roundButton, }}
-								onClick={ () => this.delete_all_socialposts() }
-							>
-								Delete All Socialposts
-							</button>
-						</div>
+						) : (
 
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
-							<button 
-								style={{...styles.roundButton, }}
-								onClick={ () => this.delete_all_books() }
-							>
-								Delete All Books
-							</button>
-						</div>
-
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
-							<button 
-								style={{...styles.roundButton, }}
-								onClick={ () => this.delete_all_sports() }
-							>
-								Delete All Sports
-							</button>
-						</div>
-
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
-							<button 
-								style={{...styles.roundButton, }}
-								onClick={ () => this.delete_all_pages() }
-							>
-								Delete All Pages
-							</button>
-						</div>
-
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
-							<button 
-								style={{...styles.roundButton, }}
-								onClick={ () => this.delete_all_ads() }
-							>
-								Delete All Ads
-							</button>
-						</div>
-
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: 'red', borderColor:'red'}}>
-							<button 
-								style={{...styles.roundButton, }}
-								onClick={ () => this.delete_all_activities() }
-							>
-								Delete All Activities
-							</button>
-						</div>
-
-					</div>
+							null
+	
+					)}
 				
 				</div>
 

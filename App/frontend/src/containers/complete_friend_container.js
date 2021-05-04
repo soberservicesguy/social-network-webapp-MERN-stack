@@ -265,10 +265,10 @@ class CompleteFriendsContainer extends Component {
 		var friend_suggestions = this.props.list_of_friend_suggestions
 		var friend_requests = this.props.list_of_friend_requests
 
-		// var base64Image = "data:image/jpeg;base64," + this.props.current_image
+		var base64CoverImage = "data:image/jpeg;base64," + this.props.user_cover_image
 
-		// let total_books = this.props.total_books
-		let total_books = [1,2,3,4,5,6,7,8,9,10]
+		var base64AvatarImage = "data:image/jpeg;base64," + this.props.user_avatar_image
+
 
 		return (
 
@@ -278,8 +278,8 @@ class CompleteFriendsContainer extends Component {
 						<div style={styles.imageContainer}>
 							<img 
 								alt="" 
-								// src={base64Image} 
-								src={utils.image}
+								src={base64CoverImage}
+								// src={utils.image}
 								style={styles.topBgImage}
 							/>
 						</div>
@@ -298,9 +298,9 @@ class CompleteFriendsContainer extends Component {
 										style={styles.avatarWrapper}
 										ref={ (divElement) => { this.divElement1 = divElement } }
 									>
-										<img 
-											// src={base64Image}
-											src={utils.image} 
+										<img
+											src={base64AvatarImage}
+											// src={utils.image} 
 											alt="" 
 											style={styles.avatarImage}
 										/>

@@ -12,17 +12,18 @@ import {
 // IMPORT responsiveness hook
 import withResponsiveness from "../responsiveness_hook";
 
+import {
+	ConnectedCreateLikeForBook,
+	ConnectedComponentForShowingBook,
+} from "../redux_stuff/connected_components"
+
 import { withRouter } from "react-router-dom";
 
-const styles = theme => ({
-  root: {
-    height: 48,
-    // color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
+import {
+	SummarizeLikesOfBook,
+	ShowLikesOfBook,
+} from "../components/likes/";
+
 
 
 class IndividualIndividualBook extends Component {
@@ -41,46 +42,63 @@ class IndividualIndividualBook extends Component {
 
 // RENDER METHOD
 	render() {
-		const { classes } = this.props;
-	  	const {_xs, _sm, _md, _lg, _xl} = this.props
+		const styles = {
+			showSocialsContainer:{
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				width:'95%',
+				margin:'auto',
+				marginTop:10,
+			},
+			showSocialsButton:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white'
+			},
+			createSocialObjectsContainer:{
+				width:'90%',
+				margin:'auto',
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+				marginTop:20,
+				paddingBottom:20,
+
+				borderWidth:0,
+				borderTopWidth:1,
+				borderStyle:'solid',
+				borderColor:utils.maroonColor,
+				paddingTop:10,
+			},
+		}
+
+	  	let data = this.props.current_book
 
 	  	return (
-	  		<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+			<div style={{width:'80%', margin:'auto'}}>
+				<ConnectedComponentForShowingBook
+					dataPayloadFromParent={data}
+				/>
 
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
+	  			<React.Fragment>
 
-	  				<Grid item>
-	  				</Grid>
+					<div style={styles.showSocialsContainer}>
+						<ShowLikesOfBook
+							dataPayloadFromParent = { data }
+							likes_quantity = { data.likes_quantity }
+						/>
+						<ConnectedCreateLikeForBook
+							parentDetailsPayload = { data }
+		  					redirectToNew = { true }
+						/>					
+					</div>
 
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
+				</React.Fragment>
 
-	  			<Grid item container direction="column" xs={12} sm={12} md={8} lg={6}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  		</Grid>
+			</div>
 		);
 	}
 }
@@ -89,4 +107,4 @@ IndividualIndividualBook.defaultProps = {
 	//:,
 };
 
-export default withRouter(withResponsiveness(withStyles(styles)(IndividualIndividualBook)));
+export default withRouter(IndividualIndividualBook);

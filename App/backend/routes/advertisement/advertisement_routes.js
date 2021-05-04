@@ -20,6 +20,7 @@ require('../../models/activity');
 const Activity = mongoose.model('Activity');
 
 const { 
+	get_image_to_display,
 	get_multer_storage_to_use, 
 	get_file_storage_venue, 
 	get_file_path_to_use,
@@ -50,45 +51,6 @@ function upload_ad_image(timestamp){
 
 }
 
-
-router.get('/ads-list', function(req, res, next){
-
-	console.log('GETTING ADS')
-
-	Advertisement.
-	find().
-	limit(10).
-	then((advertisements)=>{
-
-		if (advertisements){
-
-			var newAdvertisements_list = []
-			advertisements.map((advertisement, index)=>{
-				var newAdvertisement = {}
-
-				newAdvertisement.ad_name = advertisement[ 'ad_name' ]
-				newAdvertisement.ad_image = base64_encode( advertisement[ 'ad_image' ] )
-				newAdvertisement.ad_description = advertisement[ 'ad_description' ]
-				newAdvertisement.endpoint = advertisement[ 'endpoint' ]
-
-				newAdvertisements_list.push({...newAdvertisement})
-				newAdvertisement = {}
-			});
-
-			res.status(200).json(newAdvertisements_list);
-
-		} else {
-			res.status(401).json({ success: false, msg: "could not find Advertisements_list" });
-
-		}
-	})
-	.catch((err) => {
-
-		next(err);
-
-	});
-
-});
 
 
 
@@ -141,10 +103,12 @@ router.post('/create-advertisement-with-user',  passport.authenticate('jwt', { s
 						// ad_image: `./assets/images/uploads/advertisement_images/${filename_used_to_store_image_in_assets}`,
 						ad_description: req.body.ad_description,
 						// endpoint: req.body.endpoint,
+						object_files_hosted_at: get_file_storage_venue(),
+
 
 					});
 
-					newAdvertisement.save(function (err, newAdvertisement) {
+					newAdvertisement.save(async function (err, newAdvertisement) {
 						if (err){
 							res.status(404).json({ success: false, msg: 'couldnt create ad database entry'})
 							return console.log(err)
@@ -152,38 +116,41 @@ router.post('/create-advertisement-with-user',  passport.authenticate('jwt', { s
 
 						// assign user object then save
 						User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-						.then((user) => {
+						.then(async (user) => {
 							if (user){
 
 								// in response sending new image too with base64 encoding
 								let base64_encoded_image
 
-								if (use_gcp_storage){
+								base64_encoded_image = await get_image_to_display(newAdvertisement.ad_image, newAdvertisement.object_files_hosted_at)
 
-									{(async () => {
+// DRYed OUT
+								// if (use_gcp_storage){
 
-										cloud_resp = await axios.get(newAdvertisement.ad_image)
-										base64_encoded_image = base64_encode( cloud_resp.data )
+								// 	{(async () => {
 
-									})()}
+								// 		cloud_resp = await axios.get(newAdvertisement.ad_image)
+								// 		base64_encoded_image = base64_encode( cloud_resp.data )
 
-								} else if (use_aws_s3_storage) {
+								// 	})()}
 
-									{(async () => {
+								// } else if (use_aws_s3_storage) {
 
-										cloud_resp = await axios.get(newAdvertisement.ad_image)
-										base64_encoded_image = base64_encode( cloud_resp.data )
+								// 	{(async () => {
 
-									})()}
+								// 		cloud_resp = await axios.get(newAdvertisement.ad_image)
+								// 		base64_encoded_image = base64_encode( cloud_resp.data )
+
+								// 	})()}
 
 
-								} else {
+								// } else {
 
-									console.log('newAdvertisement.ad_image')
-									console.log(newAdvertisement.ad_image)
-									base64_encoded_image = base64_encode( newAdvertisement.ad_image )
+								// 	console.log('newAdvertisement.ad_image')
+								// 	console.log(newAdvertisement.ad_image)
+								// 	base64_encoded_image = base64_encode( newAdvertisement.ad_image )
 
-								}
+								// }
 
 								newAdvertisement.ad_uploaded_by_user = user
 								newAdvertisement.save()
@@ -192,6 +159,7 @@ router.post('/create-advertisement-with-user',  passport.authenticate('jwt', { s
 									ad_name: newAdvertisement.ad_name,
 									ad_image: base64_encoded_image,
 									ad_description: newAdvertisement.ad_description,
+									ad_endpoint: newAdvertisement.endpoint,
 								}
 
 								res.status(200).json({ success: true, msg: 'new ad saved', new_advertisement: newAdvertisement});	

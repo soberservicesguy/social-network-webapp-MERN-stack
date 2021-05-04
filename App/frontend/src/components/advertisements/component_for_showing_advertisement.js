@@ -1,3 +1,7 @@
+import { 
+	// withRouter,
+	Link,
+} from "react-router-dom";
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -40,7 +44,7 @@ class ComponentForShowingAdvertisement extends Component {
 
 			imageStyle:{
 				width:'100%', 
-				height:200, 
+				height: (this.props.increaseImageHeight) ? 400 : 200, 
 				resizeMode: "stretch"
 			},
 
@@ -56,14 +60,22 @@ class ComponentForShowingAdvertisement extends Component {
 
 		return (
 			<div style={styles.outerContainer}>
-				<div style={styles.imageContainer}>
-					<img 
-						src={base64Image}
-						// src={utils.image} 
-						alt="" 
-						style={styles.imageStyle}
-					/>
-				</div>
+
+		  		<Link 
+		  			to={{pathname:`/advertisements/:id=${data.endpoint}`}} 
+		  			style={{color: 'inherit', textDecoration: 'inherit'}}
+		  			onClick = {() => this.props.set_current_advertisement(data)}
+				>
+					<div style={styles.imageContainer}>
+						<img 
+							src={base64Image}
+							// src={utils.image} 
+							alt="" 
+							style={styles.imageStyle}
+						/>
+					</div>
+				</Link>
+
 				<p style={styles.adHeading}>
 					{ data.ad_name }
 				</p>

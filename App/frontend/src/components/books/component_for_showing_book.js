@@ -1,3 +1,7 @@
+import { 
+	// withRouter,
+	Link,
+} from "react-router-dom";
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -48,16 +52,24 @@ class ComponentForShowingBook extends Component {
 
 		return (
 			<div style={styles.outerContainer}>
-				<div style={styles.imageContainer}>
-					<img 
-						alt="" 
-						src={base64Image}
-						// src={utils.image} 
-						style={styles.imageStyle}
-					/>
-				</div>
+
+		  		<Link 
+		  			to={{pathname:`/books/:id=${data.endpoint}`}} 
+		  			style={{color: 'inherit', textDecoration: 'inherit'}}
+					onClick={() => this.props.set_current_book(data)}
+				>
+					<div style={styles.imageContainer}>
+						<img 
+							alt="" 
+							src={base64Image}
+							// src={utils.image} 
+							style={styles.imageStyle}
+						/>
+					</div>
+				</Link>
+
 				<p style={{textAlign:'center', fontWeight:'bold', marginTop:10,}}>
-					Name{ data.book_name }
+					{ data.book_name }
 				</p>
 			</div>
 		);

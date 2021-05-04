@@ -7,7 +7,7 @@ const initialState = {
 			endpoint:'dummy',
 		},
 
-	totalBook: [
+	totalBooks: [
 			// { book_name:'dummy1', book_image:'dummy1', book_description:'dummy1', endpoint:'dummy1',},
 			// { book_name:'dummy2', book_image:'dummy2', book_description:'dummy2', endpoint:'dummy2',},
 			// { book_name:'dummy3', book_image:'dummy3', book_description:'dummy3', endpoint:'dummy3',},
@@ -33,12 +33,12 @@ const reducerForBook = (state = initialState, action) => {
 
 		case "SET_FETCHED_BOOK":
 
-			return {...state, totalBook: action.book_list}
+			return {...state, totalBooks: action.book_list}
 			break;
 
 		case "SET_FETCHED_10_MORE_BOOK":
 
-			return {...state, totalBook: [...state.Book, action.book_list] }
+			return {...state, totalBooks: [...state.Book, action.book_list] }
 			break;
 
 

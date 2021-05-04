@@ -291,16 +291,20 @@ class TimelineContainer extends Component {
 
 		}			
 
-		// var friends_list = this.props.all_friends
+		var all_friends = this.props.list_of_friends
 
-		// var base64Image = "data:image/jpeg;base64," + this.props.current_image
+		var base64CoverImage = "data:image/jpeg;base64," + this.props.user_cover_image
+
+		var base64AvatarImage = "data:image/jpeg;base64," + this.props.user_avatar_image
 
 		// let all_friends = this.props.all_friends
-		let all_friends = [1,2,3,4,5,6,7,8,9,10]
-		// let total_books = this.props.total_books
-		let total_books = [1,2,3,4,5,6,7,8,9,10]
-		// let friend_suggestions = this.props.friend_suggestions
-		let friend_suggestions = [1,2,3,4,5,6,7,8,9,10]
+		// let all_friends = [1,2,3,4,5,6,7,8,9,10]
+		let total_books = this.props.total_books
+		// let total_books = [1,2,3,4,5,6,7,8,9,10]
+
+		let total_sports = this.props.total_sport
+	
+		let friend_suggestions = this.props.list_of_friend_suggestions
 
 		const total_socialposts = this.props.total_socialposts
 
@@ -312,8 +316,8 @@ class TimelineContainer extends Component {
 							<div style={styles.imageContainer}>
 								<img 
 									alt="" 
-									// src={base64Image} 
-									src={utils.image}
+									src={base64CoverImage}
+									// src={utils.image}
 									style={styles.topBgImage}
 								/>
 							</div>
@@ -333,8 +337,8 @@ class TimelineContainer extends Component {
 											ref={ (divElement) => { this.divElement1 = divElement } }
 										>
 											<img 
-												// src={base64Image}
-												src={utils.image} 
+												src={base64AvatarImage}
+												// src={utils.image} 
 												alt="" 
 												style={styles.avatarImage}
 											/>

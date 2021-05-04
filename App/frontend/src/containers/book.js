@@ -61,9 +61,6 @@ class BookContainer extends Component {
 
 			<Grid container direction="row">
 				
-				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-		  			<ConnectedCreateBook/>
-		  		</Grid>
 
 				{total_books.map((item, index)=>(
 
@@ -75,6 +72,11 @@ class BookContainer extends Component {
 					</Grid>
 
 				))}
+
+
+				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+		  			<ConnectedCreateBook/>
+		  		</Grid>
 
 			</Grid>
 

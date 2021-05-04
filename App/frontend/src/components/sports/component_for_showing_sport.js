@@ -1,3 +1,7 @@
+import { 
+	// withRouter,
+	Link,
+} from "react-router-dom";
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -28,6 +32,8 @@ class ComponentForShowingSport extends Component {
 	render() {
 		const styles = {
 			outerContainer:{
+				width: '90%',
+				margin:'auto'
 			},
 			imageContainer:{
 				textAlign:'center',
@@ -40,22 +46,38 @@ class ComponentForShowingSport extends Component {
 		}
 
 
-		const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
+		// const data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
+		let data = this.props.dataPayloadFromParent
+		if (typeof data === 'undefined'){
+			data = this.props.current_sport
+		} else {
+			data = this.props.dataPayloadFromParent	
+		}
+		
+
 
 		var base64Image = "data:image/jpeg;base64," + data.sport_image
 
 		return (
 			<div style={styles.outerContainer}>
-				<div style={styles.imageContainer}>
-					<img 
-						alt="" 
-						src={base64Image}
-						// src={utils.image} 
-						style={styles.imageStyle}
-					/>
-				</div>
+
+		  		<Link 
+		  			to={{pathname:`/sports/:id=${data.endpoint}`}} 
+		  			style={{color: 'inherit', textDecoration: 'inherit'}}
+		  			onClick={() => this.props.set_current_sport(data)}
+				>
+					<div style={styles.imageContainer}>
+						<img 
+							alt="" 
+							src={base64Image}
+							// src={utils.image} 
+							style={styles.imageStyle}
+						/>
+					</div>
+				</Link>
+
 				<p style={{textAlign:'center', fontWeight:'bold', marginTop:10,}}>
-					Name{ data.sport_name }
+					{ data.sport_name }
 				</p>
 
 			</div>

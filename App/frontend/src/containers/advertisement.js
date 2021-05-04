@@ -86,9 +86,6 @@ class AdvertisementContainer extends Component {
 						</div>
 					</div>
 					
-					<Grid item>
-			  			<ConnectedCreateAdvertisement/>
-			  		</Grid>
 
 					{total_advertisements.map((item, index)=>(
 
@@ -99,6 +96,10 @@ class AdvertisementContainer extends Component {
 						</Grid>
 
 					))}
+
+					<Grid item>
+			  			<ConnectedCreateAdvertisement/>
+			  		</Grid>
 					
 				</div>
 

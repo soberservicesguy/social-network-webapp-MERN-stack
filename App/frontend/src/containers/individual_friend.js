@@ -43,8 +43,12 @@ class IndividualFriend extends Component {
 
 	getSocialposts(){
 
+		var { id } = this.props.match.params // use in render method to access param
+		id = id.replace(":id=", "")
+
+
 		// let { id } = this.props.match.params.state // use in render method
-		let { id } = this.props.location.state // use in render method to access param
+		// let { id } = this.props.location.state // use in render method to access param
 
 		let backend_requests_made = this.state.backend_requests_made
 		let append_socialposts_callback = (response) => this.props.async_append_fetched_socialposts(response.data)
@@ -89,8 +93,12 @@ class IndividualFriend extends Component {
 	}
 
 	getUserDetails(){
-	
-		let { id } = this.props.location.state // use in render method to access param
+
+		var { id } = this.props.match.params // use in render method to access param	
+		id = id.replace(":id=", "")
+
+		// let { id } = this.props.match.params.state // use in render method
+		// let { id } = this.props.location.state // use in render method to access param
 		let set_state_callback = (response) => {
 			this.setState(prev => ({...prev, 
 				user_cover_image: response.data.user_cover_image,
@@ -383,7 +391,7 @@ class IndividualFriend extends Component {
 				</div>
 
 
-				<Grid container direction="column">
+				<Grid container direction="column" style={{backgroundColor: '#eee'}}>
 
 					{total_socialposts.map((item) => {
 
@@ -403,11 +411,7 @@ class IndividualFriend extends Component {
 										likes = { item.likes || [] }
 
 										shares_quantity = { item.total_shares }
-										shares = { item.shares || [] }
-
-										// user_quantity = { item.user_quantity }
-										// user = { item.user || [] }
-									
+										shares = { item.shares || [] }									
 									/>									
 								</div>
 							</Grid>

@@ -20,6 +20,7 @@ require('../../models/activity');
 const Activity = mongoose.model('Activity');
 
 const {
+	get_image_to_display,
 	get_multer_storage_to_use,
 	get_file_storage_venue,
 	get_file_path_to_use,
@@ -106,7 +107,7 @@ router.post('/create-sport-with-user', passport.authenticate('jwt', { session: f
 						// sport_image: `./assets/images/uploads/sport_image/${filename_used_to_store_image_in_assets}`,
 						sport_description: req.body.sport_description,
 						// endpoint: req.body.endpoint,
-
+						object_files_hosted_at: get_file_storage_venue(),
 					});
 
 					newSport.save(function (err, newSport) {
@@ -117,7 +118,7 @@ router.post('/create-sport-with-user', passport.authenticate('jwt', { session: f
 						}
 						// assign user object then save
 						User.findOne({ phone_number: req.user.user_object.phone_number }) // using req.user from passport js middleware
-						.then((user) => {
+						.then(async (user) => {
 							if (user){
 
 								newSport.sport_created_by_user = user
@@ -125,38 +126,40 @@ router.post('/create-sport-with-user', passport.authenticate('jwt', { session: f
 
 
 								let base64_encoded_image
+								base64_encoded_image = await get_image_to_display(newSport.sport_image, newSport.object_files_hosted_at)
 							
 								// in response sending new image too with base64 encoding
-								if (use_gcp_storage){
+								// if (use_gcp_storage){
 
-									{(async () => {
+								// 	{(async () => {
 
-										cloud_resp = await axios.get(newSport.sport_image)
-										base64_encoded_image = base64_encode( cloud_resp.data )
+								// 		cloud_resp = await axios.get(newSport.sport_image)
+								// 		base64_encoded_image = base64_encode( cloud_resp.data )
 
-									})()}
+								// 	})()}
 
-								} else if (use_aws_s3_storage) {
+								// } else if (use_aws_s3_storage) {
 
-									{(async () => {
+								// 	{(async () => {
 
-										cloud_resp = await axios.get(newSport.sport_image)
-										base64_encoded_image = base64_encode( cloud_resp.data )
+								// 		cloud_resp = await axios.get(newSport.sport_image)
+								// 		base64_encoded_image = base64_encode( cloud_resp.data )
 
-									})()}
+								// 	})()}
 
 
-								} else {
+								// } else {
 
-									base64_encoded_image = base64_encode( newSport.sport_image )
+								// 	base64_encoded_image = base64_encode( newSport.sport_image )
 
-								}
+								// }
 
 
 								let new_sport = {
 									sport_name: newSport.sport_name,
 									sport_image: base64_encoded_image,
 									sport_description: newSport.sport_description,
+									sport_endpoint: newSport.endpoint,
 								}
 
 								res.status(200).json({ success: true, msg: 'new sport saved', new_sport: new_sport});	
@@ -250,26 +253,30 @@ router.post('/create-interest-for-sport', passport.authenticate('jwt', { session
 
 // get sports_list
 // USED
-router.get('/sports-list', function(req, res, next){
+router.get('/sports-list', async function(req, res, next){
 
 	Sport.
 	find().
 	limit(10).
-	then((sports)=>{
+	then(async (sports)=>{
 		if (sports){
 
 			var newSports_list = []
-			sports.map((sport, index)=>{
+
+			let all_sports = await Promise.all(sports.map(async (sport, index)=>{
 				var newSport = {}
 
 				newSport.sport_name = sport[ 'sport_name' ]
-				newSport.sport_image = base64_encode( sport[ 'sport_image' ] )
+
+				newSport.sport_image = await get_image_to_display(sport.sport_image, sport.object_files_hosted_at)
+				
+				// newSport.sport_image = base64_encode( sport[ 'sport_image' ] )
 				newSport.sport_description = sport[ 'sport_description' ]
 				newSport.endpoint = sport[ 'endpoint' ]
 
 				newSports_list.push({...newSport})
 				newSport = {}
-			});
+			}));
 
 			res.status(200).json(newSports_list);
 
@@ -443,7 +450,7 @@ router.get('/find-sport', function(req, res, next){
 
 // get sports_list_with_children
 
-router.get('/sports-list-with-children', function(req, res, next){
+router.get('/sports-list-with-children', async function(req, res, next){
 
 	Sport.
 		find().
@@ -452,19 +459,23 @@ router.get('/sports-list-with-children', function(req, res, next){
 		populate('likes').
 		populate('shares').
 		populate('user').
-		then((sports)=>{
+		then(async (sports)=>{
+
 			var newSports_list = []
-			sports.map((sport, index)=>{
+
+			let all_sports = await Promise.all(sports.map(async (sport, index)=>{
 				var newSport = {}
 
 				newSport.sport_name = sport[ 'sport_name' ]
-				newSport.sport_image = base64_encode( sport[ 'sport_image' ] )
+
+				newSport.sport_image = await get_image_to_display(sport.sport_image, sport.object_files_hosted_at)
+
 				newSport.sport_description = sport[ 'sport_description' ]
 				newSport.endpoint = sport[ 'endpoint' ]
 
 				newSports_list.push({...newSport})
 				newSport = {}
-			});
+			}));
 
 			return newSports_list
 		})

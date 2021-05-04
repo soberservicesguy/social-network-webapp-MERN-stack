@@ -35,6 +35,8 @@ class CreateSport extends Component {
 			sport_name: '',
 			sport_image: '',
 			sport_description: '',
+
+			new_sport_id:'',
 		}
 
 	}
@@ -47,7 +49,7 @@ class CreateSport extends Component {
 
 	render() {
 
-				const styles = {
+		const styles = {
 		// round text input
 			roundTextInputContainer:{
 				width:'95%', 
@@ -118,7 +120,7 @@ class CreateSport extends Component {
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: "/Individual-Sport" }} />
+			return <Redirect to = {{ pathname: `/sports/:id=${this.state.new_sport_id}` }} />
 
 		} else {
 
@@ -189,6 +191,8 @@ class CreateSport extends Component {
 
 								let setResponseInCurrentSport = (arg) => this.props.set_current_sport(arg)
 								let redirectToNewSport = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+								let setNewSportIDToState = (response) => this.setState(prev => ({...prev, new_sport_id: response.data.new_sport.sport_endpoint }))	
+
 
 								const formData = new FormData()
 								formData.append('sport_name', this.state.sport_name)
@@ -197,10 +201,12 @@ class CreateSport extends Component {
 
 								axios.post(utils.baseUrl + '/sports/create-sport-with-user', formData)
 								.then(function (response) {
-									console.log(response.data) // current sport screen data
+									// console.log(response.data) // current sport screen data
 									
+									setNewSportIDToState(response)
+
 									// set to current parent object
-									setResponseInCurrentSport(response.data)
+									setResponseInCurrentSport(response.data.new_sport)
 
 									// change route to current_sport
 									redirectToNewSport()

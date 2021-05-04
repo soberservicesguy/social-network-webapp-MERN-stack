@@ -1,3 +1,8 @@
+import { 
+	// withRouter,
+	Link,
+} from "react-router-dom";
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 					
@@ -159,20 +164,28 @@ class ComponentForShowingFriend extends Component {
 						  		style={styles.outerContainer} 
 						  		onClick={ () => this.sendFriendRequest(data.endpoint) } 
 					  		>
-								<div style={styles.innerContainer}>
-									<div style={styles.imageContainer}>
-										<img 
-											// src={utils.image}
-											src={base64Image}
-											style={styles.imageStyle}
-										/>
-									</div>
 
-									<div style={styles.textContainer}>
-										<p style={{...styles.nameText, color:'black'}}>
-											{data.user_name_in_profile}
-										</p>
-									</div>
+								<div style={styles.innerContainer}>
+
+
+							  		<Link 
+							  			to={{pathname:`/friends/:id=${data.endpoint}`}} 
+							  			style={{color: 'inherit', textDecoration: 'inherit'}}
+									>
+										<div style={styles.imageContainer}>
+											<img 
+												// src={utils.image}
+												src={base64Image}
+												style={styles.imageStyle}
+											/>
+										</div>
+
+										<div style={styles.textContainer}>
+											<p style={{...styles.nameText, color:'black'}}>
+												{data.user_name_in_profile}
+											</p>
+										</div>
+									</Link>
 
 									<div style={{...styles.iconContainer, flex:3, height: '50%', backgroundColor: utils.darkBlue}}>
 										<div style={{flex:1}}>
@@ -206,19 +219,25 @@ class ComponentForShowingFriend extends Component {
 						  		onClick={ () => this.acceptFriendRequest(data.endpoint) } 
 					  		>
 								<div style={styles.innerContainer}>
-									<div style={styles.imageContainer}>
-										<img 
-											// src={utils.image}
-											src={base64Image}
-											style={styles.imageStyle}
-										/>
-									</div>
 
-									<div style={styles.textContainer}>
-										<p style={{...styles.nameText, color:'black'}}>
-											{data.user_name_in_profile}
-										</p>
-									</div>
+							  		<Link 
+							  			to={{pathname:`/friends/:id=${data.endpoint}`}} 
+							  			style={{color: 'inherit', textDecoration: 'inherit'}}
+									>
+										<div style={styles.imageContainer}>
+											<img 
+												// src={utils.image}
+												src={base64Image}
+												style={styles.imageStyle}
+											/>
+										</div>
+
+										<div style={styles.textContainer}>
+											<p style={{...styles.nameText, color:'black'}}>
+												{data.user_name_in_profile}
+											</p>
+										</div>
+									</Link>
 
 									<div style={{...styles.iconContainer, flex:3, height: '50%', backgroundColor: utils.darkBlue}}>
 										<div style={{flex:1}}>
@@ -252,22 +271,27 @@ class ComponentForShowingFriend extends Component {
 							<button 
 						  		activeOpacity={0.2}
 						  		style={styles.outerContainer} 
-						  		onClick={ () => this.props.navigation.navigate('SocialPost', {endpoint: data.endpoint}) } 
+						  		// onClick={ () => this.props.navigation.navigate('SocialPost', {endpoint: data.endpoint}) } 
 					  		>
 								<div style={styles.innerContainer}>
-									<div style={styles.imageContainer}>
-										<img
-											// src={utils.image}
-											src={base64Image} 
-											style={styles.imageStyle}
-										/>
-									</div>
+							  		<Link 
+							  			to={{pathname:`/friends/:id=${data.endpoint}`}} 
+							  			style={{color: 'inherit', textDecoration: 'inherit'}}
+									>
+										<div style={styles.imageContainer}>
+											<img
+												// src={utils.image}
+												src={base64Image} 
+												style={styles.imageStyle}
+											/>
+										</div>
 
-									<div style={styles.textContainer}>
-										<p style={styles.nameText}>
-											{data.user_name_in_profile}
-										</p>
-									</div>
+										<div style={styles.textContainer}>
+											<p style={styles.nameText}>
+												{data.user_name_in_profile}
+											</p>
+										</div>
+									</Link>
 
 									<div style={styles.iconContainer}>
 										<CheckCircle style={{fontSize:20, color:utils.maroonColor}}/>

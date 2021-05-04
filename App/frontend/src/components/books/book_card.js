@@ -15,9 +15,6 @@ import {
 	ConnectedComponentForShowingBook,
 } from "../../redux_stuff/connected_components"
 
-import {
-	// ComponentForShowingBook
-} from "."
 
 import {
 	SummarizeLikesOfBook,
@@ -30,26 +27,6 @@ import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
 
-const styles = theme => ({
-	root: {
-		maxWidth: 380,
-	},
-	media: {
-		height: 0,
-		paddingTop: '56.25%', // 16:9
-	},
-	expand: {
-		transform: 'rotate(0deg)',
-		marginLeft: 'auto',
-		transition: theme.transitions.create('transform', {
-			duration: theme.transitions.duration.shortest,
-		}),
-	},
-	expandOpen: {
-		transform: 'rotate(180deg)',
-	},
-
-});
 
 class BookCard extends Component {
 	constructor(props) {
@@ -133,7 +110,7 @@ class BookCard extends Component {
 
 
 		return (
-		  	<div>
+		  	<div style={{width:'95%', margin:'auto'}}>
 
 		  		<div>
 					{/* first the parent / card component */}
@@ -143,6 +120,7 @@ class BookCard extends Component {
 		  		</div>
 
 	  			<React.Fragment>
+
 					<div style={styles.showSocialsContainer}>
 						<ShowLikesOfBook
 							dataPayloadFromParent = { this.props.dataPayloadFromParent }
@@ -154,10 +132,6 @@ class BookCard extends Component {
 						/>					
 					</div>
 
-
-					<div style={styles.createSocialObjectsContainer}>
-						{/* 4th create individual child options like comment / like */}					
-					</div>
 
 				</React.Fragment>
 
@@ -171,4 +145,4 @@ BookCard.defaultProps = {
 };
 
 // export default BookCard; // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(withStyles(styles)(BookCard));
+export default withResponsiveness(BookCard);
