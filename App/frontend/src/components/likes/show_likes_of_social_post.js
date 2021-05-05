@@ -136,14 +136,13 @@ class ShowLikesOfSocialPost extends Component {
 
 						<Grid container direction="column" style={{backgroundColor: '#eee', paddingTop:20, }}>
 
-							{ this.state.likes.map((item, index) => (
-
+							{ this.state.likes.map((item, index) => {
 								<Grid item xs={12}>
 									<ComponentForShowingLike
 										componentData = { item }
 									/>
 								</Grid>
-							))}
+							})}
 
 						</Grid>
 

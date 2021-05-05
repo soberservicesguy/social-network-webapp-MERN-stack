@@ -19,7 +19,7 @@ async function get_post_details(type_of_post, post_created, post_details){
 			var { image_for_post, object_files_hosted_at } = post_created
 			image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
 			post_details = { ...post_details, image_for_post: image_for_post_to_use }
-
+			// image_for_post = null
 			break
 
 		case "video_post":
@@ -33,8 +33,15 @@ async function get_post_details(type_of_post, post_created, post_details){
 		case "text_with_image_post":
 
 			var { post_text, image_for_post, object_files_hosted_at } = post_created
+			// console.log('{ post_text, image_for_post, object_files_hosted_at }')
+			// console.log({ post_text, image_for_post, object_files_hosted_at })
 			image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
-			post_details = { ...post_details, post_text, image_for_post_to_use }									
+			// console.log('image_for_post_to_use for image with text')
+			// console.log(image_for_post_to_use)
+			post_details = { ...post_details, post_text, image_for_post:image_for_post_to_use }									
+			// console.log('post_details for text with image')
+			// console.log(post_details)
+			// image_for_post = null
 			break
 
 		case "text_with_video_post":

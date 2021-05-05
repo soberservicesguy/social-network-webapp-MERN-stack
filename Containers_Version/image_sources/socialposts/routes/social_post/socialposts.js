@@ -413,12 +413,22 @@ router.get('/get-socialpost', passport.authenticate('jwt', { session: false }), 
 	try{
 		let social_post = await SocialPost.findOne({ endpoint: req.query.endpoint })
 
-		var { type_of_post, total_likes, total_shares, total_comments, endpoint } = social_post
+		var { type_of_post, total_likes, total_shares, total_comments, endpoint, user } = social_post
+
+		let user_owning_socialpost = await User.findOne({_id: user})
+		let user_owning_socialpost_avatar = await get_image_to_display(user_owning_socialpost.user_avatar_image, user_owning_socialpost.object_files_hosted_at)
+
+
+
 		// incorporating notification_type
 		let post_details = { type_of_post, total_likes, total_shares, total_comments, endpoint }
 		post_details = await get_post_details(type_of_post, social_post, post_details)
 
-		res.status(200).json(post_details)
+		res.status(200).json({
+			...post_details,
+			friends_user_name: user_owning_socialpost.user_name_in_profile,
+			friends_user_avatar_image: user_owning_socialpost_avatar, 
+		})
 
 	} catch (err){
 		return err
@@ -456,21 +466,20 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 				let friend = friends[i]
 
+				// console.log('friend')
+				// console.log(friend)
+
 			// var friend = await User.findOne({_id: friend_id})
 
 			// access friend data here
-				var { user_name, user_avatar_image } = friend
-				let friends_user_name = user_name
+				var { user_name_in_profile, user_avatar_image } = friend
+				let friends_user_name = user_name_in_profile
 				let friends_user_avatar_image = user_avatar_image
 				let friend_endpoint = friend.endpoint
 
 				let friends_user_avatar_image_to_use
 				let cloud_resp
 
-				// console.log('friends_user_avatar_image')
-				// console.log(friends_user_avatar_image)
-				// console.log('object_files_hosted_at')
-				// console.log(object_files_hosted_at)
 				friends_user_avatar_image_to_use = await get_image_to_display(friends_user_avatar_image, object_files_hosted_at)
 
 // DRYed OUT
@@ -551,9 +560,13 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 					// } else {
 					// 	activity = activity
 					// }
+					console.log('activity')
+					console.log(activity)
 
 					activity = await Activity.findOne({_id: activity})
 
+					console.log('activity')
+					console.log(activity)
 					// console.log('activity')
 					// console.log(activity)
 
@@ -562,6 +575,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 					let post_details = {}
 
 					post_details = { friends_user_name, friends_user_avatar_image: friends_user_avatar_image_to_use, friend_endpoint, timestamp:activity.timestamp }
+					// console.log('post_details at beginning')
+					// console.log(post_details)
 
 					if ( last_timestamp_of_checking_notification !== null && Number(activity.timestamp) < Number(last_timestamp_of_checking_notification) ){
 						// console.log('INNER TRIGGERED')
@@ -574,9 +589,17 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 							case "created_post":
 
+								console.log('activity')
+								console.log(activity)
 								var { post_created } = activity
+								console.log('post_created')
+								console.log(post_created)
 								post_created = await SocialPost.findOne({_id: post_created})
+								console.log('post_created')
+								console.log(post_created)
 								var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_created
+								// console.log('endpoint in created post')
+								// console.log(endpoint)
 								// incorporating notification_type
 								post_details = { ...post_details, notification_type:'created_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
 	// DRYed out
@@ -607,17 +630,27 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								post_details = await get_post_details(type_of_post, post_created, post_details)
 								// console.log('post_details')
 								// console.log(post_details)
-								console.log('PUSHED')
-								activities_to_send.push(post_details)
+								// console.log('PUSHED')
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
+
+
 								break
 
 							case "liked_post":
 
 								var { post_liked } = activity
-								console.log('post_liked')
-								console.log(post_liked)
+								// console.log('post_liked')
+								// console.log(post_liked)
 								post_liked = await SocialPost.findOne({_id: post_liked})
-								console.log(post_liked)
+								// console.log(post_liked)
 								var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_liked
 								// incorporating notification_type
 								post_details = { ...post_details, notification_type:'liked_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
@@ -629,7 +662,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								post_details = {...post_details, user_name, user_avatar_image: image_in_base64_encoding}
 								post_details = await get_post_details(type_of_post, post_liked, post_details)
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "shared_post":
@@ -647,7 +688,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								post_details = {...post_details, user_name, user_avatar_image: image_in_base64_encoding}
 								post_details = await get_post_details(type_of_post, post_share, post_details)
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "commented_on_post":
@@ -668,7 +717,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								post_details = {...post_details, user_name, user_avatar_image: image_in_base64_encoding}
 								post_details = await get_post_details(type_of_post, post_commented, post_details)
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "created_book":
@@ -681,7 +738,14 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = await get_image_to_display(book_image, object_files_hosted_at)
 
 								post_details = { ...post_details, notification_type:'created_book', activity_type, book_name, book_image: image_in_base64_encoding, book_description, endpoint }
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "got_interested_in_book":
@@ -694,7 +758,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = await get_image_to_display(book_image, object_files_hosted_at)
 
 								post_details = { ...post_details, notification_type:'got_interested_in_book', activity_type, book_name, book_image: get_image_to_display, book_description, endpoint }
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "created_page":
@@ -707,7 +779,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = await get_image_to_display(page_image, object_files_hosted_at)
 
 								post_details = { ...post_details, notification_type:'created_page', activity_type, page_name, page_image: image_in_base64_encoding, page_description, endpoint }
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "got_interested_in_page":
@@ -720,7 +800,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = await get_image_to_display(page_image, object_files_hosted_at)
 
 								post_details = { ...post_details, notification_type:'got_interested_in_page', activity_type, page_name, page_image: image_in_base64_encoding, page_description, endpoint }
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "created_sport":
@@ -733,7 +821,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = await get_image_to_display(sport_image, object_files_hosted_at)
 
 								post_details = { ...post_details, notification_type:'created_sport', activity_type, sport_name, sport_image: image_in_base64_encoding, sport_description, endpoint }
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "got_interested_in_sport":
@@ -746,7 +842,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = await get_image_to_display(sport_image, object_files_hosted_at)
 
 								post_details = { ...post_details, notification_type:'got_interested_in_sport', activity_type, sport_name, sport_image: image_in_base64_encoding, sport_description, endpoint }
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "created_advertisement":
@@ -759,7 +863,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = await get_image_to_display(ad_image, object_files_hosted_at)
 
 								post_details = { ...post_details, notification_type:'created_advertisement', activity_type, ad_name, ad_image: image_in_base64_encoding, ad_description, endpoint }
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							case "got_interested_in_advertisement":
@@ -772,7 +884,15 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = await get_image_to_display(ad_image, object_files_hosted_at)
 
 								post_details = { ...post_details, notification_type:'got_interested_in_advertisement', activity_type, ad_name, ad_image: image_in_base64_encoding, ad_description, endpoint }
-								activities_to_send.push(post_details)
+								// activities_to_send.push(post_details)
+
+								if ( !activities_to_send.includes(post_details) ){
+
+									activities_to_send.push(post_details)
+									console.log('PUSHED')
+
+								}
+
 								break
 
 							default:
@@ -795,6 +915,13 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 		Promise.all(list_of_promises)
 		.then(async () => {
+
+			// friends_user_name
+			activities_to_send.map((activity) => {
+				console.log('activity.friends_user_name')
+				console.log(activity.friends_user_name)
+			})
+
 
 			if(send_posts){
 				user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
@@ -864,8 +991,8 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 		let activities_to_send = []
 
 		// access friend data here
-		var { user_name, user_avatar_image, object_files_hosted_at } = user_owning_socialposts
-		let friends_user_name = user_name
+		var { user_name_in_profile, user_avatar_image, object_files_hosted_at } = user_owning_socialposts
+		let friends_user_name = user_name_in_profile
 		let friends_user_avatar_image = user_avatar_image
 		let friend_endpoint = user_owning_socialposts.endpoint
 
@@ -1731,6 +1858,9 @@ router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { ses
 		SocialPost.findOne({endpoint: socialpost_endpoint})
 		.then(async (socialpost) => {
 
+			let user_owning_socialpost = await User.findOne({_id: socialpost.user})
+			let user_owning_socialpost_avatar = await get_image_to_display(user_owning_socialpost.user_avatar_image, user_owning_socialpost.object_files_hosted_at)
+
 			socialpost.comments.push( newComment )
 
 			newComment.socialpost = socialpost
@@ -1750,6 +1880,8 @@ router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { ses
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
 					}) 
 
 				} else if (socialpost.type_of_post === 'image_post') {
@@ -1762,6 +1894,8 @@ router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { ses
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
 					}) 
 
 				} else if (socialpost.type_of_post === 'video_post') {
@@ -1775,6 +1909,8 @@ router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { ses
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
 					}) 
 
 				} else if (socialpost.type_of_post === 'text_with_image_post') {
@@ -1788,6 +1924,8 @@ router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { ses
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
 					}) 
 
 				} else if (socialpost.type_of_post === 'text_with_video_post') {
@@ -1802,6 +1940,8 @@ router.post('/create-comment-for-socialpost', passport.authenticate('jwt', { ses
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
 					}) 
 
 				} else {
@@ -1852,16 +1992,16 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 		_id: new mongoose.Types.ObjectId(),
 	})
 
-	SocialPost.find()
-	.then((posts) => {
-		posts.map((post) => console.log(`endpoint is ${post.endpoint}`))
-	})
 
 	let post = await SocialPost.findOne({endpoint: socialpost_endpoint})
 	console.log(post)
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
 	.then(async (user) => {
+
+		let user_owning_socialpost = await User.findOne({_id: post.user})
+		let user_owning_socialpost_avatar = await get_image_to_display(user_owning_socialpost.user_avatar_image, user_owning_socialpost.object_files_hosted_at)
+
 					
 		newLike.user = user
 		user.socialpost_likes.push(newLike)
@@ -1891,6 +2031,8 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
 					}) 
 
 				} else if (socialpost.type_of_post === 'image_post') {
@@ -1903,6 +2045,8 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
 					}) 
 
 				} else if (socialpost.type_of_post === 'video_post') {
@@ -1916,6 +2060,9 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
+
 					}) 
 
 				} else if (socialpost.type_of_post === 'text_with_image_post') {
@@ -1929,6 +2076,9 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
+
 					}) 
 
 				} else if (socialpost.type_of_post === 'text_with_video_post') {
@@ -1943,6 +2093,9 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
+
 					}) 
 
 				} else {
@@ -1999,6 +2152,9 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 		SocialPost.findOne({endpoint: socialpost_endpoint})
 		.then(async (socialpost) => {
 
+			let user_owning_socialpost = await User.findOne({_id: socialpost.user})
+			let user_owning_socialpost_avatar = await get_image_to_display(user_owning_socialpost.user_avatar_image, user_owning_socialpost.object_files_hosted_at)
+
 			socialpost.shares.push( newShare )
 
 			newShare.socialpost = socialpost
@@ -2019,6 +2175,9 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
+
 					}) 
 
 				} else if (socialpost.type_of_post === 'image_post') {
@@ -2031,6 +2190,9 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
+
 					}) 
 
 				} else if (socialpost.type_of_post === 'video_post') {
@@ -2044,6 +2206,9 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
+
 					}) 
 
 				} else if (socialpost.type_of_post === 'text_with_image_post') {
@@ -2057,6 +2222,9 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
+
 					}) 
 
 				} else if (socialpost.type_of_post === 'text_with_video_post') {
@@ -2071,6 +2239,9 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 						total_comments: socialpost.total_comments,
 						total_likes: socialpost.total_likes,
 						total_shares: socialpost.total_shares,
+						friends_user_name: user_owning_socialpost.user_name_in_profile,
+						friends_user_avatar_image: user_owning_socialpost_avatar,
+
 					}) 
 
 				} else {
@@ -2117,11 +2288,12 @@ router.get('/get-all-comments-of-socialpost', async function(req, res, next){
 
 	var final_result = await Promise.all(socialpost_with_comments.comments.map(async (comment_object) => {
 	// find user from each like
+		let user_object = await User.findOne({_id:comment_object.user})
+
 		base64_encoded_image = await get_image_to_display(user_object.user_avatar_image, user_object.object_files_hosted_at)
 
-		let user_object = await User.findOne({_id:comment_object.user})
 		return {
-			user_name:user_object.user_name,
+			user_name:user_object.user_name_in_profile,
 			user_avatar_image:base64_encoded_image,
 			comment_text:comment_object.comment_text
 		}
@@ -2151,8 +2323,9 @@ router.get('/get-all-likes-of-socialpost',async function(req, res, next){
 		
 		base64_encoded_image = await get_image_to_display(user_object.user_avatar_image, user_object.object_files_hosted_at)
 		
+
 		final_result.push({
-			user_name:user_object.user_name,
+			user_name:user_object.user_name_in_profile,
 			user_avatar_image:base64_encoded_image,
 		})
 
@@ -2184,7 +2357,7 @@ router.get('/get-all-shares-of-socialpost',async function(req, res, next){
 		base64_encoded_image = await get_image_to_display(user_object.user_avatar_image, user_object.object_files_hosted_at)
 
 		final_result.push({
-			user_name:user_object.user_name,
+			user_name:user_object.user_name_in_profile,
 			user_avatar_image:base64_encoded_image,
 		})
 

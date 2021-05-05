@@ -56,36 +56,47 @@ class IndividualSocialPost extends Component {
 
 // FETCHING DATA FOR COMPONENT
 	// if id was set by previous route
-		var { id } = this.props.match.params // use in render method to access param
-		if (typeof id !== 'undefined'){
-			id = id.replace(":id=", "")
+		// if (typeof this.props.location.state !== 'undefined'){
 
-			console.log('MAKING REQEST')
-			axios.get(utils.baseUrl + '/socialposts/get-socialpost', 
-				{
-				    params: {
-						endpoint: id,
-				    }
+		// 	console.log('USING REDUX DATA')
+
+		// } else {
+
+			var { id } = this.props.match.params // use in render method to access param
+			if (typeof id !== 'undefined'){
+				id = id.replace(":id=", "")
+
+				console.log('MAKING REQEST')
+				axios.get(utils.baseUrl + '/socialposts/get-socialpost', 
+					{
+					    params: {
+							endpoint: id,
+					    }
+					})
+				.then((response) => {
+
+					// console.log('RESPONSE')
+					// console.log(response.data)
+					this.props.set_current_socialpost(response.data)
+					console.log('this.props.current_socialpost')		
+					console.log(this.props.current_socialpost)		
+					// this.setState( prev => ({...prev, 
+					// 	comments: response.data,
+					// 	show_comments: ( prev.show_comments === true ) ? false : true,
+					// 	show_shares: false,
+					// 	show_likes: false,
+					// }))
+					
 				})
-			.then((response) => {
+				.catch((error) => {
+					console.log(error);
+				})
+			}
+		// }
 
-				// console.log('RESPONSE')
-				// console.log(response.data)
-				this.props.set_current_socialpost(response.data)
-				console.log('this.props.current_socialpost')		
-				console.log(this.props.current_socialpost)		
-				// this.setState( prev => ({...prev, 
-				// 	comments: response.data,
-				// 	show_comments: ( prev.show_comments === true ) ? false : true,
-				// 	show_shares: false,
-				// 	show_likes: false,
-				// }))
-				
-			})
-			.catch((error) => {
-				console.log(error);
-			})
-		}
+
+
+
 		
 	}
 

@@ -36,11 +36,12 @@ SocialPostSchema.pre('save', function(next) {
 	endpoint_number += 1
 
 	// adding timestamp and endpoint when post is created ie likes, comments, shares are 0
-	if ( this.total_comments.length === 0 && this.likes.length === 0 && this.shares.length === 0 ){
+	if ( this.comments.length === 0 && this.likes.length === 0 && this.shares.length === 0 ){
 
 		this.endpoint = String( endpoint_number )
 		this.timestamp = String( Date.now() )
 
+		console.log(`assigning endpoint to new post ${endpoint_number}`)
 	}
 
 	this.total_comments = this.comments.length

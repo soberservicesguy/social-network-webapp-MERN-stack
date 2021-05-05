@@ -94,8 +94,12 @@ UserSchema.pre('save', function(next) {
 
 	endpoint_number += 1
 
-	this.endpoint = String( endpoint_number )
-	this.timestamp = String( Date.now() )
+	if ( this.socialposts.length === 0 && this.socialpost_comments.length === 0 && this.socialpost_likes.length === 0 && this.socialpost_shares.length === 0 && this.books_created.length === 0 && this.books_liked.length === 0 && this.pages_created.length === 0 && this.pages_liked.length === 0 && this.ad_created.length === 0 && this.ad_liked.length === 0 && this.sport_created.length === 0 && this.sport_liked.length === 0 && this.friends.length === 0 && this.friend_requests_sent.length === 0 ){
+
+		this.endpoint = String( endpoint_number )
+		this.timestamp = String( Date.now() )
+	
+	}
 
     next();
 

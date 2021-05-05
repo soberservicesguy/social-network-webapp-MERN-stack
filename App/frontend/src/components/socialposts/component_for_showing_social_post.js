@@ -1,5 +1,5 @@
 import { 
-	// withRouter,
+	withRouter,
 	Link,
 } from "react-router-dom";
 
@@ -95,22 +95,67 @@ class ComponentForShowingSocialPost extends Component {
 		}
 
 
+
+
 		// const data = {type_of_post:'text_post', notification_type:'created_page'} 
 
-		const data = this.props.dataPayloadFromParent
-		console.log('data while going')
-		console.log(data)
-		if (typeof data === 'undefined' || data === null){
-			data = this.props.current_socialpost
-		}
+		let data = this.props.dataPayloadFromParent
+		// console.log('data friends_user_name')
+		// console.log(data.friends_user_name)
+
+		// if (typeof this.props.location.state !== 'undefined'){
+
+		// 	console.log('USING REDUX DATA')
+		// 	// let { data_to_use } = this.props.location.state
+
+		// 	if (this.props.location.state.data_to_use === 'from_redux'){
+		// 		data = this.props.current_socialpost
+		// 		// console.log('data when in cuurent socialpost')			
+		// 		// console.log(data.friends_user_name)			
+		// 	}
+
+		// 	if (this.props.location.state.set_type_of_post === 'liked_post'){
+		// 		data.notification_type = 'liked_post' // && 
+		// 		data.type_of_post = 'text_post'				
+		// 	}
+
+		// }
+
+				// data = this.props.current_socialpost
+
+	// <Link 
+	// 	to = {{ pathname: `/blogposts/:id=`, state:{something:'valueable'} }} 
+	// 	style={{color: 'inherit', textDecoration: 'inherit'}}
+	// >
+	// 	<p>Signup</p>
+	// </Link>
+
+	// // consuming params in new route
+	// let { id } = this.props.match.params // use in render method to access param
+	// // consuming payload in new route
+	// let { something } = this.props.location.state // use in render method to access param
+
+
+		// if (data.friends_user_name){
+			// data = this.props.dataPayloadFromParent
+		// } else {
+		// 	this.props.set_current_socialpost(data)
+		// }
+
+
+		// if (typeof data === 'undefined' || data === null){
+		// 	data = this.props.current_socialpost
+		// 	console.log('DATA CHANGED')
+		// }
 		// var base64Image = "data:image/jpeg;base64," + data.image_for_post
+
 
 
 
 	/* activity headers start here */
 		let user_activity_header_for_post_create = (
 	  		<Link 
-	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			to={{ pathname:`/socialposts/:id=${data.endpoint}`, state:{data_to_use:'from_redux'} }} 
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
 	  			onClick={() => this.props.set_current_socialpost(data)}
 			>
@@ -135,7 +180,8 @@ class ComponentForShowingSocialPost extends Component {
 
 		let user_activity_header_for_like = (
 	  		<Link 
-	  			to={`/socialposts/:id=${data.endpoint}`} 
+	  			// to={`/socialposts/:id=${data.endpoint}`} 
+	  			to={{ pathname:`/socialposts/:id=${data.endpoint}`, state:{data_to_use:'from_redux'} }}
 	  			style={{color: 'inherit', textDecoration: 'inherit'}}
 	  			onClick={() => this.props.set_current_socialpost(data)}
 			>
@@ -406,6 +452,13 @@ class ComponentForShowingSocialPost extends Component {
 			avatar_to_use = this.props.user_avatar_image
 		}
 		 
+		// console.log('data')
+		// console.log(data)
+
+		// console.log('this.props.current_socialpost')
+		// console.log(this.props.current_socialpost)
+
+		console.log({friends_user_name:data.friends_user_name})
 
 		let username_avatar_in_created_post_type = (
 	  		<Link 
@@ -416,20 +469,30 @@ class ComponentForShowingSocialPost extends Component {
 					<div style={styles.avatarContainer}>
 						<img 
 							alt="" 
-							src={"data:image/jpeg;base64," + avatar_to_use}
-							// src={"data:image/jpeg;base64," + data.friends_user_avatar_image}
+							// src={"data:image/jpeg;base64," + avatar_to_use}
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image}
 							// src={utils.image}
 							style={styles.avatarImage}
 						/>
 					</div>
 					<div style={styles.usernameContainer}>
 						<p style={{...styles.usernameText, marginLeft:(_xs || _sm) ? 20 : -60}}>
-							{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}
+							{/*{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}*/}
+							{data.friends_user_name}
+							{/*{this.props.current_socialpost.friends_user_name}*/}
+							{/*{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}*/}
+							{/*{(typeof data.friends_user_name === 'undefined') ? this.props.user_name_in_profile : data.friends_user_name}*/}
 						</p>
 					</div>
 				</div>
 			</Link>
 		)
+
+		// console.log('data')
+		// console.log(data)
+
+		// console.log('this.props.user_avatar_image')
+		// console.log(this.props.user_avatar_image)
 
 		let username_avatar_in_rest_cases = (
 	  		<Link 
@@ -440,7 +503,9 @@ class ComponentForShowingSocialPost extends Component {
 					<div style={styles.avatarContainer}>
 						<img 
 							alt="" 
-							src={"data:image/jpeg;base64," + avatar_to_use}
+							// src={"data:image/jpeg;base64," + data.friends_user_avatar_image}
+							src={"data:image/jpeg;base64," + this.props.user_avatar_image}
+							// src={"data:image/jpeg;base64," + avatar_to_use}
 							// src={"data:image/jpeg;base64," + data.user_avatar_image} 
 							// src={utils.image}
 							style={styles.avatarImage}
@@ -448,7 +513,8 @@ class ComponentForShowingSocialPost extends Component {
 					</div>
 					<div style={styles.usernameContainer}>
 						<p style={{...styles.usernameText, marginLeft:(_xs || _sm) ? 20 : -60}}>
-							{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}
+							sss{data.friends_user_name}
+							{/*{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}*/}
 						</p>
 					</div>
 				</div>
@@ -748,7 +814,7 @@ class ComponentForShowingSocialPost extends Component {
 
 				// liked_post section
 
-					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'text_post'){
+					} else if (data.notification_type === 'liked_post' && data.type_of_post === 'text_post' ){
 
 						return (
 							<div style={styles.outerContainer}>
@@ -1145,7 +1211,7 @@ ComponentForShowingSocialPost.defaultProps = {
 };
 
 // export default ComponentForShowingSocialPost;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withResponsiveness(withStyles(styles)(ComponentForShowingSocialPost))
+export default withRouter(withResponsiveness(ComponentForShowingSocialPost))
 
 				// <p>
 				// 	{ data.video_thumbnail_image }

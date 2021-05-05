@@ -59,8 +59,8 @@ class CreateLikeForSocialpost extends Component {
 			// switching it back to false
 			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
 
-			// redirecting
-			return <Redirect to = {{ pathname: `/socialposts/:id=${this.props.parentDetailsPayload.endpoint}` }} />
+			// redirecting 
+			return <Redirect to = {{ pathname: `/socialposts/:id=${this.props.parentDetailsPayload.endpoint}`, state:{data_to_use:'from_redux', set_type_of_post: 'liked_post'} }} />
 
 		} else {
 

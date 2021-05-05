@@ -32,7 +32,8 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 
 				let new_socialpost = {}
 				let socialpost_endpoint = ''
-
+				let image_for_post_to_use
+				
 				switch (social_post_type) {
 					case "text_post":
 
@@ -62,7 +63,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 							console.log('newSocialPost.image_for_post')
 							console.log(newSocialPost.image_for_post)
 
-							let image_for_post_to_use = await get_image_to_display(newSocialPost.image_for_post, newSocialPost.object_files_hosted_at)
+							image_for_post_to_use = await get_image_to_display(newSocialPost.image_for_post, newSocialPost.object_files_hosted_at)
 
 							new_socialpost = {
 								type_of_post: newSocialPost.type_of_post,
@@ -82,7 +83,7 @@ async function save_socialpost_and_activity(req, res, err, newSocialPost, social
 
 							socialpost_endpoint = saved_socialpost.endpoint
 
-							let image_for_post_to_use = await get_image_to_display(newSocialPost.image_for_post, newSocialPost.object_files_hosted_at)
+							image_for_post_to_use = await get_image_to_display(newSocialPost.image_for_post, newSocialPost.object_files_hosted_at)
 
 							new_socialpost = {
 								type_of_post: newSocialPost.type_of_post,
