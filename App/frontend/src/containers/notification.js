@@ -58,14 +58,14 @@ class NotificationsContainer extends Component {
 
 				if(response.data.length === 0){
 
-					console.log('no more notifications to show')
+					// console.log('no more notifications to show')
 					append_fetched_notifications_callback({data:[{message:'no more notifications'}]})
 					setNoMoreNotificationsCallback()
 
 				} else {
 
-					console.log('Notifications recieved')
-					console.log(response.data.length)
+					// console.log('Notifications recieved')
+					// console.log(response.data.length)
 					append_fetched_notifications_callback(response)
 					set_state_for_requests_made()
 
@@ -145,8 +145,8 @@ class NotificationsContainer extends Component {
 						}}>
 							<img src={utils.notification_image} alt="" 
 								style={{
-									width:70, 
-									height:70, 
+									width:60, 
+									height:60, 
 									resizeMode: "stretch",
 									borderRadius: 70/2,
 									marginBottom:20,
@@ -156,65 +156,67 @@ class NotificationsContainer extends Component {
 					</button>
 
 
-					<div style={{
-						position:'absolute',
-						right:20,
-						backgroundColor: 'white',
-						width:(_xs || _sm ) ? '30%' : '15%',
-						opacity: (this.state.show_notifications_modal) ? 1 : 0,
-						borderWidth:1,
-						borderColor:'#eee',
-						borderStyle:'solid',
-					}}>
+					{this.state.show_notifications_modal && (
+						<div style={{
+							position:'absolute',
+							right:20,
+							backgroundColor: 'white',
+							width:(_xs || _sm ) ? '30%' : '15%',
+							// opacity: (this.state.show_notifications_modal) ? 1 : 0,
+							borderWidth:1,
+							borderColor:'#eee',
+							borderStyle:'solid',
+						}}>
 
-						{/*<div>
-							<p style={{fontWeight:'bold', fontSize:20, marginTop:20}}>
-								Recent Notifications
-							</p>
-							<div style={{
-								width:'20%',
-								height:1,
-								borderWidth:0,
-								borderBottomWidth: 1,
-								borderStyle:'solid',
-								borderBottomColor:utils.maroonColor,
-								marginBottom:20,
-							}}>
-								<p></p>
-							</div>
-						</div>*/}
+							{/*<div>
+								<p style={{fontWeight:'bold', fontSize:20, marginTop:20}}>
+									Recent Notifications
+								</p>
+								<div style={{
+									width:'20%',
+									height:1,
+									borderWidth:0,
+									borderBottomWidth: 1,
+									borderStyle:'solid',
+									borderBottomColor:utils.maroonColor,
+									marginBottom:20,
+								}}>
+									<p></p>
+								</div>
+							</div>*/}
 
-						{total_notifications.map((item, index)=>{
+							{total_notifications.map((item, index)=>{
 
-							return (
-								<Grid key={String(index)} item>
-									<ConnectedComponentForShowingNotification
-										dataPayloadFromParent = { item }
-									/>
-								</Grid>
-							)
+								return (
+									<Grid key={String(index)} item>
+										<ConnectedComponentForShowingNotification
+											dataPayloadFromParent = { item }
+										/>
+									</Grid>
+								)
 
-						})}
+							})}
 
-						<button onClick={() => this.getNotifications()}
-							style={{
-								opacity:(this.state.no_more_notifications_from_backend) ? 0 : 1,
-								outline:'none',
-								background:'none',
-								borderWidth:0,
-								textAlign:'center',
-								width:'100%',
-								color:utils.maroonColor,
-								paddingBottom:30,
-								fontWeight:'bold',
-								marginTop:20,
-							}}
-						>
-							Show more
-						</button>
+							<button onClick={() => this.getNotifications()}
+								style={{
+									opacity:(this.state.no_more_notifications_from_backend) ? 0 : 1,
+									outline:'none',
+									background:'none',
+									borderWidth:0,
+									textAlign:'center',
+									width:'100%',
+									color:utils.maroonColor,
+									paddingBottom:30,
+									fontWeight:'bold',
+									marginTop:20,
+								}}
+							>
+								Show more
+							</button>
 
-					</div>
+						</div>
 
+					)}
 
 				</div>
 

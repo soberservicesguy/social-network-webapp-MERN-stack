@@ -31,14 +31,14 @@ const {
 
 router.get('/ads-list', async function(req, res, next){
 
-	console.log('GETTING ADS')
+	// console.log('GETTING ADS')
 
 	Advertisement.
 	find().
 	limit(10).
 	then(async (advertisements)=>{
 
-		console.log(`number of ads are ${advertisements.length}`)
+		// console.log(`number of ads are ${advertisements.length}`)
 
 		if (advertisements){
 
@@ -57,7 +57,7 @@ router.get('/ads-list', async function(req, res, next){
 				newAdvertisement = {}
 			}))
 
-			console.log(newAdvertisements_list)
+			// console.log(newAdvertisements_list)
 			res.status(200).json(newAdvertisements_list);
 
 		} else {

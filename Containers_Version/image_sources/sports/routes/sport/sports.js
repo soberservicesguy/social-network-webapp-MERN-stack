@@ -329,8 +329,6 @@ router.get('/get-all-likes-of-sport',async function(req, res, next){
 	let final_interested_payload = await Promise.all(sport_with_interested_users.map(async (user_object) => {
 
 	// find user from each like
-		console.log('user_object.user_name')
-		console.log(user_object.user_name)
 
 		// return await User.findOne({_id:like_object.user})
 		// .then(async (user_object) => {
@@ -353,39 +351,10 @@ router.get('/get-all-likes-of-sport',async function(req, res, next){
 		
 	}))
 
-	// console.log('PROMISE RESULT 1')
-	// console.log(users_list_who_liked)
-
-// find image from user
-// NOT NEEDED SINCE WE DID NOT MAKE IMAGE AS SEPARATE ENTITY
-	// let final_interested_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
-	
-	// 	return await Image.findOne({_id:user_object.user_image})
-	// 	.then(async (image_object) => {
-
-	// 		if (image_object){
-
-	// 			return {
-	// 				user_name:user_object.user_name,
-	// 				user_image:base64_encode(image_object.image_filepath),
-	// 			}
-
-	// 		} else {
-	// 			null
-	// 		}
-
-	// 	})
-
-	// }))
-
-	// console.log('PROMISE RESULT 2')
-	// console.log(final_interested_payload)
 
 	Promise.all(list_of_promises)
 	.then(() => {
 
-		// console.log('final_interested_payload')
-		// console.log(final_interested_payload)
 		res.status(200).json( final_interested_payload );
 
 	})

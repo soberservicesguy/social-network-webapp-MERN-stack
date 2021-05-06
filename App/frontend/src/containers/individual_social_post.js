@@ -66,7 +66,7 @@ class IndividualSocialPost extends Component {
 			if (typeof id !== 'undefined'){
 				id = id.replace(":id=", "")
 
-				console.log('MAKING REQEST')
+				// console.log('MAKING REQEST')
 				axios.get(utils.baseUrl + '/socialposts/get-socialpost', 
 					{
 					    params: {
@@ -78,8 +78,8 @@ class IndividualSocialPost extends Component {
 					// console.log('RESPONSE')
 					// console.log(response.data)
 					this.props.set_current_socialpost(response.data)
-					console.log('this.props.current_socialpost')		
-					console.log(this.props.current_socialpost)		
+					// console.log('this.props.current_socialpost')		
+					// console.log(this.props.current_socialpost)		
 					// this.setState( prev => ({...prev, 
 					// 	comments: response.data,
 					// 	show_comments: ( prev.show_comments === true ) ? false : true,
@@ -224,7 +224,7 @@ class IndividualSocialPost extends Component {
 
 		let data = this.props.current_socialpost
 
-		console.log({data})
+		// console.log({data})
 
 		let all_likes = (
 			<Grid container direction="column" style={{backgroundColor: '#eee', paddingTop:20, width:'70%', margin:'auto'}}>

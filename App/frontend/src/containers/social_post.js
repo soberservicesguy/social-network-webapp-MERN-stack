@@ -65,13 +65,13 @@ class SocialPostContainer extends Component {
 
 			if(response.data.length === 0){
 
-				console.log('no more posts to show')
+				// console.log('no more posts to show')
 				window.removeEventListener("scroll", this.onScroll);
 				append_socialposts_callback({data: [{message:'no more posts to show'}]})
 
 			} else {
-				console.log('posts recieved')
-				console.log(response.data)
+				// console.log('posts recieved')
+				// console.log(response.data)
 				append_socialposts_callback(response)
 				set_state_for_requests_made()
 				addEventListenerCallback()

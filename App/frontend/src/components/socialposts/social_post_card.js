@@ -127,7 +127,7 @@ class SocialPostCard extends Component {
 			  		/>
 		  		</div>
 
-		  		{console.log(Object.keys(this.props.dataPayloadFromParent))}
+		  		{/*{console.log(Object.keys(this.props.dataPayloadFromParent))}*/}
 
 		  		{( !['no more posts to show', 'no posts to show'].includes(this.props.dataPayloadFromParent.message) ) ? (
 		  		// {(this.props.dataPayloadFromParent.message !== 'no more posts to show' || this.props.dataPayloadFromParent.message !== 'no posts to show'  ) ? (

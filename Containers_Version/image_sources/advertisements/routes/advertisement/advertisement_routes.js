@@ -155,6 +155,9 @@ router.post('/create-advertisement-with-user',  passport.authenticate('jwt', { s
 								newAdvertisement.ad_uploaded_by_user = user
 								newAdvertisement.save()
 
+								// console.log('newAdvertisement.endpoint while creating ad')
+								// console.log(newAdvertisement.endpoint)
+
 								let new_advertisement = {
 									ad_name: newAdvertisement.ad_name,
 									ad_image: base64_encoded_image,
@@ -162,7 +165,7 @@ router.post('/create-advertisement-with-user',  passport.authenticate('jwt', { s
 									ad_endpoint: newAdvertisement.endpoint,
 								}
 
-								res.status(200).json({ success: true, msg: 'new ad saved', new_advertisement: newAdvertisement});	
+								res.status(200).json({ success: true, msg: 'new ad saved', new_advertisement: new_advertisement});	
 
 
 								let newActivity = new Activity({
@@ -197,62 +200,6 @@ router.post('/create-advertisement-with-user',  passport.authenticate('jwt', { s
 		}
 	})
 })
-
-
-
-
-// get advertisements_list_with_children
-// USED
-// router.get('/ads-list-with-children', passport.authenticate('jwt', { session: false }), function(req, res, next){
-// router.get('/ads-list', function(req, res, next){
-
-// 	console.log('GETTING ADS')
-
-// 	// Advertisement.
-// 	// find().
-// 	// limit(10).
-// 	// then((advertisements)=>{
-
-// 	// 	if (advertisements){
-
-// 	// 		var newAdvertisements_list = []
-// 	// 		advertisements.map((advertisement, index)=>{
-// 	// 			var newAdvertisement = {}
-
-// 	// 			newAdvertisement.ad_name = advertisement[ 'ad_name' ]
-// 	// 			newAdvertisement.ad_image = base64_encode( advertisement[ 'ad_image' ] )
-// 	// 			newAdvertisement.ad_description = advertisement[ 'ad_description' ]
-// 	// 			newAdvertisement.endpoint = advertisement[ 'endpoint' ]
-
-// 	// 			newAdvertisements_list.push({...newAdvertisement})
-// 	// 			newAdvertisement = {}
-// 	// 		});
-
-// 	// 		res.status(200).json(newAdvertisements_list);
-
-// 	// 	} else {
-// 	// 		res.status(401).json({ success: false, msg: "could not find Advertisements_list" });
-
-// 	// 	}
-// 	// })
-// 	// .catch((err) => {
-
-// 	// 	next(err);
-
-// 	// });
-
-// });
-
-
-
-
-
-
-
-
-
-
-
 
 
 

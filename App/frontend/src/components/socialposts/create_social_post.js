@@ -232,7 +232,7 @@ class CreateSocialPost extends Component {
 
 											axios.post(utils.baseUrl + '/socialposts/create-socialpost-with-user', formData)
 											.then(function (response) {
-												console.log(response.data) // current socialpost screen data
+												// console.log(response.data) // current socialpost screen data
 												
 												setNewSocialpostIDToState(response)
 												// set to current parent object
@@ -273,7 +273,7 @@ class CreateSocialPost extends Component {
 											// console logging selected file from menu
 											// setState method with event.target.files[0] as argument
 											this.setState(prev => ({...prev, social_post_image: event.target.files[0]}))
-											console.log( event.target.files[0] ) // gives first file
+											// console.log( event.target.files[0] ) // gives first file
 										}}
 									/>
 								</div>
@@ -292,7 +292,7 @@ class CreateSocialPost extends Component {
 										type={"file"}
 										onChange={(event) => {
 											// console logging selected file from menu
-											console.log( event.target.files[0] ) // gives first file
+											// console.log( event.target.files[0] ) // gives first file
 											// setState method with event.target.files[0] as argument
 											this.setState(prev => ({...prev, social_post_video: event.target.files[0]}))
 										}}

@@ -29,7 +29,7 @@ class CreateAdvertisement extends Component {
 // STATE	
 		this.state = {
 			expanded:false,
-			redirectToRoute: false,
+			redirectAdToRoute: false,
 
 			ad_name: '',
 			ad_description: '',
@@ -129,14 +129,13 @@ class CreateAdvertisement extends Component {
 
 		}
 
-		if ( this.state.redirectToRoute !== false ){
+		if ( this.state.redirectAdToRoute !== false ){
 
 			// switching it back to false
-			this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))
+			this.setState(prev => ({...prev, redirectAdToRoute: (prev.redirectAdToRoute === false) ? true : false }))
 
 			// redirecting
-			return <Redirect to = {{ pathname: `/advertisements/:id=${this.state.new_ad_id}` }} />
-
+			return <Redirect to = {{ pathname: `/ads/:id=${this.state.new_ad_id}` }} />
 
 		} else {
 
@@ -151,7 +150,7 @@ class CreateAdvertisement extends Component {
 								ref={ (divElement) => { this.divElement1 = divElement } }
 								placeholder="Type your ad_name" 
 								type="text" 
-								name="post_text"
+								name="ad_text"
 								multiline={true}
 								onChange={ (event) => this.setState( prev => ({...prev, ad_name: event.target.value})) }
 								style={styles.roundTextInput} 
@@ -165,9 +164,12 @@ class CreateAdvertisement extends Component {
 							<input 
 								placeholder="Type your ad_description" 
 								type="text" 
-								name="post_text"
+								name="ad_desc"
 								multiline={true}
-								onChange={ (event) => this.setState( prev => ({...prev, ad_description: event.target.value})) }
+								onChange={ (event) => {
+									// console.log(event)
+									this.setState( prev => ({...prev, ad_description: event.target.value})) 
+								}}
 								style={styles.roundTextInput} 
 							/>
 						</form>
@@ -177,20 +179,21 @@ class CreateAdvertisement extends Component {
 
 					<div style={styles.buttonsContainer}>
 						<div>
-							<label htmlFor="myInputAd">
+							<label htmlFor="myInputAdvertisement">
 								{/* below div will act as myInputAd button*/}
 								<div style={styles.uploadImageButton}>
-									Upload Images
+									Upload Image
 								</div>
 							</label>
 							<input
-								id="myInputAd"
+								id="myInputAdvertisement"
 								style={{display:'none'}}
 								name="ad_image" // name of input field or fieldName simply
 								type={"file"}
 								// multiple="multiple" // for selecting multiple files
 								enctype="multipart/form-data"
 								onChange={(event) => {
+									// console.log(event)
 									// console logging selected file from menu
 									// console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
@@ -201,11 +204,11 @@ class CreateAdvertisement extends Component {
 						</div>
 
 
-						<button style={styles.createAdButton}
+						<button style={styles.createAdButton} id={'ad_button'}
 							onClick={ () => {
-
+								// console.log('PRESSED')
 								let setResponseInCurrentAdvertisement = (arg) => this.props.set_current_advertisement(arg)
-								let redirectToNewAdvertisement = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+								let redirectToNewAdvertisement = () => this.setState(prev => ({...prev, redirectAdToRoute: (prev.redirectAdToRoute === false) ? true : false }))	
 								let setNewAdIDToState = (response) => this.setState(prev => ({...prev, new_ad_id: response.data.new_advertisement.ad_endpoint }))	
 
 
@@ -218,8 +221,8 @@ class CreateAdvertisement extends Component {
 								}
 
 								// if (this.state.ad_image !== ''){
-									console.log('added ad_image')
-									console.log(this.state.ad_image)
+									// console.log('added ad_image')
+									// console.log(this.state.ad_image)
 									formData.append('ad_image', this.state.ad_image, this.state.ad_image.name)
 								// }
 
@@ -227,11 +230,15 @@ class CreateAdvertisement extends Component {
 								.then(function (response) {
 									// console.log(response.data) // current advertisement screen data
 									
+									
+									// console.log('setting new ad id')									
 									setNewAdIDToState(response)
 
+									// console.log('setting response to current ad')									
 									// set to current parent object
 									setResponseInCurrentAdvertisement(response.data.new_advertisement)
 
+									// console.log('redirecting to new ad')									
 									// change route to current_advertisement
 									redirectToNewAdvertisement()
 

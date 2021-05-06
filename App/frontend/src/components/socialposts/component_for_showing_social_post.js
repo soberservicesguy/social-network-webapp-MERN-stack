@@ -458,7 +458,7 @@ class ComponentForShowingSocialPost extends Component {
 		// console.log('this.props.current_socialpost')
 		// console.log(this.props.current_socialpost)
 
-		console.log({friends_user_name:data.friends_user_name})
+		// console.log({friends_user_name:data.friends_user_name})
 
 		let username_avatar_in_created_post_type = (
 	  		<Link 
@@ -568,8 +568,8 @@ class ComponentForShowingSocialPost extends Component {
 
 			// video_source = `https://s3.amazonaws.com/${ data.video_for_post }`
 			video_source = `https://d3iwm50qkhk5zm.cloudfront.net/${ data.video_for_post }`
-			console.log('video_source')
-			console.log(video_source)
+			// console.log('video_source')
+			// console.log(video_source)
 
 			post_video_content = (
 				<div style={styles.postVideoContainer}>
@@ -588,8 +588,8 @@ class ComponentForShowingSocialPost extends Component {
 		} else {
 
 			// video_source = `http://localhost:3001/video-stream/video?endpoint=${ data.video_for_post }`
-			console.log('socialpost_endpoint')
-			console.log(data.endpoint)
+			// console.log('socialpost_endpoint')
+			// console.log(data.endpoint)
 			// video_source = `http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`
 			// video_source = {uri: video_source}
 			// console.log(`http://localhost:3001/video-stream/video?endpoint=${ data.socialpost_endpoint }`)

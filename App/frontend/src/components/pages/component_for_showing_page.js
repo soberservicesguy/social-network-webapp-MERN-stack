@@ -49,12 +49,6 @@ class ComponentForShowingPage extends Component {
 				flex:4,
 				paddingLeft:20,
 			},
-			imageStyle:{
-				width: 50, 
-				height: 50,
-				resizeMode: "stretch",
-				borderRadius:50/2
-			},
 
 			heading:{
 				fontWeight:'bold',
@@ -77,6 +71,29 @@ class ComponentForShowingPage extends Component {
 				backgroundColor:'white'
 			},
 
+
+			outerContainer:{
+				marginTop:30,
+			},
+
+			imageStyle:{
+				width: (this.props.showWholeComponent) ? '100%' : 50, 
+				height: (this.props.showWholeComponent) ? 400 : 50, 
+				resizeMode: "stretch",
+				borderRadius:(this.props.showWholeComponent) ? 0 : 50/2,
+
+			},
+
+			adHeading:{
+				fontWeight:'bold',
+				fontSize:20,
+				marginBottom:10,
+			},
+			adDescription:{
+				fontSize:15,
+			},
+
+
 		}
 					// { data.page_image }
 					// { data.endpoint }
@@ -85,77 +102,117 @@ class ComponentForShowingPage extends Component {
 		var base64Image = "data:image/jpeg;base64," + data.page_image
 
 		return (
-			<div style={styles.outerContainer}>
+			<div>
 
-		  		<Link 
-		  			to={{pathname:`/pages/:id=${data.endpoint}`}} 
-		  			style={{color: 'inherit', textDecoration: 'inherit'}}
-				>
-					<div style={styles.imageContainer}>
-						<img 
-							src={base64Image} 
-							// src = {utils.image}
-							alt="" 
-							style={styles.imageStyle}
-						/>
+				{(this.props.showWholeComponent) ? (
+				
+					<div style={styles.outerContainer}>
+				  		<Link 
+				  			to={{pathname:`/advertisements/:id=${data.endpoint}`}} 
+				  			style={{color: 'inherit', textDecoration: 'inherit'}}
+				  			// onClick = {() => this.props.set_current_advertisement(data)}
+						>
+							<div style={styles.imageContainer}>
+								<img 
+									src={base64Image}
+									// src={utils.image} 
+									alt="" 
+									style={styles.imageStyle}
+								/>
+							</div>
+						</Link>
+
+						<p style={styles.adHeading}>
+							{ data.page_name }
+						</p>
+						<p style={styles.adDescription}>
+							{ data.page_description }
+						</p>
+
 					</div>
-				</Link>
 
-				<div style={styles.textContainer}>
-					<p style={styles.heading}>
-						{ data.page_name }
-					</p>
+				) : (
 
-					<p style={styles.text}>
-						{ data.page_description }
-					</p>
-				</div>
+					<div style={styles.outerContainer}>
+				  		
+				  		<div style={{display:'flex'}}>
+					  		<Link 
+					  			to={{pathname:`/pages/:id=${data.endpoint}`}} 
+					  			style={{color: 'inherit', textDecoration: 'inherit'}}
+							>
+								<div style={styles.imageContainer}>
+									<img 
+										src={base64Image} 
+										// src = {utils.image}
+										alt="" 
+										style={styles.imageStyle}
+									/>
+								</div>
+							</Link>
 
-				<div style={styles.likeButtonContainer}>
-					<button
-						style={styles.likeButton}
-						onClick={ () => {
-							
-							let setResponseInCurrentPage = (arg) => this.props.set_current_page(arg)
-							let redirectToNewPage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
-							let setStateToLike = () => this.setState( prev => ({...prev, liked: (prev.liked===true) ? false : true }) )
+							<div style={styles.textContainer}>
+								<p style={styles.heading}>
+									{ data.page_name }
+								</p>
 
-							let page_endpoint = (typeof this.props.parentDetailsPayload.endpoint === "undefined" || this.props.parentDetailsPayload.endpoint === null) ? data.endpoint : this.props.parentDetailsPayload.endpoint
+								<p style={styles.text}>
+									{ data.page_description }
+								</p>
+							</div>
 
-							axios.post(utils.baseUrl + '/pages/create-interest-for-page', 
-								{
-									// page_endpoint: this.props.parentDetailsPayload.endpoint,
-									page_endpoint: page_endpoint,
-								})
-							.then(function (response) {
+							<div style={styles.likeButtonContainer}>
+								<button
+									style={styles.likeButton}
+									onClick={ () => {
+										
+										let setResponseInCurrentPage = (arg) => this.props.set_current_page(arg)
+										let redirectToNewPage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
+										let setStateToLike = () => this.setState( prev => ({...prev, liked: (prev.liked===true) ? false : true }) )
 
-								console.log(response.data) // current blogpost screen data
+										let page_endpoint = (typeof this.props.parentDetailsPayload.endpoint === "undefined" || this.props.parentDetailsPayload.endpoint === null) ? data.endpoint : this.props.parentDetailsPayload.endpoint
 
-						// setting icon to liked
-								setStateToLike()
+										axios.post(utils.baseUrl + '/pages/create-interest-for-page', 
+											{
+												// page_endpoint: this.props.parentDetailsPayload.endpoint,
+												page_endpoint: page_endpoint,
+											})
+										.then(function (response) {
 
-								// set to current parent object
-								setResponseInCurrentPage(response.data)
+											// console.log(response.data) // current blogpost screen data
 
-								// change route to current_blogpost	
-								redirectToNewPage()							
+									// setting icon to liked
+											setStateToLike()
 
-							})
-							.catch(function (error) {
-								console.log(error)
-							});						
+											// set to current parent object
+											setResponseInCurrentPage(response.data)
 
-						}}
-					>
-						{(this.state.liked) ?
-							 <Favorite style={{color:utils.maroonColor, fontSize:30, marginRight:20,}}/>
-							:
-							 <FavoriteBorder style={{color:utils.maroonColor, fontSize:30, marginRight:20,}}/>
-						}
-						
-						
-					</button>
-				</div>
+											// change route to current_blogpost	
+											redirectToNewPage()							
+
+										})
+										.catch(function (error) {
+											console.log(error)
+										});						
+
+									}}
+								>
+									{(this.state.liked) ?
+										 <Favorite style={{color:utils.maroonColor, fontSize:30, marginRight:20,}}/>
+										:
+										 <FavoriteBorder style={{color:utils.maroonColor, fontSize:30, marginRight:20,}}/>
+									}
+									
+									
+								</button>
+							</div>
+				  			
+				  		</div>
+
+
+					</div>
+
+				)}
+
 			</div>
 		);
 	}

@@ -25,45 +25,6 @@ import {
 import ThumbUp from '@material-ui/icons/ThumbUp';
 
 
-const styles = theme => ({
-	root: {
-		height: 48,
-		color: props => (props.cool) ? 'red' : 'black',
-		[theme.breakpoints.up('sm')]:{
-			paddingLeft:100
-		},
-	},
-	buttonWithoutBG:{
-		marginTop:50,
-		marginBottom:50,
-	},
-	innerText:{
-
-	},
-	textinputContainer:{
-		// marginTop: windowHeight * 0.05, // or 30  gap
-		// height: windowHeight * 0.1, // or 100
-		width: '80%',
-		justifyContent: 'center', // vertically centered
-		alignSelf: 'center', // horizontally centered
-		// backgroundColor: utils.lightGreen,
-	},
-	textinput:{
-		marginTop:20,
-		textAlign:'left',
-		borderWidth:1,
-		borderColor:(utils.lightGrey),
-		borderStyle:'solid',
-		paddingLeft:20,
-		paddingTop:15,
-		paddingBottom:15,
-		fontSize:18,
-	},
-	outerContainer: {
-	},
-	bigBlue: {
-	},
-});
 
 class CreateLikeForBook extends Component {
 	constructor(props) {
@@ -127,7 +88,7 @@ class CreateLikeForBook extends Component {
 									book_endpoint: endpoint,
 								})
 							.then(function (response) {
-								console.log(response.data) // current blogpost screen data
+								// console.log(response.data) // current blogpost screen data
 								
 								// set to current parent object
 								setResponseInCurrentBook({...response.data, endpoint: endpoint})
@@ -157,4 +118,4 @@ CreateLikeForBook.defaultProps = {
 };
 
 // export default CreateLikeForBook;  // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreateLikeForBook)))
+export default withRouter(withResponsiveness(CreateLikeForBook))

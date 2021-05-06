@@ -130,10 +130,3 @@ PageCard.defaultProps = {
 
 // export default PageCard; // REMOVE withResponsiveness and withStyles as much as possible
 export default withResponsiveness(PageCard);
-
-				// <div style={styles.createSocialObjectsContainer}>
-				// 	{/* 4th create individual child options like comment / like */}
-				// 	<ConnectedCreateLikeForPage
-				// 		parentDetailsPayload = { this.props.dataPayloadFromParent }
-				// 	/>
-				// </div>

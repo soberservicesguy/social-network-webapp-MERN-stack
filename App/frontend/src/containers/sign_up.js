@@ -67,12 +67,12 @@ class SignUpContainer extends Component {
 
 			axios.post(utils.baseUrl + '/users/signup-and-get-privileges', formData, {
 				onUploadProgress: progressEvent => {
-					console.log( 'upload progress: ' + Math.round((progressEvent.loaded / progressEvent.total)*100) + '%' )
+					// console.log( 'upload progress: ' + Math.round((progressEvent.loaded / progressEvent.total)*100) + '%' )
 				}
 			})
 			.then(function (response) {
 
-				console.log(`POST rest call response is${JSON.stringify(response.data, null, 1)}`);
+				// console.log(`POST rest call response is${JSON.stringify(response.data, null, 1)}`);
 
 				if (response.data.success === true){
 
@@ -82,7 +82,7 @@ class SignUpContainer extends Component {
 
 				} else if (response.data.msg === 'user already exists, try another'){
 
-					console.log('ID already exists, just sign in')
+					// console.log('ID already exists, just sign in')
 					redirectCallback()
 
 				} else {
@@ -292,7 +292,7 @@ class SignUpContainer extends Component {
 								type="file"
 								onChange={(event) => {
 									// console logging selected file from menu
-									console.log( event.target.files[0] ) // gives first file
+									// console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
 									this.setState(prev => ({...prev, user_image: event.target.files[0]}))
 								}}
@@ -312,7 +312,7 @@ class SignUpContainer extends Component {
 									label="Select Privileges To Use"
 									onChange={(event) => {
 										// console logging selected file from menu
-										console.log( event.target.value ) // gives first file
+										// console.log( event.target.value ) // gives first file
 										// setState method with event.target.files[0] as argument
 										this.setState(prev => ({...prev, privileges_selected: event.target.value}))
 									}}

@@ -60,8 +60,8 @@ class MyResponsiveNavigation extends Component {
 	  		<div style={{width:'8%', margin:'auto'}}>
 	  			<img src={utils.user_settings_image} alt="" 
 	  				style={{
-	  					width:70, 
-	  					height:70, 
+	  					width:60, 
+	  					height:60, 
 	  					resizeMode: "stretch",
 	  					borderRadius: 70/2,
 	  					marginBottom:20,

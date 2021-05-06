@@ -95,9 +95,9 @@ class SettingsContainer extends Component {
 			.then(function (response) {
 
 				if (response.data.success === true){
-					console.log('UPDATED SUCCESSFULLY')
+					// console.log('UPDATED SUCCESSFULLY')
 
-					console.log(response.data)
+					// console.log(response.data)
 
 					set_user_name_in_profile_callback(response)
 					set_user_avatar_image_callback(response)
@@ -337,7 +337,7 @@ class SettingsContainer extends Component {
 								type="file"
 								onChange={(event) => {
 									// console logging selected file from menu
-									console.log( event.target.files[0] ) // gives first file
+									// console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
 									this.setState(prev => ({...prev, user_avatar_image: event.target.files[0]}))
 								}}
@@ -361,7 +361,7 @@ class SettingsContainer extends Component {
 								type="file"
 								onChange={(event) => {
 									// console logging selected file from menu
-									console.log( event.target.files[0] ) // gives first file
+									// console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
 									this.setState(prev => ({...prev, user_cover_image: event.target.files[0]}))
 								}}

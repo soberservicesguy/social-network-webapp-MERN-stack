@@ -14,15 +14,15 @@ import withResponsiveness from "../responsiveness_hook";
 
 import { withRouter } from "react-router-dom";
 
-const styles = theme => ({
-  root: {
-    height: 48,
-    // color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
+import {
+	ConnectedCreateLikeForPage,
+	ConnectedComponentForShowingPage,
+} from "../redux_stuff/connected_components"
+
+import {
+	SummarizeLikesOfPage,
+	ShowLikesOfPage,
+} from "../components/likes/";
 
 
 class IndividualIndividualPage extends Component {
@@ -41,46 +41,65 @@ class IndividualIndividualPage extends Component {
 
 // RENDER METHOD
 	render() {
-		const { classes } = this.props;
-	  	const {_xs, _sm, _md, _lg, _xl} = this.props
+		const styles = {
+			showSocialsContainer:{
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				width:'90%',
+				margin:'auto',
+				marginTop:10,
+			},
+			showSocialsButton:{
+				outline:'none',
+				borderStyle:'solid',
+				borderColor:'white',
+				backgroundColor:'white'
+			},
+			createSocialObjectsContainer:{
+				width:'90%',
+				margin:'auto',
+				display:'flex',
+				flexDirection:'row',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+				marginTop:20,
+				paddingBottom:20,
+
+				borderWidth:0,
+				borderTopWidth:1,
+				borderStyle:'solid',
+				borderColor:utils.maroonColor,
+				paddingTop:10,
+			},
+		}
+
+	  	let data = this.props.current_page
 
 	  	return (
-	  		<Grid container direction="row" spacing={4} style={{backgroundColor: '#eee'}} >
+			<div style={{width:'80%', margin:'auto'}}>
+				<ConnectedComponentForShowingPage
+					dataPayloadFromParent={data}
+					showWholeComponent={true}
+				/>
 
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
 
-	  				<Grid item>
-	  				</Grid>
+	  			<div style={styles.createSocialObjectsContainer}>
 
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
+					<div style={styles.showSocialsContainer}>
+						<ShowLikesOfPage
+							dataPayloadFromParent = { data }
+							likes_quantity = { data.likes_quantity }
+						/>
+						<ConnectedCreateLikeForPage
+							parentDetailsPayload = { data }
+		  					redirectToNew = { true }
+						/>					
+					</div>
 
-	  			<Grid item container direction="column" xs={12} sm={12} md={8} lg={6}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  			<Grid item container direction="column" xs={12} sm={12} md={2} lg={3}>
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-
-	  				<Grid item>
-	  				</Grid>
-	  			</Grid>
-
-	  		</Grid>
+				</div>
+				
+			</div>
 		);
 	}
 }
@@ -89,4 +108,4 @@ IndividualIndividualPage.defaultProps = {
 	//:,
 };
 
-export default withRouter(withResponsiveness(withStyles(styles)(IndividualIndividualPage)));
+export default withRouter(withResponsiveness(IndividualIndividualPage));

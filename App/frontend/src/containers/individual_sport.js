@@ -50,7 +50,7 @@ class IndividualIndividualSport extends Component {
 				display:'flex',
 				flexDirection:'row',
 				justifyContent: 'space-between',
-				width:'95%',
+				width:'85%',
 				margin:'auto',
 				marginTop:10,
 			},
@@ -61,7 +61,7 @@ class IndividualIndividualSport extends Component {
 				backgroundColor:'white'
 			},
 			createSocialObjectsContainer:{
-				width:'90%',
+				width:'85%',
 				margin:'auto',
 				display:'flex',
 				flexDirection:'row',
@@ -92,7 +92,7 @@ class IndividualIndividualSport extends Component {
 			  		/>
 		  		</div>
 
-	  			<React.Fragment>
+	  			<div style={styles.createSocialObjectsContainer}>
 
 					<div style={styles.showSocialsContainer}>
 						<ShowLikesOfSport
@@ -105,7 +105,7 @@ class IndividualIndividualSport extends Component {
 						/>					
 					</div>
 
-				</React.Fragment>
+				</div>
 
 	  		</div>
 

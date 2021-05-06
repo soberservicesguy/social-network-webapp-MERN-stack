@@ -92,9 +92,6 @@ class ComponentForShowingComment extends Component {
 			</div>
 		);
 	}
-				// <p>
-				// 	{ data.commenting_timestamp }
-				// </p>
 }
 	
 ComponentForShowingComment.defaultProps = {

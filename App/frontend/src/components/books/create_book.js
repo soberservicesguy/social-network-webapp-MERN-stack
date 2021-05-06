@@ -173,7 +173,7 @@ class CreateBook extends Component {
 								name="book_image" // name of input field or fieldName simply
 								onChange={(event) => {
 									// console logging selected file from menu
-									console.log( event.target.files[0] ) // gives first file
+									// console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
 									this.setState(prev => ({...prev, book_image: event.target.files[0]}))
 								}}
@@ -195,8 +195,8 @@ class CreateBook extends Component {
 								axios.post(utils.baseUrl + '/books/create-book-with-user', formData)
 								.then(function (response) {
 									// console.log(response.data) // current book screen data
-									console.log('response.data.book_endpoint')
-									console.log(response.data.book_endpoint)
+									// console.log('response.data.book_endpoint')
+									// console.log(response.data.book_endpoint)
 
 									setNewBookIDToState(response)
 									

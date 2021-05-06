@@ -117,7 +117,7 @@ class SportCard extends Component {
 			  		/>
 		  		</div>
 
-	  			<React.Fragment>
+	  			<div style={styles.createSocialObjectsContainer}>
 
 					<div style={styles.showSocialsContainer}>
 						<ShowLikesOfSport
@@ -130,8 +130,7 @@ class SportCard extends Component {
 						/>					
 					</div>
 
-				</React.Fragment>
-
+				</div>
 
 		  	</div>
 		);

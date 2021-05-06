@@ -304,33 +304,6 @@ router.get('/get-all-likes-of-book',async function(req, res, next){
 		
 	}))
 
-	// console.log('PROMISE RESULT 1')
-	// console.log(users_list_who_liked)
-
-// find image from user
-// NOT NEEDED SINCE WE DID NOT MAKE IMAGE AS SEPARATE ENTITY
-	// let final_interested_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
-	
-	// 	return await Image.findOne({_id:user_object.user_image})
-	// 	.then(async (image_object) => {
-
-	// 		if (image_object){
-
-	// 			return {
-	// 				user_name:user_object.user_name,
-	// 				user_image:base64_encode(image_object.image_filepath),
-	// 			}
-
-	// 		} else {
-	// 			null
-	// 		}
-
-	// 	})
-
-	// }))
-
-	// console.log('PROMISE RESULT 2')
-	// console.log(final_interested_payload)
 
 	Promise.all(list_of_promises)
 	.then(() => {

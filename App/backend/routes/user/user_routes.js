@@ -124,7 +124,6 @@ router.get('/user-details', async function(req, res, next){
 // Validate an existing user and issue a JWT
 router.post('/login', async function(req, res, next){
 
-	console.log('INCOMING')
 
 	User.findOneAndUpdate({ phone_number: req.body.phone_number }, { $set:{ isLoggedIn:true } }, { new: true }, async (err, user) => {
 	    if (err) {
@@ -267,76 +266,6 @@ router.post('/login', async function(req, res, next){
 
 
 
-// Set The Storage Engine DRYed IT
-// const cover_and_avatar_storage = multer.diskStorage({
-// 	// destination: path.join(__dirname , '../../assets/bulk_blogposts/'),
-// 	destination:function(req, file, cb){
-// 		// let file_path = `./uploads/${type}`;
-// 		currentDate = new Date().toLocaleDateString("en-US").split("/").join(" | ");
-// 		currentTime = new Date().toLocaleTimeString("en-US").split("/").join(" | ");
-
-// 		if (file.fieldname === "avatar_image") {
-
-// 			let file_path = path.join(__dirname , '../../assets/images/uploads/avatar_image/')
-// 			console.log(file_path)
-// 			cb(null, file_path)	
-
-// 		} else {
-
-			
-// 			let file_path = path.join(__dirname , `../../assets/images/uploads/cover_image/`)
-// 			console.log(file_path)
-// 			cb(null, file_path)	
-
-// 		}
-
-// 	},
-// 	filename: function(req, file, cb){
-// 		// file name pattern fieldname-currentDate-fileformat
-// 		// filename_used_to_store_image_in_assets_without_format = file.fieldname + '-' + Date.now()
-// 		// filename_used_to_store_image_in_assets = filename_used_to_store_image_in_assets_without_format + path.extname(file.originalname)
-
-// 		filename_used_to_store_image_in_assets = file.originalname
-// 		cb(null, file.originalname);
-
-// 	}
-// });
-
-
-// Check File Type DRYed out
-// function checkFileTypeForImages(file, cb){
-
-// 	// Allowed ext
-// 	let filetypes_for_image = /jpeg|jpg|png|gif/
-
-// 	// Check ext
-// 	let extname_for_image = filetypes_for_image.test( path.extname(file.originalname).toLowerCase() );
-
-// 	// Check mime
-// 	let mimetype_for_image = filetypes_for_image.test( file.mimetype );
-
-// 	if (file.fieldname === "avatar_image") { // if uploading resume
-		
-// 		if (mimetype_for_image && extname_for_image) {
-// 			cb(null, true);
-// 		} else {
-// 			cb('Error: jpeg, jpg, png, gif Images Only!');
-// 		}
-
-// 	} else { // else uploading images
-
-// 		if (mimetype_for_image && extname_for_image) {
-// 			cb(null, true);
-// 		} else {
-// 			cb('Error: jpeg, jpg, png, gif Images Only!');
-// 		}
-
-// 	}
-
-// }
-
-
-// Init Upload
 
 
 function upload_avatar_and_cover(timestamp){
@@ -356,39 +285,14 @@ function upload_avatar_and_cover(timestamp){
 }
 
 
-// DRYed out
-// const upload_avatar_and_cover = multer({
-// 	// storage: get_multer_storage_to_use(cover_and_avatar_storage),
-// 	storage: get_multer_storage_to_use(file, folder_name, timestamp),
-// 	limits:{fileSize: 200000000}, // 1 mb
-// 	fileFilter: function(req, file, cb){
-// 		checkFileTypeForImages(file, cb);
-// 	}
-// }).fields([
-// 	{ name: 'avatar_image', maxCount: 1 }, 
-// 	{ name: 'cover_image', maxCount: 1 }
-// ])  // these are the fields that will be dealt
-// // .single('blogpost_image_main'); 
-// // .array('photos', 12)
 
 
 router.post('/accept-friend-request', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
 
-	// REMOVE FROM FRIEND REQUESTS
-	// console.log('req.body.endpoint')
-	// console.log(req.body.endpoint)
-
-	console.log('req.user.user_object.phone_number')
-	console.log(req.user.user_object.phone_number)
-
-	console.log('req.body.endpoint')
-	console.log(req.body.endpoint)
 
 	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
 	let user_to_accept_request = await User.findOne({ endpoint: req.body.endpoint })
 
-	console.log('user_to_accept_request')
-	console.log(user_to_accept_request)
 
 	user.friends.push(user_to_accept_request)
 
@@ -415,13 +319,9 @@ router.post('/accept-friend-request', passport.authenticate(['jwt'], { session: 
 
 router.post('/send-friend-request', passport.authenticate(['jwt'], { session: false }), isAllowedSurfing, async (req, res, next) => {
 
-	console.log('INCOMING')
 
 	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
-	console.log({user})
 	let user_to_send_request = await User.findOne({ endpoint: req.body.endpoint })
-	console.log(req.body.endpoint)
-	console.log({user_to_send_request})
 
 	user.friend_requests_sent.push(user_to_send_request)
 
@@ -486,8 +386,6 @@ router.get('/friend-requests', passport.authenticate(['jwt'], { session: false }
 
 	}))
 
-	// console.log('friends_requests sent')
-	// console.log(friends_requests.length)
 	res.status(200).json({ success: true, friends_requests: friends_requests});
 
 })
@@ -501,22 +399,16 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 
 	let user = await User.findOne({ phone_number: req.user.user_object.phone_number })
 
-	// console.log('user._id')
-	// console.log(user._id)
 
 	list_of_promises.push(user)
 
 	let { friends } = user
 	let non_friends_ids = []
 
-	// console.log('friends')
-	// console.log(friends)
 
 
 	let all_users = await User.find({})
 
-	// console.log('all_users')
-	// console.log(all_users)
 
 	let last_n_users_ids = all_users.slice(1).slice(-users_count_to_show_for_suggestion)
 	
@@ -527,30 +419,21 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 		}
 	)
 
-	// console.log('non_friends')
-	// console.log(non_friends)
 
 
 	let friend_suggestions = []
 	await Promise.all( non_friends.map(async (non_friend_object) => {
 
-		// console.log('non_friend')
-		// console.log(non_friend_object)
 
 		let non_friend = await User.findOne({ _id: non_friend_object._id })
 
-		// console.log('non_friend')
-		// console.log(non_friend)
 
 		let {user_avatar_image, user_name_in_profile, endpoint, object_files_hosted_at} = non_friend
 
-		// console.log('endpoint')
-		// console.log(endpoint)
 
 		let image_64_encoded = await get_image_to_display(user_avatar_image, object_files_hosted_at)
 
 		friend_suggestions.push({
-			// user_avatar_image: base64_encode(user_avatar_image), 
 			user_avatar_image: image_64_encoded, 
 			endpoint: endpoint,
 			user_name_in_profile: user_name_in_profile, 
@@ -560,12 +443,6 @@ router.get('/friend-suggestions', passport.authenticate(['jwt'], { session: fals
 	}))
 
 
-	// console.log('friend_suggestions sent')
-	// console.log(friend_suggestions.length)
-	// friend_suggestions.map((sug) => {
-		// console.log('sug.endpoint')
-		// console.log(sug.endpoint)
-	// })
 	res.status(200).json({ success: true, friend_suggestions: friend_suggestions});
 });
 
@@ -624,7 +501,6 @@ router.get('/delete-all-ads', async (req, res, next) => {
 // 'facebook', 'google', 
 router.post('/update-settings', passport.authenticate(['jwt'], { session: false }), function(req, res, next){
 
-	console.log('incoming')
 
 	timestamp = Date.now()
 
@@ -656,9 +532,6 @@ router.post('/update-settings', passport.authenticate(['jwt'], { session: false 
 
 			}, { new: true }, (err, user) => {
 
-				// console.log('BELOW')
-				// console.log( path.join(__dirname ,`../../assets/images/uploads/avatar_image/${req.files['avatar_image'][0].filename}`) )
-				// console.log(user.user_avatar_image)
 
 
 			let user_avatar_image_to_use
@@ -771,35 +644,6 @@ router.post('/login-with-jwt', function(req, res, next){
 });
 
 
-// DEPRECATED
-// 	User.findOne({ phone_number: req.body.phone_number })
-// 	.then((user) => {
-
-// 		console.log(user)
-
-// 		if (!user) {
-// 			res.status(401).json({ success: false, msg: "could not find user" });
-// 		}
-
-// 		// Function defined at bottom of app.js
-// 		const isValid = utils.validPassword(req.body.password, user.hash, user.salt);
-
-// 		if (isValid) {
-
-// 			const tokenObject = utils.issueJWT(user);
-// 			res.status(200).json({ success: true, token: tokenObject.token, expiresIn: tokenObject.expires });
-
-// 		} else {
-
-// 			res.status(401).json({ success: false, msg: "you entered the wrong password" });
-
-// 		}
-
-// 	})
-// 	.catch((err) => {
-// 		next(err);
-// 	});
-// });
 
 // Register a new user
 router.post('/register', function(req, res, next){

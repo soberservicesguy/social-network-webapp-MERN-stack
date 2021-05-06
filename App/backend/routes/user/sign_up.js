@@ -172,8 +172,6 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 							const salt = saltHash.salt;
 							const hash = saltHash.hash;
 
-							console.log('req.file')
-							console.log(req.file)
 
 							newUser = new User({
 
@@ -191,8 +189,6 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 
 						}
 
-					console.log('FILE SAVED AT BELOW PATH')
-					console.log( get_file_path_to_use(req.file, 'avatar_images') )
 
 					} catch (err){
 						console.log('user not created')

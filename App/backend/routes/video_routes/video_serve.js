@@ -8,12 +8,9 @@ const SocialPost = mongoose.model('SocialPost');
 // const passport = require('passport');
 // const utils = require('../lib/utils');
 
-console.log('INCORPORATED VIDEOS')
 
 router.get('/video', function(req, res) {
 
-  console.log('incoming')
-  console.log( req.query.endpoint )
 
   var path = '' 
 
@@ -22,16 +19,12 @@ router.get('/video', function(req, res) {
 
     if(!socialpost_with_video){
 
-      console.log('NO VIDEO FOUND')
       res.status(200).json({ success: false, msg: "no such video exists" });
 
     } else {
 
-      console.log('FILE PATH')
-      console.log(socialpost_with_video)
 // video_for_post
       path = socialpost_with_video.video_for_post
-      // const path = '/home/arsalan/Work_stuff/Full_stack_apps/REACT_APPS/Final_portfolio/content_app/backend/assets/videos/sample.mp4'
       const stat = fs.statSync(path)
       const fileSize = stat.size
       const range = req.headers.range

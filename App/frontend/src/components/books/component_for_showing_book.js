@@ -82,10 +82,3 @@ ComponentForShowingBook.defaultProps = {
 
 // export default ComponentForShowingBook;  // REMOVE withResponsiveness and withStyles as much as possible
 export default withResponsiveness(ComponentForShowingBook)
-
-				// <p>
-				// 	{ data.book_description }
-				// </p>
-				// <p>
-				// 	{ data.endpoint }
-				// </p>

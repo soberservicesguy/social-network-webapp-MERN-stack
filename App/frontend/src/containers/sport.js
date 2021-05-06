@@ -18,16 +18,6 @@ import {
 } from '../redux_stuff/connected_components';
 
 
-const styles = theme => ({
-  root: {
-    height: 48,
-//    color: props => (props.cool) ? 'red' : 'black',
-    [theme.breakpoints.up('sm')]:{
-    	paddingLeft:100
-    },
-  },
-});
-
 class SportContainer extends Component {
 	constructor(props) {
 		super(props);
@@ -98,5 +88,4 @@ SportContainer.defaultProps = {
 	// : ,
 };
 
-export default withResponsiveness(withStyles(styles)(SportContainer));
-
+export default withResponsiveness(SportContainer);

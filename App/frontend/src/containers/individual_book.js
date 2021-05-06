@@ -83,7 +83,7 @@ class IndividualIndividualBook extends Component {
 					dataPayloadFromParent={data}
 				/>
 
-	  			<React.Fragment>
+	  			<div style={styles.createSocialObjectsContainer}>
 
 					<div style={styles.showSocialsContainer}>
 						<ShowLikesOfBook
@@ -96,7 +96,7 @@ class IndividualIndividualBook extends Component {
 						/>					
 					</div>
 
-				</React.Fragment>
+				</div>
 
 			</div>
 		);

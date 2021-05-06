@@ -78,7 +78,7 @@ class CreateLikeForSocialpost extends Component {
 
 							let endpoint = (this.props.parentDetailsPayload.endpoint) ? this.props.parentDetailsPayload.endpoint : this.props.current_socialpost.endpoint
 
-							console.log(`GOING TO USE ${endpoint} AS ENDPOINT`)
+							// console.log(`GOING TO USE ${endpoint} AS ENDPOINT`)
 
 							axios.post(utils.baseUrl + '/socialposts/create-like-for-socialpost', 
 								{

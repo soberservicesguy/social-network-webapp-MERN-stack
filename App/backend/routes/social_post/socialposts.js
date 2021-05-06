@@ -145,7 +145,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							save_image_or_video_promise = save_file_to_aws_s3( req.files['social_post_image'][0], timestamp )
 							promises.push(save_image_or_video_promise)
 							console.log('SAVED TO AWS')
-							console.log(save_image_or_video_promise)
+							// console.log(save_image_or_video_promise)
 
 						} else {
 
@@ -196,7 +196,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 				let promise_fulfilled
 
-				console.log('HERE 1')
+				// console.log('HERE 1')
 
 
 					if (req.files['social_post_image'] !== undefined && req.body.post_text){
@@ -233,15 +233,12 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 							// image_for_post: `./assets/images/uploads/social_post_images/${req.files['social_post_image'][0].filename}`,
 						});
 
-						console.log('TILL HERERERERE')
 
 						await Promise.all(promises)
 						save_socialpost_promise = await save_socialpost_and_activity(req, res, err, newSocialPost, social_post_type, social_post_id, total_snapshots_count)
 
 					} else if (req.files['social_post_video'] !== undefined && req.body.post_text){
 
-						console.log('BELOW IS VIDE OPATH')
-						console.log(get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp))
 						video_path = get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 						let video_for_post
 						if (use_gcp_storage){
@@ -279,7 +276,6 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 								// video_thumbnail_image: `${get_snapshots_storage_path()}/${req.files['social_post_video'][0].filename}-${timestamp}.png`,
 							});
 
-							console.log('NO ERROR HERE')
 							return newSocialPost
 						}
 
@@ -307,8 +303,6 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 					} else if (req.files['social_post_video'] !== undefined && !req.body.post_text){
 
-						console.log('BELOW IS VIDE OPATH')
-						console.log(get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp))
 						
 						video_path = get_file_path_to_use_alternate(req.files['social_post_video'][0], 'social_post_videos', timestamp)
 						let video_for_post
@@ -373,14 +367,6 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 						save_socialpost_promise = await save_socialpost_and_activity(req, res, err,  after_screenshot_callback(), social_post_type, social_post_id, total_snapshots_count)
 
 
-						// store_video_at_tmp_promise = await store_video_at_tmp_and_get_its_path( req.files['social_post_video'][0], video_path )
-						// create_snapshots_promise = await create_snapshots_from_uploaded_video(timestamp, req.files['social_post_video'][0], store_video_at_tmp_promise)
-
-						// Promise.all([store_video_at_tmp_promise, create_snapshots_promise]).then(async () => {
-
-						// 	console.log('NOW COMES THE ERROR')
-
-						// })
 
 					} else {
 
@@ -409,7 +395,7 @@ router.post('/create-socialpost-with-user', passport.authenticate('jwt', { sessi
 
 
 router.get('/get-socialpost', passport.authenticate('jwt', { session: false }), async function(req, res, next){
-	console.log('INCOMING')
+
 	try{
 		let social_post = await SocialPost.findOne({ endpoint: req.query.endpoint })
 
@@ -450,8 +436,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 		let activities_to_send = []
 
-		// console.log('friends')
-		// console.log(friends)
 
 
 		let send_posts = true
@@ -466,10 +450,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 				let friend = friends[i]
 
-				// console.log('friend')
-				// console.log(friend)
-
-			// var friend = await User.findOne({_id: friend_id})
 
 			// access friend data here
 				var { user_name_in_profile, user_avatar_image } = friend
@@ -482,31 +462,9 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 				friends_user_avatar_image_to_use = await get_image_to_display(friends_user_avatar_image, object_files_hosted_at)
 
-// DRYed OUT
-				// if (object_files_hosted_at === 'gcp_storage'){
-
-				// 	cloud_resp = await get_file_from_gcp(friends_user_avatar_image)
-				// 	friends_user_avatar_image_to_use = cloud_resp.toString('base64')
-
-				// } else if (object_files_hosted_at === 'aws_s3'){
-
-				// 	cloud_resp = await get_file_from_aws(friends_user_avatar_image)
-				// 	friends_user_avatar_image_to_use = cloud_resp.toString('base64')
-
-				// } else {
-
-				// 	friends_user_avatar_image_to_use = base64_encode( friends_user_avatar_image )
-
-				// }
-
 				// we have reduced activities link for each user to last 50 in user model
 				let last_n_activities_of_friend = friend.activities
 
-				// console.log('req.query.request_number')
-				// console.log(req.query.request_number)
-
-				// console.log('friend.activities')
-				// console.log(friend.activities)
 
 				if ( req.query.request_number === 1 ){
 					
@@ -520,8 +478,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 				}
 
-				// console.log('req.query.request_number')
-				// console.log(req.query.request_number)
 
 				let activities_for_first_request = last_n_activities_of_friend.slice(1).slice(-posts_to_show_per_friend)
 				let activities_for_subsequent_request = last_n_activities_of_friend.slice(1).slice( -posts_to_show_per_friend * req.query.request_number, -posts_to_show_per_friend * (req.query.request_number-1)  )
@@ -543,45 +499,20 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 				}
 
 
-				// console.log('last_n_activities_of_friend')
-				// console.log(last_n_activities_of_friend)
 
 				// let all_activities = await Promise.all(friend.activities.map(async (activity) => {
 				let all_activities = await Promise.all(last_n_activities_of_friend.map(async (activity) => {
 
-					// if (typeof activity === 'object' && activity !== null){
-					// 	activity = activity
-					// } else {
-					// 	activity = await Activity.findOne({_id: activity})
-					// }
-
-					// if (typeof activity === 'String' && activity !== null){
-					// 	activity = await Activity.findOne({_id: activity})
-					// } else {
-					// 	activity = activity
-					// }
-					console.log('activity')
-					console.log(activity)
-
 					activity = await Activity.findOne({_id: activity})
 
-					console.log('activity')
-					console.log(activity)
-					// console.log('activity')
-					// console.log(activity)
-
-					// console.log({last_timestamp_of_checking_notification})
 
 					let post_details = {}
 
 					post_details = { friends_user_name, friends_user_avatar_image: friends_user_avatar_image_to_use, friend_endpoint, timestamp:activity.timestamp }
-					// console.log('post_details at beginning')
-					// console.log(post_details)
 
 					if ( last_timestamp_of_checking_notification !== null && Number(activity.timestamp) < Number(last_timestamp_of_checking_notification) ){
 						// console.log('INNER TRIGGERED')
 						let { activity_type } = activity
-						console.log({activity_type})
 						let user_owning_post
 						let image_in_base64_encoding
 
@@ -589,49 +520,11 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 							case "created_post":
 
-								console.log('activity')
-								console.log(activity)
 								var { post_created } = activity
-								console.log('post_created')
-								console.log(post_created)
 								post_created = await SocialPost.findOne({_id: post_created})
-								console.log('post_created')
-								console.log(post_created)
 								var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_created
-								// console.log('endpoint in created post')
-								// console.log(endpoint)
-								// incorporating notification_type
 								post_details = { ...post_details, notification_type:'created_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
-	// DRYed out
-								// switch (type_of_post) {
-								// 	case "text_post":
-								// 		let { post_text } = post_created
-								// 		post_details = { ...post_details, post_text }
-								// 		break
-								// 	case "image_post":
-								// 		let { image_for_post } = post_created
-								// 		post_details = { ...post_details, image_for_post }
-								// 		break
-								// 	case "video_post":
-								// 		let { video_for_post, video_thumbnail_image } = post_created
-								// 		post_details = { ...post_details, video_for_post, video_thumbnail_image }									
-								// 		break
-								// 	case "text_with_image_post":
-								// 		let { post_text, image_for_post } = post_created
-								// 		post_details = { ...post_details, post_text, image_for_post }									
-								// 		break
-								// 	case "text_with_video_post":
-								// 		let { post_text, video_for_post, video_thumbnail_image } = post_created
-								// 		post_details = { ...post_details, post_text, video_for_post, video_thumbnail_image }									
-								// 		break
-								// 	default:
-								// 		null
-								// }			
 								post_details = await get_post_details(type_of_post, post_created, post_details)
-								// console.log('post_details')
-								// console.log(post_details)
-								// console.log('PUSHED')
-								// activities_to_send.push(post_details)
 
 								if ( !activities_to_send.includes(post_details) ){
 
@@ -647,10 +540,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 							case "liked_post":
 
 								var { post_liked } = activity
-								// console.log('post_liked')
-								// console.log(post_liked)
 								post_liked = await SocialPost.findOne({_id: post_liked})
-								// console.log(post_liked)
 								var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_liked
 								// incorporating notification_type
 								post_details = { ...post_details, notification_type:'liked_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
@@ -667,7 +557,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -693,7 +582,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -722,7 +610,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -742,7 +629,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -763,7 +649,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -784,7 +669,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -805,7 +689,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -826,7 +709,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -847,7 +729,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -868,7 +749,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -889,7 +769,6 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								if ( !activities_to_send.includes(post_details) ){
 
 									activities_to_send.push(post_details)
-									console.log('PUSHED')
 
 								}
 
@@ -917,17 +796,9 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 		.then(async () => {
 
 			// friends_user_name
-			activities_to_send.map((activity) => {
-				console.log('activity.friends_user_name')
-				console.log(activity.friends_user_name)
-			})
-
 
 			if(send_posts){
 				user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
-
-				console.log('activities_to_send in socialposts')
-				console.log(activities_to_send.length)
 
 				res.status(200).json(activities_to_send)
 				// activities_to_send.map((act) => {
@@ -956,8 +827,6 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 	let friends_of_user
 	let user_checking_others_posts
 
-	console.log('req.query.user_id')
-	console.log(req.query.user_id)
 
 	if (req.query.user_id){
 
@@ -965,8 +834,6 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 		friends_of_user = user_checking_others_posts.friends
 		user_owning_socialposts = friends_of_user.filter(
 			function(item){
-				console.log('item.endpoint')
-				console.log(item.endpoint)
 				return item.endpoint === req.query.user_id
 			}
 		)
@@ -974,7 +841,6 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 		user_owning_socialposts = user_owning_socialposts[0]
 
 		if (user_owning_socialposts === null){
-			console.log('USER IS NOT A FRIEND, THEREFORE NOT SENDING')
 			res.status(200).json([])
 			return
 		}
@@ -1001,26 +867,6 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 
 		friends_user_avatar_image_to_use = await get_image_to_display(friends_user_avatar_image, object_files_hosted_at)
 
-// DRYed OUT
-		// if (object_files_hosted_at === 'gcp_storage'){
-
-		// 	cloud_resp = await get_file_from_gcp(friends_user_avatar_image)
-		// 	friends_user_avatar_image_to_use = cloud_resp.toString('base64')
-
-		// } else if (object_files_hosted_at === 'aws_s3'){
-
-		// 	cloud_resp = await get_file_from_aws(friends_user_avatar_image)
-		// 	friends_user_avatar_image_to_use = cloud_resp.toString('base64')
-
-		// } else {
-
-		// 	friends_user_avatar_image_to_use = base64_encode( friends_user_avatar_image )
-
-		// }
-
-
-		// console.log('user_owning_socialposts')
-		// console.log(user_owning_socialposts)
 
 		// we have reduced activities link for each user to last 50 in user model
 		let last_n_activities_of_friend = user_owning_socialposts.activities
@@ -1049,7 +895,6 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 
 		if (req.query.request_number > 1 && new_activities.length === 0){
 
-			console.log('SAME ACTIVITIES TO SEND, THEREFORE NOT SENDING')
 			res.status(200).json([])
 			return
 		}
@@ -1073,45 +918,15 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 					var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_created
 					// incorporating notification_type
 					post_details = { ...post_details, notification_type:'created_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
-				// DRYed out
-					// switch (type_of_post) {
-					// 	case "text_post":
-					// 		let { post_text } = post_created
-					// 		post_details = { ...post_details, post_text }
-					// 		break
-					// 	case "image_post":
-					// 		let { image_for_post } = post_created
-					// 		post_details = { ...post_details, image_for_post }
-					// 		break
-					// 	case "video_post":
-					// 		let { video_for_post, video_thumbnail_image } = post_created
-					// 		post_details = { ...post_details, video_for_post, video_thumbnail_image }									
-					// 		break
-					// 	case "text_with_image_post":
-					// 		let { post_text, image_for_post } = post_created
-					// 		post_details = { ...post_details, post_text, image_for_post }									
-					// 		break
-					// 	case "text_with_video_post":
-					// 		let { post_text, video_for_post, video_thumbnail_image } = post_created
-					// 		post_details = { ...post_details, post_text, video_for_post, video_thumbnail_image }									
-					// 		break
-					// 	default:
-					// 		null
-					// }			
+
 					post_details = await get_post_details(type_of_post, post_created, post_details)
-					// console.log('post_details')
-					// console.log(post_details)
-					console.log('PUSHED')
 					activities_to_send.push(post_details)
 					break
 
 				case "liked_post":
 
 					var { post_liked } = activity
-					console.log('post_liked')
-					console.log(post_liked)
 					post_liked = await SocialPost.findOne({_id: post_liked})
-					console.log(post_liked)
 					var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_liked
 					// incorporating notification_type
 					post_details = { ...post_details, notification_type:'liked_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
@@ -1272,186 +1087,6 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 				default:
 					null
 
-// OLD cases for social posts, above are copied from other socialposts route
-				// case "created_post":
-
-				// 	var { post_created } = activity
-				// 	post_created = await SocialPost.findOne({_id: post_created})
-				// 	var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_created
-				// 	// incorporating notification_type
-				// 	post_details = { ...post_details, notification_type:'created_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
-				// 	post_details = await get_post_details(type_of_post, post_created, post_details)
-				// 	// console.log('post_details')
-				// 	// console.log(post_details)
-				// 	console.log('PUSHED')
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "liked_post":
-
-				// 	var { post_liked } = activity
-				// 	// console.log('post_liked')
-				// 	// console.log(post_liked)
-				// 	post_liked = await SocialPost.findOne({_id: post_liked})
-				// 	// console.log(post_liked)
-				// 	var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_liked
-				// 	// incorporating notification_type
-				// 	post_details = { ...post_details, notification_type:'liked_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
-				// 	// incorporating user_owning_post user_name and user_avatar_image
-				// 	user_owning_post = await User.findOne({_id: post_liked.user})
-				// 	var { user_name, user_avatar_image, object_files_hosted_at } = user_owning_post
-
-				// 	image_in_base64_encoding = await get_image_to_display(user_avatar_image, object_files_hosted_at)
-
-				// 	post_details = {...post_details, user_name, user_avatar_image: image_in_base64_encoding}
-				// 	post_details = await get_post_details(type_of_post, post_liked, post_details)
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "shared_post":
-
-				// 	var { post_share } = activity
-				// 	post_share = await SocialPost.findOne({_id: post_share})
-				// 	var { type_of_post, total_likes, total_shares, total_comments, endpoint } = post_share
-				// 	// incorporating notification_type
-				// 	post_details = { ...post_details, notification_type:'shared_post', activity_type, type_of_post, total_likes, total_shares, total_comments, endpoint }
-				// 	// incorporating user_owning_post user_name and user_avatar_image
-				// 	user_owning_post = await User.findOne({_id: post_share.user})
-				// 	var { user_name, user_avatar_image, object_files_hosted_at } = user_owning_post
-
-				// 	image_in_base64_encoding = await get_image_to_display(user_avatar_image, object_files_hosted_at)
-
-				// 	post_details = {...post_details, user_name, user_avatar_image: image_in_base64_encoding}
-				// 	post_details = await get_post_details(type_of_post, post_share, post_details)
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "commented_on_post":
-
-				// 	var { post_commented, comment_link } = activity
-				// 	let original_post = await SocialPost.findOne({_id: post_commented})
-				// 	let comment_object = await Comment.findOne({_id: comment_link})
-				// 	var { comment_text } = comment_object
-				// 	var { type_of_post, total_likes, total_shares, total_comments, endpoint } = original_post
-				// 	// incorporating notification_type
-				// 	post_details = { ...post_details, notification_type:'commented_on_post', activity_type, comment_text, type_of_post, total_likes, total_shares, total_comments, endpoint }
-				// 	// incorporating user_owning_post user_name and user_avatar_image
-				// 	user_owning_post = await User.findOne({_id: original_post.user})
-				// 	var { user_name, user_avatar_image, object_files_hosted_at } = user_owning_post
-
-				// 	image_in_base64_encoding = await get_image_to_display(user_avatar_image, object_files_hosted_at)
-
-				// 	post_details = {...post_details, user_name, user_avatar_image: image_in_base64_encoding}
-				// 	post_details = await get_post_details(type_of_post, post_commented, post_details)
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "created_book":
-
-				// 	let { book_created } = activity
-				// 	book_created = await Book.findOne({_id: book_created})
-				// 	var { book_name, book_image, book_description, interested_users, endpoint, object_files_hosted_at } = book_created
-				// 	// incorporating notification_type
-
-				// 	image_in_base64_encoding = await get_image_to_display(book_image, object_files_hosted_at)
-
-				// 	post_details = { ...post_details, notification_type:'created_book', activity_type, book_name, book_image: image_in_base64_encoding, book_description, endpoint }
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "got_interested_in_book":
-
-				// 	let { book_liked } = activity
-				// 	book_liked = await Book.findOne({_id: book_liked})
-				// 	var { book_name, book_image, book_description, endpoint, object_files_hosted_at } = book_liked
-				// 	// incorporating notification_type
-
-				// 	image_in_base64_encoding = await get_image_to_display(book_image, object_files_hosted_at)
-
-				// 	post_details = { ...post_details, notification_type:'got_interested_in_book', activity_type, book_name, book_image: image_in_base64_encoding, book_description, endpoint }
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "created_page":
-
-				// 	let { page_created } = activity
-				// 	page_created = await Page.findOne({_id: page_created})
-				// 	var { page_name, page_image, page_description, endpoint, object_files_hosted_at } = page_created
-				// 	// incorporating notification_type
-
-				// 	image_in_base64_encoding = await get_image_to_display(page_image, object_files_hosted_at)
-
-				// 	post_details = { ...post_details, notification_type:'created_page', activity_type, page_name, page_image: image_in_base64_encoding, page_description, endpoint }
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "got_interested_in_page":
-
-				// 	let { page_liked } = activity
-				// 	page_liked = await Page.findOne({_id: page_liked})
-				// 	var { page_name, page_image, page_description, endpoint, object_files_hosted_at } = page_liked
-				// 	// incorporating notification_type
-
-				// 	image_in_base64_encoding = await get_image_to_display(page_image, object_files_hosted_at)
-
-				// 	post_details = { ...post_details, notification_type:'got_interested_in_page', activity_type, page_name, page_image: image_in_base64_encoding, page_description, endpoint }
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "created_sport":
-
-				// 	let { sport_created } = activity
-				// 	sport_created = await Sport.findOne({_id: sport_created})
-				// 	var { sport_name, sport_image, sport_description, endpoint, object_files_hosted_at } = sport_created
-				// 	// incorporating notification_type
-
-				// 	image_in_base64_encoding = await get_image_to_display(sport_image, object_files_hosted_at)
-
-				// 	post_details = { ...post_details, notification_type:'created_sport', activity_type, sport_name, sport_image: image_in_base64_encoding, sport_description, endpoint }
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "got_interested_in_sport":
-
-				// 	let { sport_liked } = activity
-				// 	sport_liked = await Sport.findOne({_id: sport_liked})
-				// 	var { sport_name, sport_image, sport_description, endpoint, object_files_hosted_at } = sport_created
-				// 	// incorporating notification_type
-
-				// 	image_in_base64_encoding = await get_image_to_display(sport_image, object_files_hosted_at)
-
-				// 	post_details = { ...post_details, notification_type:'got_interested_in_sport', activity_type, sport_name, sport_image: image_in_base64_encoding, sport_description, endpoint }
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "created_advertisement":
-
-				// 	let { ad_created } = activity
-				// 	ad_created = await Advertisement.findOne({_id: ad_created})
-				// 	var { ad_name, ad_image, ad_description, endpoint, object_files_hosted_at } = ad_created
-				// 	// incorporating notification_type
-
-				// 	image_in_base64_encoding = await get_image_to_display(ad_image, object_files_hosted_at)
-
-				// 	post_details = { ...post_details, notification_type:'created_advertisement', activity_type, ad_name, ad_image: image_in_base64_encoding, ad_description, endpoint }
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// case "got_interested_in_advertisement":
-
-				// 	let { ad_liked } = activity
-				// 	ad_liked = await Advertisement.findOne({_id: ad_liked})
-				// 	var { ad_name, ad_image, ad_description, endpoint, object_files_hosted_at } = ad_liked
-				// 	// incorporating notification_type
-
-				// 	image_in_base64_encoding = await get_image_to_display(ad_image, object_files_hosted_at)
-
-				// 	post_details = { ...post_details, notification_type:'got_interested_in_advertisement', activity_type, ad_name, ad_image: image_in_base64_encoding, ad_description, endpoint }
-				// 	activities_to_send.push(post_details)
-				// 	break
-
-				// default:
-				// 	null
 			}
 
 		}))
@@ -1464,15 +1099,9 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 			return b - a
 		});
 
-		console.log('activities_to_send')
-		console.log(activities_to_send.length)
 
 		res.status(200).json(activities_to_send)
 
-		// activities_to_send.map((act) => {
-		// 	res.write([act])
-		// })
-		// res.end();
 
 
 	} catch (err) {
@@ -1490,7 +1119,6 @@ router.get('/get-socialposts-of-someone', passport.authenticate('jwt', { session
 // get posts from friends for wall
 router.get('/get-notifications-from-friends', passport.authenticate('jwt', { session: false }), async function(req, res, next){
 
-	console.log('GET NOTICATIONS TRIGGERED')
 
 	let posts_to_show_per_friend = 5
 
@@ -1500,9 +1128,6 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 		let { friends, last_timestamp_of_checking_notification } =  user_checking_others_posts
 
 		let activities_to_send = []
-
-		// console.log('friends')
-		// console.log(friends)
 
 
 		let send_posts = true
@@ -1549,11 +1174,6 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 			// we have reduced activities link for each user to last 50 in user model
 			let last_n_activities_of_friend = friend.activities
 
-			// console.log('req.query.request_number')
-			// console.log(req.query.request_number)
-
-			// console.log('friend.activities')
-			// console.log(friend.activities)
 
 			if ( req.query.request_number === 1 ){
 				
@@ -1567,8 +1187,6 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 
 			}
 
-			console.log('req.query.request_number')
-			console.log(req.query.request_number)
 
 			let activities_for_first_request = last_n_activities_of_friend.slice(1).slice(-posts_to_show_per_friend)
 			let activities_for_subsequent_request = last_n_activities_of_friend.slice(1).slice( -posts_to_show_per_friend * req.query.request_number, -posts_to_show_per_friend * (req.query.request_number-1)  )
@@ -1589,24 +1207,17 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 			}
 
 
-			// console.log('last_n_activities_of_friend')
-			// console.log(last_n_activities_of_friend)
 
 			// let all_activities = await Promise.all(friend.activities.map(async (activity) => {
 			let all_activities = await Promise.all(last_n_activities_of_friend.map(async (activity) => {
 
 				activity = await Activity.findOne({_id: activity})
 
-				// console.log('activity.timestamp')
-				// console.log(activity.timestamp)
-
-				console.log({last_timestamp_of_checking_notification})
 
 				let post_details = {}
 				post_details = { friends_user_name, friends_user_avatar_image: friends_user_avatar_image_to_use, friend_endpoint, timestamp:activity.timestamp }
 
 				if ( last_timestamp_of_checking_notification !== null && Number(activity.timestamp) < Number(last_timestamp_of_checking_notification) ){
-					console.log('INNER TRIGGERED')
 					let { activity_type } = activity
 					let user_owning_post
 
@@ -1744,9 +1355,6 @@ router.get('/get-notifications-from-friends', passport.authenticate('jwt', { ses
 
 			if(send_posts){
 				user_checking_others_posts.last_timestamp_of_checking_notification = String( Date.now() )
-
-				console.log('activities_to_send in notification')
-				console.log(activities_to_send.length)
 
 				res.status(200).json(activities_to_send)
 
@@ -1985,8 +1593,6 @@ router.post('/create-like-for-socialpost', passport.authenticate('jwt', { sessio
 
 	var socialpost_endpoint = req.body.socialpost_endpoint
 
-	console.log('socialpost_endpoint')
-	console.log(socialpost_endpoint)
 
 	var newLike = new Like({
 		_id: new mongoose.Types.ObjectId(),
@@ -2299,9 +1905,6 @@ router.get('/get-all-comments-of-socialpost', async function(req, res, next){
 		}
 	}))
 
-	// final_result.map((result) => {
-	// 	console.log(Object.keys(result))
-	// })
 	res.status(200).json( final_result );
 })
 
@@ -2331,10 +1934,6 @@ router.get('/get-all-likes-of-socialpost',async function(req, res, next){
 
 	}))
 
-	// final_result.map((result) => {
-	// 	console.log(Object.keys(result))
-	// })
-
 	res.status(200).json( final_result );
 
 })
@@ -2363,9 +1962,6 @@ router.get('/get-all-shares-of-socialpost',async function(req, res, next){
 
 	}))
 
-	// final_result.map((result) => {
-	// 	console.log(Object.keys(result))
-	// })
 
 	res.status(200).json( final_result );
 })

@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 					
@@ -22,45 +21,6 @@ import {
 import { withStyles } from '@material-ui/styles';
 import withResponsiveness from "../../responsiveness_hook";
 
-const styles = theme => ({
-	root: {
-		height: 48,
-		color: props => (props.cool) ? 'red' : 'black',
-		[theme.breakpoints.up('sm')]:{
-			paddingLeft:100
-		},
-	},
-	buttonWithoutBG:{
-		marginTop:50,
-		marginBottom:50,
-	},
-	innerText:{
-
-	},
-	textinputContainer:{
-		// marginTop: windowHeight * 0.05, // or 30  gap
-		// height: windowHeight * 0.1, // or 100
-		width: '80%',
-		justifyContent: 'center', // vertically centered
-		alignSelf: 'center', // horizontally centered
-		// backgroundColor: utils.lightGreen,
-	},
-	textinput:{
-		marginTop:20,
-		textAlign:'left',
-		borderWidth:1,
-		borderColor:(utils.lightGrey),
-		borderStyle:'solid',
-		paddingLeft:20,
-		paddingTop:15,
-		paddingBottom:15,
-		fontSize:18,
-	},
-	outerContainer: {
-	},
-	bigBlue: {
-	},
-});
 
 
 class CreatePage extends Component {
@@ -214,7 +174,7 @@ class CreatePage extends Component {
 								enctype="multipart/form-data"
 								onChange={(event) => {
 									// console logging selected file from menu
-									console.log( event.target.files[0] ) // gives first file
+									// console.log( event.target.files[0] ) // gives first file
 									// setState method with event.target.files[0] as argument
 									this.setState(prev => ({...prev, page_image: event.target.files[0]}))
 								}}
@@ -228,9 +188,11 @@ class CreatePage extends Component {
 						<button style={styles.createPageButton}
 							onClick={ () => {
 
+								// console.log('CREATE PAGE TRIGGERED')
+
 								let setResponseInCurrentPage = (arg) => this.props.set_current_page(arg)
 								let redirectToNewPage = () => this.setState(prev => ({...prev, redirectToRoute: (prev.redirectToRoute === false) ? true : false }))	
-								let setNewPageIDToState = (response) => this.setState(prev => ({...prev, new_page_id: response.data.page_endpoint }))	
+								let setNewPageIDToState = (response) => this.setState(prev => ({...prev, new_page_id: response.data.new_page.page_endpoint }))	
 
 
 								const formData = new FormData()
@@ -248,10 +210,12 @@ class CreatePage extends Component {
 								.then(function (response) {
 									// console.log(response.data) // current page screen data
 
+									// console.log('response.data')
+									// console.log(response.data)
 									setNewPageIDToState(response)
 									
 									// set to current parent object
-									setResponseInCurrentPage(response.data)
+									setResponseInCurrentPage(response.data.new_page)
 
 									// change route to current_page
 									redirectToNewPage()
@@ -280,4 +244,4 @@ CreatePage.defaultProps = {
 };
 
 // export default CreatePage // REMOVE withResponsiveness and withStyles as much as possible
-export default withRouter(withResponsiveness(withStyles(styles)(CreatePage)))
+export default withRouter(withResponsiveness(CreatePage))

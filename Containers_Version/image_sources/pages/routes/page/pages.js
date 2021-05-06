@@ -158,6 +158,7 @@ router.post('/create-page-with-user', passport.authenticate('jwt', { session: fa
 
 								}
 
+
 								res.status(200).json({ success: true, msg: 'new page saved', new_page: new_page});	
 
 
@@ -242,11 +243,6 @@ router.get('/pages-list-with-children', async function(req, res, next){
 router.post('/create-interest-for-page', passport.authenticate('jwt', { session: false }), isAllowedInteractingWithOthersPosts, function(req, res, next){
 
 	var page_endpoint = req.body.page_endpoint
-	console.log(page_endpoint)
-
-	// var newLike = new Like({
-	// 	_id: new mongoose.Types.ObjectId(),
-	// })
 
 	User.findOne({ phone_number: req.user.user_object.phone_number })
 	.then((user) => {
@@ -343,33 +339,6 @@ router.get('/get-all-interest-in-page',async function(req, res, next){
 		
 	}))
 
-	// console.log('PROMISE RESULT 1')
-	// console.log(users_list_who_liked)
-
-// find image from user
-// NOT NEEDED SINCE WE DID NOT MAKE IMAGE AS SEPARATE ENTITY
-	// let final_interested_payload = await Promise.all(users_list_who_liked.map(async (user_object) => {
-	
-	// 	return await Image.findOne({_id:user_object.user_image})
-	// 	.then(async (image_object) => {
-
-	// 		if (image_object){
-
-	// 			return {
-	// 				user_name:user_object.user_name,
-	// 				user_image:base64_encode(image_object.image_filepath),
-	// 			}
-
-	// 		} else {
-	// 			null
-	// 		}
-
-	// 	})
-
-	// }))
-
-	// console.log('PROMISE RESULT 2')
-	// console.log(final_interested_payload)
 
 	Promise.all(list_of_promises)
 	.then(() => {

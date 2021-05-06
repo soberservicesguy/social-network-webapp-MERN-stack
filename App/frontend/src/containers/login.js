@@ -35,7 +35,7 @@ class LoginContainer extends Component {
 
 			redirectToHome:false,
 
-			showAdminControls: true,
+			showAdminControls: false,
 
 		}
 	}
@@ -50,11 +50,11 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				console.log(response.data)
+				// console.log(response.data)
 
 			} else {
-				console.log(response.data)
-				console.log('not authorized')
+				// console.log(response.data)
+				// console.log('not authorized')
 			}
 
 		})
@@ -108,7 +108,7 @@ class LoginContainer extends Component {
 				redirectToHomeCallback()
 				
 			} else {
-				console.log(response.data.msg)
+				// console.log(response.data.msg)
 				console.log('couldnt login')
 			}
 
@@ -123,7 +123,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				console.log(response.data.message)
+				// console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all users')
@@ -141,7 +141,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				console.log(response.data.message)
+				// console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all sports')
@@ -159,7 +159,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				console.log(response.data.message)
+				// console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all socialposts')
@@ -177,7 +177,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				console.log(response.data.message)
+				// console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all books')
@@ -195,7 +195,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				console.log(response.data.message)
+				// console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all pages')
@@ -213,7 +213,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				console.log(response.data.message)
+				// console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all ads')
@@ -231,7 +231,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				console.log(response.data.message)
+				// console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all ads')

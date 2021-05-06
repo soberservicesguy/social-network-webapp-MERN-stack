@@ -37,17 +37,17 @@ class FriendsContainer extends Component {
 			axios.get(utils.baseUrl + '/users/friend-suggestions',)
 			.then((response) => {
 				if (response.data.success){
-					console.log('GOT FRIEND SUGGESTIONS')
-					console.log(response.data.friend_suggestions)
+					// console.log('GOT FRIEND SUGGESTIONS')
+					// console.log(response.data.friend_suggestions)
 					set_friends_suggestions_callback(response)
 
-					console.log('this.props.list_of_friend_suggestions')
-					console.log(this.props.list_of_friend_suggestions)
+					// console.log('this.props.list_of_friend_suggestions')
+					// console.log(this.props.list_of_friend_suggestions)
 
 				}
 			})
 			.catch((error) => {
-				console.log('ERROR FRIEND SUGGESTIONS')
+				// console.log('ERROR FRIEND SUGGESTIONS')
 				console.log(error);
 			})
 
@@ -56,17 +56,17 @@ class FriendsContainer extends Component {
 			axios.get(utils.baseUrl + '/users/friend-requests',)
 			.then((response) => {
 				if (response.data.success){
-					console.log('GOT FRIEND REQUESTS')
-					console.log(response.data.friends_requests)
+					// console.log('GOT FRIEND REQUESTS')
+					// console.log(response.data.friends_requests)
 					set_friends_requests_callback(response)
 
-					console.log('this.props.list_of_friend_requests')
-					console.log(this.props.list_of_friend_requests)
+					// console.log('this.props.list_of_friend_requests')
+					// console.log(this.props.list_of_friend_requests)
 
 				}
 			})
 			.catch((error) => {
-				console.log('ERROR FRIEND REQUESTS')
+				// console.log('ERROR FRIEND REQUESTS')
 				console.log(error);
 			})
 
@@ -75,17 +75,17 @@ class FriendsContainer extends Component {
 			axios.get(utils.baseUrl + '/users/friends-list',)
 			.then((response) => {
 				if (response.data.success){				
-					console.log('GOT FRIEND LIST')
-					console.log(response.data.friends_list)
+					// console.log('GOT FRIEND LIST')
+					// console.log(response.data.friends_list)
 					set_friends_list_callback(response)
 
-					console.log('this.props.list_of_friends')
-					console.log(this.props.list_of_friends)
+					// console.log('this.props.list_of_friends')
+					// console.log(this.props.list_of_friends)
 
 				}
 			})
 			.catch((error) => {
-				console.log('ERROR FRIEND LIST')
+				// console.log('ERROR FRIEND LIST')
 				console.log(error);
 			})
 
@@ -112,7 +112,7 @@ class FriendsContainer extends Component {
 
 		if (this.props.showFriendsRequestInstead){
 
-			console.log('TRIED THIS')
+			// console.log('TRIED THIS')
 			data_to_use = this.props.list_of_friend_requests
 			heading = 'Friend Requests'
 
@@ -120,7 +120,7 @@ class FriendsContainer extends Component {
 
 		if (this.props.showFriendsSuggestionsInstead){
 
-			console.log('TRIED THIS1')
+			// console.log('TRIED THIS1')
 			data_to_use = this.props.list_of_friend_suggestions
 			heading = 'Friend Suggestions'
 
@@ -129,7 +129,7 @@ class FriendsContainer extends Component {
 
 		if (this.props.showFriendsSuggestionsInstead === false && this.props.showFriendsRequestInstead === false){
 
-			console.log('TRIED THIS2')
+			// console.log('TRIED THIS2')
 			data_to_use = this.props.list_of_friends
 			heading = 'Friends'
 

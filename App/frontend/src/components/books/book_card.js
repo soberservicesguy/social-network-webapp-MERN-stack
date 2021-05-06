@@ -119,7 +119,7 @@ class BookCard extends Component {
 			  		/>
 		  		</div>
 
-	  			<React.Fragment>
+	  			<div style={styles.createSocialObjectsContainer}>
 
 					<div style={styles.showSocialsContainer}>
 						<ShowLikesOfBook
@@ -133,8 +133,8 @@ class BookCard extends Component {
 					</div>
 
 
-				</React.Fragment>
-
+				</div>
+				
 		  	</div>
 		);
 	}
