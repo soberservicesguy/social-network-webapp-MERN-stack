@@ -504,7 +504,8 @@ class ComponentForShowingSocialPost extends Component {
 						<img 
 							alt="" 
 							// src={"data:image/jpeg;base64," + data.friends_user_avatar_image}
-							src={"data:image/jpeg;base64," + this.props.user_avatar_image}
+							src={"data:image/jpeg;base64," + data.friends_user_avatar_image}
+							// src={"data:image/jpeg;base64," + this.props.user_avatar_image}
 							// src={"data:image/jpeg;base64," + avatar_to_use}
 							// src={"data:image/jpeg;base64," + data.user_avatar_image} 
 							// src={utils.image}
@@ -513,7 +514,7 @@ class ComponentForShowingSocialPost extends Component {
 					</div>
 					<div style={styles.usernameContainer}>
 						<p style={{...styles.usernameText, marginLeft:(_xs || _sm) ? 20 : -60}}>
-							sss{data.friends_user_name}
+							{data.friends_user_name}
 							{/*{(data.friends_user_name) ? data.friends_user_name : this.props.user_name_in_profile}*/}
 						</p>
 					</div>
