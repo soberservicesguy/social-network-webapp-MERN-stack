@@ -17,8 +17,9 @@
 
 
 
+
 #!/usr/bin/env bash
 
-docker image build -t socialapp_user_module_24 .
-docker image tag socialapp_user_module_24 soberservicesguy/portfolio-images:socialapp_user_module_24
-docker image push soberservicesguy/portfolio-images:socialapp_user_module_24
+docker image build -t socialapp_user_module_25 .
+docker image tag socialapp_user_module_25 soberservicesguy/portfolio-images:socialapp_user_module_25
+docker image push soberservicesguy/portfolio-images:socialapp_user_module_25
