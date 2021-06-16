@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: notifications
-        image: soberservicesguy/portfolio-images:socialapp_notifications_24
+        image: soberservicesguy/portfolio-images:socialapp_notifications_25
         resources:
           limits:
             cpu: "200m"
