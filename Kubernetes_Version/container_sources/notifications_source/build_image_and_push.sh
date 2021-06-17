@@ -21,8 +21,9 @@
 
 
 
+
 #!/usr/bin/env bash
 
-docker image build -t socialapp_notifications_28 .
-docker image tag socialapp_notifications_28 soberservicesguy/portfolio-images:socialapp_notifications_28
-docker image push soberservicesguy/portfolio-images:socialapp_notifications_28
+docker image build -t socialapp_notifications_29 .
+docker image tag socialapp_notifications_29 soberservicesguy/portfolio-images:socialapp_notifications_29
+docker image push soberservicesguy/portfolio-images:socialapp_notifications_29
