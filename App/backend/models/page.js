@@ -19,6 +19,8 @@ const PageSchema = new mongoose.Schema({
 // other model links
 	interested_users: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
 
+	total_likes: 0,
+
 	timestamp:String,
 
 })
@@ -35,6 +37,8 @@ PageSchema.pre('save', function(next) {
 
 	}
 	
+	this.total_likes = this.interested_users.length
+
     next();
 
 });

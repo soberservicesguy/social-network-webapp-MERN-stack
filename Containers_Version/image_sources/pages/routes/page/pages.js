@@ -212,7 +212,11 @@ router.get('/pages-list-with-children', async function(req, res, next){
 				var newPage = {}
 
 				newPage.page_name = page[ 'page_name' ]
-				newPage.page_image = await get_image_to_display(page.page_image, page.object_files_hosted_at)
+				// OLD VERSION
+				// newPage.page_image = await get_image_to_display(page.page_image, page.object_files_hosted_at)
+				// NEW VERSION
+				newPage.page_image = page.page_image
+				newPage.page_image_host = page.object_files_hosted_at
 				newPage.page_description = page[ 'page_description' ]
 				newPage.endpoint = page[ 'endpoint' ]
 

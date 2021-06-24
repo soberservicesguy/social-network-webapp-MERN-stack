@@ -18,6 +18,8 @@ const SportSchema = new mongoose.Schema({
 	interested_users: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
 	sport_created_by_user:{ type: Schema.Types.ObjectId, ref: 'User'  },
 
+	total_likes:0,
+
 	endpoint:String,
 	timestamp:String,
 })
@@ -34,6 +36,8 @@ SportSchema.pre('save', function(next) {
 		this.timestamp = String( Date.now() )
 
 	}
+
+	this.total_likes = this.interested_users.length
 
     next();
 

@@ -341,8 +341,12 @@ router.get('/books-list-with-children', async function(req, res, next){
 				var newBook = {}
 
 				newBook.book_name = book[ 'book_name' ]
+				// OLD VERSION
+				// newBook.book_image = await get_image_to_display(book.book_image, book.object_files_hosted_at)
+				// NEW VERSION
+				newBook.book_image = book.book_image
+				newBook.book_image_host = book.object_files_hosted_at
 
-				newBook.book_image = await get_image_to_display(book.book_image, book.object_files_hosted_at)
 				newBook.book_description = book[ 'book_description' ]
 				newBook.endpoint = book[ 'endpoint' ]
 

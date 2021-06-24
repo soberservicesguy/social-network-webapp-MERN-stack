@@ -19,6 +19,8 @@ const BookSchema = new mongoose.Schema({
 // other model links
 	interested_users: [{ type: Schema.Types.ObjectId, ref: 'User'  }],
 
+	total_likes: 0,
+
 	endpoint:String,
 	timestamp:String,
 
@@ -36,6 +38,8 @@ BookSchema.pre('save', function(next) {
 
 	}
 	
+	this.total_likes = this.interested_users.length
+
     next();
 
 });

@@ -17,38 +17,43 @@ async function get_post_details(type_of_post, post_created, post_details){
 		case "image_post":
 
 			var { image_for_post, object_files_hosted_at } = post_created
-			image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
-			post_details = { ...post_details, image_for_post: image_for_post_to_use }
+			// OLD VERSION
+			// image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
+			// NEW VERSION
+			image_for_post_to_use = image_for_post 
+			post_details = { ...post_details, image_for_post: image_for_post_to_use, image_for_post_host:object_files_hosted_at }
 			// image_for_post = null
 			break
 
 		case "video_post":
 
 			var { video_for_post, video_thumbnail_image, object_files_hosted_at } = post_created
-			video_thumbnail_image_to_use = await get_image_to_display(video_thumbnail_image, object_files_hosted_at)
-			post_details = { ...post_details, video_for_post, video_thumbnail_image: video_thumbnail_image_to_use }									
+			// OLD VERSION
+			// video_thumbnail_image_to_use = await get_image_to_display(video_thumbnail_image, object_files_hosted_at)
+			// NEW VERSION
+			video_thumbnail_image_to_use = video_thumbnail_image
+			post_details = { ...post_details, video_for_post, video_thumbnail_image: video_thumbnail_image_to_use, video_thumbnail_image_host: object_files_hosted_at}									
 
 			break
 
 		case "text_with_image_post":
 
 			var { post_text, image_for_post, object_files_hosted_at } = post_created
-			// console.log('{ post_text, image_for_post, object_files_hosted_at }')
-			// console.log({ post_text, image_for_post, object_files_hosted_at })
-			image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
-			// console.log('image_for_post_to_use for image with text')
-			// console.log(image_for_post_to_use)
-			post_details = { ...post_details, post_text, image_for_post:image_for_post_to_use }									
-			// console.log('post_details for text with image')
-			// console.log(post_details)
-			// image_for_post = null
+			// OLD VERSION
+			// image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
+			// NEW VERSION
+			image_for_post_to_use = image_for_post
+			post_details = { ...post_details, post_text, image_for_post:image_for_post_to_use, image_for_post_host: object_files_hosted_at}									
 			break
 
 		case "text_with_video_post":
 
 			var { post_text, video_for_post, video_thumbnail_image, object_files_hosted_at } = post_created
-			video_thumbnail_image_to_use = await get_image_to_display(video_thumbnail_image, object_files_hosted_at)
-			post_details = { ...post_details, post_text, video_for_post, video_thumbnail_image: video_thumbnail_image_to_use }									
+			// OLD VERSION
+			// video_thumbnail_image_to_use = await get_image_to_display(video_thumbnail_image, object_files_hosted_at)
+			// NEW VERSION
+			video_thumbnail_image_to_use = video_thumbnail_image
+			post_details = { ...post_details, post_text, video_for_post, video_thumbnail_image: video_thumbnail_image_to_use, video_thumbnail_image_host: object_files_hosted_at}								
 			break
 
 		default:
