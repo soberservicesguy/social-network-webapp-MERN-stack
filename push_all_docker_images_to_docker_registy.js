@@ -17,7 +17,6 @@ function get_all_deployment_files(){
 
 }
 
-
 all_image_folders = get_all_deployment_files()
 
 function push_all_docker_images_to_docker_registy(){
@@ -30,9 +29,10 @@ function push_all_docker_images_to_docker_registy(){
 		// output = execSync(`cd Kubernetes_Version/container_sources/${image_folder} && bash build_image_and_push.sh`, {encoding: 'utf8'})
 
 
-		exec(`cd Kubernetes_Version/container_sources/${image_folder} && bash build_image_and_push.sh`, (err, stdout, stderr) => {
-			if (err) {
-				console.log(err)
+		exec(`cd Kubernetes_Version/container_sources/${image_folder} && bash build_image_and_push.sh && cd ../../`, (err, stdout, stderr) => {
+			if (err || stderr) {
+				err && console.log(err)
+				stderr && console.log(stderr)
 				return;
 			}
 

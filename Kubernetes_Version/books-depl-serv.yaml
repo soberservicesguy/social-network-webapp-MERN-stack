@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: books
-        image: soberservicesguy/portfolio-images:socialapp_books_35
+        image: soberservicesguy/portfolio-images:socialapp_books_37
         resources:
           limits:
             cpu: "200m"
