@@ -13,6 +13,7 @@ let deployment_path = './Kubernetes_Version'
 async function updateDeploymentFileForLocal(image_folder){
 	let regex_for_depl_image = /\s*image\:/
 	let imageSuffix = image_folder.replace('_source', '')
+	imageSuffix = imageSuffix.replace('_', '-')
 	let file_path = `${deployment_path}/${imageSuffix}-depl-serv.yaml`
 	var file_lines_content = fs.readFileSync(file_path).toString().split("\n");
 	let file_lines_with_matched_regex = file_lines_content.filter((line) => {
