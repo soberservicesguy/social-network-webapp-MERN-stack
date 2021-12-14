@@ -44,7 +44,7 @@ function push_all_docker_images_to_local(){
 		console.log(' ')
 		console.log(`ABOUT TO BUILD IMAGE LOCALLY FOR ${image_folder}`)
 		console.log(' ')
-		buildLocally(image_folder)
+		await buildLocally(image_folder)
 
 	})
 
