@@ -22,7 +22,7 @@ spec:
       containers:
       - name: advertisement
         imagePullPolicy: IfNotPresent #Never
-        image: soberservicesguy/portfolio-images:socialapp_advertisement_44
+        image: soberservicesguy/portfolio-images:socialapp_advertisement_45
         resources:
           limits:
             cpu: "200m"

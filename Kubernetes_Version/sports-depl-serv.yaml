@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: sports
-        image: soberservicesguy/portfolio-images:socialapp_sports_43
+        image: soberservicesguy/portfolio-images:socialapp_sports_44
         resources:
           limits:
             cpu: "200m"

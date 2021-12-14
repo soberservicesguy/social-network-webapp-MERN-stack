@@ -29,21 +29,6 @@ async function buildAndPushToDockerRegistry(image_folder){
 	});
 }
 
-async function buildLocally(image_folder){
-	let imageSuffix = image_folder.replace('_source', '')
-
-	await exec(`cd Kubernetes_Version/container_sources/${image_folder} && docker image build -t socialapp_${imageSuffix} . && cd ../../`, (err, stdout, stderr) => {
-		if (err || stderr) {
-			err && console.log(err)
-			stderr && console.log(stderr)
-			return false;
-		}
-
-		console.log(`stdout: ${stdout}`);
-		return true
-	});
-}
-
 all_image_folders = get_all_deployment_files()
 
 function push_all_docker_images_to_docker_registy(){
@@ -51,13 +36,6 @@ function push_all_docker_images_to_docker_registy(){
 	let file_to_execute
 	all_image_folders.map(async (image_folder) => {
 
-		console.log(' ')
-		console.log(`ABOUT TO BUILD IMAGE LOCALLY FOR ${image_folder}`)
-		console.log(' ')
-		buildLocally(image_folder)
-
-		// TO BUILD AND PUSH CONTAINER TO REGISTERY, USE BELOW BLOCK
-		/*console.log(' ')
 		console.log(`ABOUT TO BUILD IMAGE AND PUSH TO REGISTERY FOR ${image_folder}`)
 		console.log(' ')
 		for (let i = 0; i < 10; i++) {
@@ -68,7 +46,7 @@ function push_all_docker_images_to_docker_registy(){
 				console.log(' ')
 				break
 			}
-		}*/
+		}
 
 	})
 

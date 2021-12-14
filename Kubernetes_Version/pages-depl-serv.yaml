@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: pages
-        image: soberservicesguy/portfolio-images:socialapp_pages_43
+        image: soberservicesguy/portfolio-images:socialapp_pages_44
         resources:
           limits:
             cpu: "200m"
