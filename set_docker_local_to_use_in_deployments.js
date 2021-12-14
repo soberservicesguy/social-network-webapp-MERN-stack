@@ -22,6 +22,7 @@ async function updateDeploymentFileForLocal(image_folder){
 	file_lines_with_matched_regex = file_lines_with_matched_regex[0]
 	const index = file_lines_content.indexOf( file_lines_with_matched_regex );
 	
+	imageSuffix = imageSuffix.replace('-', '_')
 	let newLine = `        image: ${appName}_${imageSuffix}:latest`
 
 	if (index > -1) {

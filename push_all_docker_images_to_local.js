@@ -21,6 +21,7 @@ function get_all_deployment_files(){
 
 async function buildLocally(image_folder){
 	let imageSuffix = image_folder.replace('_source', '')
+	imageSuffix = imageSuffix.replace('-', '_')
 
 	await exec(`cd Kubernetes_Version/container_sources/${image_folder} && docker image build -t ${appName}_${imageSuffix} . && cd ../../`, (err, stdout, stderr) => {
 		if (err || stderr) {
