@@ -25,16 +25,17 @@ async function updateDeploymentFileForLocal(image_folder){
 	let newLine = `\t\t\t\timage: ${appName}_${imageSuffix}:latest`
 
 	if (index > -1) {
-		// file_lines_content.splice(index, 1);
-		// file_lines_content.splice(index, 0, newLine);
-		file_lines_content.splice(index, 1, newLine);
+		file_lines_content.splice(index, 1);
+		file_lines_content.splice(index, 0, newLine);
+		// file_lines_content.splice(index, 1, newLine);
 	}
 	
 
 	let final_content_to_write = file_lines_content.join("\n")	
-	await fs.writeFile(file_path, final_content_to_write, function (err) {
-		if (err) return console.log(err);
-	});
+	console.log({final_content_to_write})
+	// await fs.writeFile(file_path, final_content_to_write, function (err) {
+	// 	if (err) return console.log(err);
+	// });
 
 }
 
