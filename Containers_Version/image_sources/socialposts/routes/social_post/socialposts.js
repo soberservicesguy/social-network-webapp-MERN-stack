@@ -1852,6 +1852,9 @@ router.post('/create-share-for-socialpost', passport.authenticate('jwt', { sessi
 		SocialPost.findOne({endpoint: socialpost_endpoint})
 		.then(async (socialpost) => {
 
+			console.log('socialpost.user')
+			console.log(socialpost.user)
+
 			let user_owning_socialpost = await User.findOne({_id: socialpost.user})
 			let user_owning_socialpost_avatar = await get_image_to_display(user_owning_socialpost.user_avatar_image, user_owning_socialpost.object_files_hosted_at)
 

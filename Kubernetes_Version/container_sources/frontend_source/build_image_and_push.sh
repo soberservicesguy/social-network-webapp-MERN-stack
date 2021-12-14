@@ -24,6 +24,21 @@
 
 
 
-docker image build -t socialapp_frontend_29 .
-docker image tag socialapp_frontend_29 soberservicesguy/portfolio-images:socialapp_frontend_29
-docker image push soberservicesguy/portfolio-images:socialapp_frontend_29
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+docker image build -t socialapp_frontend_44 .
+docker image tag socialapp_frontend_44 soberservicesguy/portfolio-images:socialapp_frontend_44
+docker image push soberservicesguy/portfolio-images:socialapp_frontend_44

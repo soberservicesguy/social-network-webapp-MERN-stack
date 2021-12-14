@@ -116,7 +116,6 @@ async function set_docker_build_index_for_all_images(){
 }
 
 
-
 let tokens_of_first_docker_image_name
 let number_of_matched_tokens_list = []
 let matched_tokens
@@ -128,11 +127,9 @@ async function get_deployment_file_base_names(docker_images){
 	let deployment_file_base_names = []
 
 	docker_images = await set_docker_build_index_for_all_images()
-	// console.log(docker_images)
-
+	console.log({docker_images})
 
 	tokens_of_first_docker_image_name = docker_images[0].split("_")
-	// return tokens_of_first_docker_image_name
 
 	docker_images.map((docker_image) => {
 
@@ -154,9 +151,8 @@ async function get_deployment_file_base_names(docker_images){
 
 	})
 
-	// console.log(number_of_matched_tokens_list)
 	total_common_tokens = Math.min.apply(null, number_of_matched_tokens_list)
-	// console.log(total_common_tokens)
+	console.log({total_common_tokens})
 
 	common_tokens = tokens_of_first_docker_image_name.slice(0, total_common_tokens)
 
@@ -177,13 +173,12 @@ async function get_deployment_file_base_names(docker_images){
 		})	
 
 		docker_image_tokens = docker_image_tokens.join("_")
-
 		docker_image_tokens = docker_image_tokens.replace(/\_\d+/, "")
-
 		docker_image_tokens = docker_image_tokens.split("_").join("-")
-		// console.log({docker_image_tokens})
-		// console.log('THIS')
-		// console.log(docker_image)
+
+		console.log({docker_image_tokens})
+		console.log('THIS')
+		console.log(docker_image)
 
 
 		deployment_file_base_names.push( {docker_image_tokens:docker_image_tokens, docker_image_final:docker_image} )

@@ -1,7 +1,6 @@
-const { exec, execSync } = require('child_process');
 const fs = require('fs')
-
-
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 
 let containers_sources = './Kubernetes_Version/container_sources'
@@ -17,29 +16,37 @@ function get_all_deployment_files(){
 
 }
 
+async function buildAndPushToDockerRegistry(image_folder){
+	await exec(`cd Kubernetes_Version/container_sources/${image_folder} && bash build_image_and_push.sh && cd ../../`, (err, stdout, stderr) => {
+		if (err || stderr) {
+			err && console.log(err)
+			stderr && console.log(stderr)
+			return false;
+		}
+
+		console.log(`stdout: ${stdout}`);
+		return true
+	});
+}
 
 all_image_folders = get_all_deployment_files()
 
 function push_all_docker_images_to_docker_registy(){
 
 	let file_to_execute
-	all_image_folders.map((image_folder) => {
+	all_image_folders.map(async (image_folder) => {
 
-		// console.log(image_folder)
-		// let output
-		// output = execSync(`cd Kubernetes_Version/container_sources/${image_folder} && bash build_image_and_push.sh`, {encoding: 'utf8'})
-
-
-		exec(`cd Kubernetes_Version/container_sources/${image_folder} && bash build_image_and_push.sh`, (err, stdout, stderr) => {
-			if (err) {
-				console.log(err)
-				return;
+		console.log(`ABOUT TO BUILD IMAGE AND PUSH TO REGISTERY FOR ${image_folder}`)
+		console.log(' ')
+		for (let i = 0; i < 10; i++) {
+			let result = await buildAndPushToDockerRegistry(image_folder)
+			if (result){
+				console.log(' ')
+				console.log('PUSHED TO DOCKER SUCCESSFULLY')
+				console.log(' ')
+				break
 			}
-
-			console.log(`stdout: ${stdout}`);
-			console.log(`stderr: ${stderr}`);
-
-		});
+		}
 
 	})
 
