@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
       - name: social-frontend
-        imagePullPolicy: 'IfNotPresent' #Never      
-				image: socialapp_frontend:latest
+        imagePullPolicy: IfNotPresent      
+        image: socialapp_frontend:latest
         ports:
           - containerPort: 80
             name: http-port

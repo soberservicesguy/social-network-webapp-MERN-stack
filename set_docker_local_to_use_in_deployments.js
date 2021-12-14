@@ -22,7 +22,7 @@ async function updateDeploymentFileForLocal(image_folder){
 	file_lines_with_matched_regex = file_lines_with_matched_regex[0]
 	const index = file_lines_content.indexOf( file_lines_with_matched_regex );
 	
-	let newLine = `\t\t\t\timage: ${appName}_${imageSuffix}:latest`
+	let newLine = `        image: ${appName}_${imageSuffix}:latest`
 
 	if (index > -1) {
 		file_lines_content.splice(index, 1);
@@ -32,7 +32,7 @@ async function updateDeploymentFileForLocal(image_folder){
 	
 
 	let final_content_to_write = file_lines_content.join("\n")	
-	console.log({final_content_to_write})
+	// console.log({final_content_to_write})
 	await fs.writeFile(file_path, final_content_to_write, function (err) {
 		if (err) return console.log(err);
 	});

@@ -21,8 +21,8 @@ spec:
     spec:
       containers:
       - name: sports
-        imagePullPolicy: 'IfNotPresent' #Never      
-				image: socialapp_sports:latest
+        imagePullPolicy: IfNotPresent
+        image: socialapp_sports:latest
         resources:
           limits:
             cpu: "200m"

@@ -21,7 +21,8 @@ spec:
     spec:
       containers:
       - name: user-module
-				image: socialapp_users-module:latest
+        imagePullPolicy: IfNotPresent
+        image: socialapp_users-module:latest
         resources:
           limits:
             cpu: "200m"

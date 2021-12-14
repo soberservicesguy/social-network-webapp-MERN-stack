@@ -21,8 +21,8 @@ spec:
     spec:
       containers:
       - name: friends
-        imagePullPolicy: 'IfNotPresent' #Never      
-				image: socialapp_friends:latest
+        imagePullPolicy: IfNotPresent      
+        image: socialapp_friends:latest
         resources:
           limits:
             cpu: "200m"
