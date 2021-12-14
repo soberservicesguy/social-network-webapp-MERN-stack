@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: friends
-        image: soberservicesguy/portfolio-images:socialapp_friends_40
+        image: soberservicesguy/portfolio-images:socialapp_friends_41
         resources:
           limits:
             cpu: "200m"

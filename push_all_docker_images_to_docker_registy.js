@@ -1,7 +1,7 @@
-const { exec, execSync } = require('child_process');
+// const { exec, execSync } = require('child_process');
 const fs = require('fs')
-
-
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 
 let containers_sources = './Kubernetes_Version/container_sources'
