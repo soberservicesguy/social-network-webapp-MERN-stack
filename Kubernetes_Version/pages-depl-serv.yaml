@@ -22,7 +22,7 @@ spec:
       containers:
       - name: pages
         imagePullPolicy: 'IfNotPresent' #Never      
-        image: soberservicesguy/portfolio-images:socialapp_pages_33
+				image: socialapp_pages:latest
         resources:
           limits:
             cpu: "200m"

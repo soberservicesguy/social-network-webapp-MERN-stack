@@ -22,7 +22,7 @@ spec:
       containers:
       - name: books
         imagePullPolicy: 'IfNotPresent' #Never        
-        image: soberservicesguy/portfolio-images:socialapp_books_33
+				image: socialapp_books:latest
         resources:
           limits:
             cpu: "200m"
