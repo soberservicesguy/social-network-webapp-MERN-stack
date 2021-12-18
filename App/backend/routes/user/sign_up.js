@@ -80,7 +80,7 @@ function checkFileTypeForUserAvatar(file, cb){
 router.post('/signup-and-get-privileges', (req, res, next) => {
 
 //	here there will be no req.body due to multer 
-	// console.log('OUTER LOG')
+	console.log('OUTER LOG')
 	// console.log(req.body)
 
 	timestamp = Date.now()
