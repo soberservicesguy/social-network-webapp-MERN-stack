@@ -37,4 +37,4 @@ kubernetes_path='./Kubernetes_Version'
 # generateVersionKubernetesBuildAndCopyToBackend $baseURL_for_Kubernetes_Version $utilities_file_path
 # generateDockerImages $kubernetes_containers_path $kubernetes_path
 # deployApp $baseURL_for_Heroku $utilities_file_path $aws_s3_accessKeyId $aws_s3_secretAccessKey $aws_s3_bucket
-createNewGithubPR $frontendURL_for_App $docker_images_path $kubernetes_containers_path $app_backend_env_file_path
+createNewGithubPR $app_backend_file_path $docker_images_path $kubernetes_containers_path $app_backend_env_file_path
