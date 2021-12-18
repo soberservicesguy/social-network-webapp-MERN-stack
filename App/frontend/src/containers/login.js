@@ -35,7 +35,7 @@ class LoginContainer extends Component {
 
 			redirectToHome:false,
 
-			showAdminControls: false,
+			showAdminControls: true,
 
 		}
 	}

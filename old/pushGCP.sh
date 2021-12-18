@@ -1,1 +1,0 @@
-bash ../../portfolio_pushing_pipelines/social_app/my_own_pipeline_gcloud_gcs.sh

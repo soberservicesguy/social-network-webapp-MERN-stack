@@ -275,15 +275,18 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 					if ( req.body.phone_number !== '03352065000' ){
 
 						let bruce_lee = await User.findOne({ phone_number: '03352065000' })
-						bruce_lee.friend_requests_sent.push(newUser)
-						newUser.friend_requests.push(bruce_lee)
-						await bruce_lee.save()
+						if (bruce_lee){
+							bruce_lee.friend_requests_sent.push(newUser)
+							newUser.friend_requests.push(bruce_lee)
+							await bruce_lee.save()							
+						}
 
 					}
 
 					await newImage.save()
 					await newUser.save()
-
+					console.log({newUser})
+					console.log('USER SAVED')
 					res.status(200).json({ success: true, msg: 'new user saved' });
 
 				}

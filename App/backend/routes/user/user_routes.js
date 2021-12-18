@@ -124,15 +124,16 @@ router.get('/user-details', async function(req, res, next){
 // Validate an existing user and issue a JWT
 router.post('/login', async function(req, res, next){
 
-
+	console.log('TRIGGERED')
 	User.findOneAndUpdate({ phone_number: req.body.phone_number }, { $set:{ isLoggedIn:true } }, { new: true }, async (err, user) => {
 	    if (err) {
-
+	    	console.log('NOT FOUND')
 	        res.status(401).json({ success: false, msg: "could not find user" });
 
 	    }
-
+	    console.log({user, body: req.body})
 		if (!user || user === null) {
+	    	console.log('NOT FOUND1')
 			res.status(401).json({ success: false, msg: "could not find user" });
 			return
 		}
