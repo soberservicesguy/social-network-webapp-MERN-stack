@@ -8,6 +8,8 @@ const fs = require('fs')
 
 const file_path = './App/backend/.env'
 
+
+const regex_pattern0 = /^DB_STRING_PROD/
 const regex_pattern1 = /^gcp_keyFilename/
 const regex_pattern2 = /^gcp_projectId/
 const regex_pattern3 = /^gcp_bucket/
@@ -29,7 +31,8 @@ async function censor_dot_env_file_for_cloud_storage(){
 	var file_lines_content = fs.readFileSync(file_path).toString().split("\n");
 
 	let file_lines_without_matched_reges = file_lines_content.filter((line) => {
-		return regex_pattern1.test(line) === false 
+		return regex_pattern0.test(line) === false 
+			&& regex_pattern1.test(line) === false 
 			&& regex_pattern2.test(line) === false 
 			&& regex_pattern3.test(line) === false 
 			&& regex_pattern4.test(line) === false 
@@ -45,6 +48,7 @@ async function censor_dot_env_file_for_cloud_storage(){
 
 	let final_lines_content = [
 		...file_lines_without_matched_reges,
+		`\nDB_STRING_PROD=''`,		
 		`\ngcp_keyFilename=''`,		
 		`\gcp_projectId=''`,		
 		`\gcp_bucket=''`,	
