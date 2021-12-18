@@ -1,6 +1,6 @@
 
 const utils = {
-	baseUrl: 'http://localhost:3001',
+	baseUrl: 'https://social-mern-stack.herokuapp.com',
 	// baseUrl: 'https://social-mern-stack.herokuapp.com',
 	// baseUrl: 'https://social-app-dot-portfolio-apps-311617.uc.r.appspot.com',
 	// baseUrl: 'http://hello-world.info:80',

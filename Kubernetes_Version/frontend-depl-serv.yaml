@@ -14,7 +14,7 @@ spec:
       containers:
       - name: social-frontend
         imagePullPolicy: IfNotPresent      
-        image: appointment_frontend:latest
+        image: socialapp_frontend:latest
         ports:
           - containerPort: 80
             name: http-port

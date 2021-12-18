@@ -22,7 +22,7 @@ spec:
       containers:
       - name: user-module
         imagePullPolicy: IfNotPresent
-        image: appointment_users_module:latest
+        image: socialapp_users_module:latest
         resources:
           limits:
             cpu: "200m"
