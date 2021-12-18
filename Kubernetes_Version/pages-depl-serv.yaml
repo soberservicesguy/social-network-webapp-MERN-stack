@@ -22,7 +22,7 @@ spec:
       containers:
       - name: pages
         imagePullPolicy: IfNotPresent      
-        image: socialapp_pages:latest
+        image: appointment_pages:latest
         resources:
           limits:
             cpu: "200m"

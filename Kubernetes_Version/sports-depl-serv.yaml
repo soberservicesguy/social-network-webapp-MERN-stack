@@ -22,7 +22,7 @@ spec:
       containers:
       - name: sports
         imagePullPolicy: IfNotPresent
-        image: socialapp_sports:latest
+        image: appointment_sports:latest
         resources:
           limits:
             cpu: "200m"

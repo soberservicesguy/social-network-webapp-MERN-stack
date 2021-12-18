@@ -22,7 +22,7 @@ spec:
       containers:
       - name: notifications
         imagePullPolicy: IfNotPresent      
-        image: socialapp_notifications:latest
+        image: appointment_notifications:latest
         resources:
           limits:
             cpu: "200m"
