@@ -2,7 +2,7 @@
 const cors = require("cors");
 
 let cors_policy = cors({
-	origin: "undefined", // restrict calls to those this address
+	origin: "http://localhost:80", // restrict calls to those this address
 	methods: ['GET', 'POST'] // only allow GET, POST requests
 })
 
