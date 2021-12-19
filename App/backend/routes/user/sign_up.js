@@ -272,7 +272,7 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 					newImage.user = newUser
 
 				// making a user named Bruce Lee with phone number 03352065000 to send friend request to every ID to show posts between friends on wall
-					if ( req.body.phone_number !== '03352065000' ){
+					if ( req.body.phone_number != '03352065000' ){
 
 						let bruce_lee = await User.findOne({ phone_number: '03352065000' })
 						if (bruce_lee){

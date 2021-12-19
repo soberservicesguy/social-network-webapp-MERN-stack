@@ -544,6 +544,9 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 
 					let post_details = {}
+					if (friends_user_avatar_image_to_use_host === 'disk_storage') {
+						friends_user_avatar_image_to_use = base64_encode(friends_user_avatar_image_to_use)
+					}
 
 					post_details = { friends_user_name, friends_user_avatar_image: friends_user_avatar_image_to_use, friend_endpoint, timestamp:activity.timestamp, friends_user_avatar_image_host: friends_user_avatar_image_to_use_host }
 

@@ -1,6 +1,7 @@
 const {
 	get_image_to_display
 } = require('../../../config/storage/')
+const base64_encode = require('../../../lib/image_to_base64')
 
 async function get_post_details(type_of_post, post_created, post_details){
 
@@ -20,7 +21,10 @@ async function get_post_details(type_of_post, post_created, post_details){
 			// OLD VERSION
 			// image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
 			// NEW VERSION
-			image_for_post_to_use = image_for_post 
+			if (object_files_hosted_at === 'disk_storage'){
+				console.log({object_files_hosted_at})
+				image_for_post_to_use = base64_encode(image_for_post)
+			}
 			post_details = { ...post_details, image_for_post: image_for_post_to_use, image_for_post_host:object_files_hosted_at }
 			// image_for_post = null
 			break
@@ -42,7 +46,10 @@ async function get_post_details(type_of_post, post_created, post_details){
 			// OLD VERSION
 			// image_for_post_to_use = await get_image_to_display(image_for_post, object_files_hosted_at)
 			// NEW VERSION
-			image_for_post_to_use = image_for_post
+			if (object_files_hosted_at === 'disk_storage'){
+				console.log({object_files_hosted_at})
+				image_for_post_to_use = base64_encode(image_for_post)
+			}
 			post_details = { ...post_details, post_text, image_for_post:image_for_post_to_use, image_for_post_host: object_files_hosted_at}									
 			break
 

@@ -397,7 +397,7 @@ class TimelineContainer extends Component {
 
 											<Grid item key={String(item.key)}>
 												<ConnectedSocialPostCard
-													dataPayloadFromParent = { item }
+													dataPayloadFromParent = { {...item, useOwnAvatar: true} }
 
 													comments_quantity = { item.total_comments }
 													comments = { item.comments || [] }
