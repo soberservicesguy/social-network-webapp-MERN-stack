@@ -95,7 +95,7 @@ class LoginContainer extends Component {
 				verify_privilege_callack(response)
 				set_signed_in_callback()
 				set_phone_number_callback()
-
+				console.log({user_avatar_image: response.data.user_details.user_avatar_image})
 				set_user_name_in_profile_callback(response)
 				set_user_avatar_image_callback(response)
 				set_user_cover_image_callback(response)

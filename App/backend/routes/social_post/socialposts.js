@@ -547,7 +547,8 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 					if (friends_user_avatar_image_to_use_host === 'disk_storage') {
 						friends_user_avatar_image_to_use = base64_encode(friends_user_avatar_image_to_use)
 					}
-
+					
+					friends_user_avatar_image_to_use = await get_image_to_display(friends_user_avatar_image_to_use, friends_user_avatar_image_to_use_host)
 					post_details = { friends_user_name, friends_user_avatar_image: friends_user_avatar_image_to_use, friend_endpoint, timestamp:activity.timestamp, friends_user_avatar_image_host: friends_user_avatar_image_to_use_host }
 
 					if ( last_timestamp_of_checking_notification !== null && Number(activity.timestamp) < Number(last_timestamp_of_checking_notification) ){
@@ -660,13 +661,20 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								let { book_created } = activity
 								book_created = await Book.findOne({_id: book_created})
-								var { book_name, book_image, book_description, interested_users, endpoint, object_files_hosted_at } = book_created
+								var { book_name, book_image, book_description, interested_users, endpoint, object_files_hosted_at, type_of_post } = book_created
 								// incorporating notification_type
 								// OLD VERSION
 								// image_in_base64_encoding = await get_image_to_display(book_image, object_files_hosted_at)
 								// NEW VERSION
 								image_in_base64_encoding = book_image
 								post_details = { ...post_details, notification_type:'created_book', activity_type, book_name, book_image: image_in_base64_encoding, book_description, endpoint, book_image_host: object_files_hosted_at }
+								type_of_post = 'created_book'
+								try {
+									post_details = await get_post_details(type_of_post, book_created, post_details)
+								} catch (error5){
+									console.log('ERROR CAUGHT WHILE GETTING IMAGE')
+									console.log(error5)
+								}
 								// activities_to_send.push(post_details)
 								if ( !activities_to_send.includes(post_details) ){
 
@@ -680,7 +688,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								let { book_liked } = activity
 								book_liked = await Book.findOne({_id: book_liked})
-								var { book_name, book_image, book_description, endpoint, object_files_hosted_at } = book_liked
+								var { book_name, book_image, book_description, endpoint, object_files_hosted_at, type_of_post } = book_liked
 								// incorporating notification_type
 
 								// OLD VERSION
@@ -688,6 +696,13 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								// NEW VERSION
 								image_in_base64_encoding = book_image
 								post_details = { ...post_details, notification_type:'got_interested_in_book', activity_type, book_name, book_image: get_image_to_display, book_description, endpoint, book_image_host: object_files_hosted_at}
+								type_of_post = 'got_interested_in_book'
+								try {
+									post_details = await get_post_details(type_of_post, book_liked, post_details)
+								} catch (error5){
+									console.log('ERROR CAUGHT WHILE GETTING IMAGE')
+									console.log(error5)
+								}
 								// activities_to_send.push(post_details)
 
 								if ( !activities_to_send.includes(post_details) ){
@@ -702,7 +717,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								let { page_created } = activity
 								page_created = await Page.findOne({_id: page_created})
-								var { page_name, page_image, page_description, endpoint, object_files_hosted_at } = page_created
+								var { page_name, page_image, page_description, endpoint, object_files_hosted_at, type_of_post } = page_created
 								// incorporating notification_type
 
 								// OLD VERSION
@@ -711,6 +726,13 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = page_image
 
 								post_details = { ...post_details, notification_type:'created_page', activity_type, page_name, page_image: image_in_base64_encoding, page_description, endpoint, page_image_host: object_files_hosted_at }
+								type_of_post = 'created_page'
+								try {
+									post_details = await get_post_details(type_of_post, page_created, post_details)
+								} catch (error5){
+									console.log('ERROR CAUGHT WHILE GETTING IMAGE')
+									console.log(error5)
+								}
 								// activities_to_send.push(post_details)
 
 								if ( !activities_to_send.includes(post_details) ){
@@ -725,7 +747,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								let { page_liked } = activity
 								page_liked = await Page.findOne({_id: page_liked})
-								var { page_name, page_image, page_description, endpoint, object_files_hosted_at } = page_liked
+								var { page_name, page_image, page_description, endpoint, object_files_hosted_at, type_of_post } = page_liked
 								// incorporating notification_type
 
 								// OLD VERSION
@@ -734,6 +756,13 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = page_image
 
 								post_details = { ...post_details, notification_type:'got_interested_in_page', activity_type, page_name, page_image: image_in_base64_encoding, page_description, endpoint, page_image_host: object_files_hosted_at }
+								type_of_post = 'got_interested_in_page'
+								try {
+									post_details = await get_post_details(type_of_post, page_liked, post_details)
+								} catch (error5){
+									console.log('ERROR CAUGHT WHILE GETTING IMAGE')
+									console.log(error5)
+								}
 								// activities_to_send.push(post_details)
 
 								if ( !activities_to_send.includes(post_details) ){
@@ -748,7 +777,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								let { sport_created } = activity
 								sport_created = await Sport.findOne({_id: sport_created})
-								var { sport_name, sport_image, sport_description, endpoint, object_files_hosted_at } = sport_created
+								var { sport_name, sport_image, sport_description, endpoint, object_files_hosted_at, type_of_post } = sport_created
 								// incorporating notification_type
 
 								// OLD VERSION
@@ -757,6 +786,13 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = sport_image
 
 								post_details = { ...post_details, notification_type:'created_sport', activity_type, sport_name, sport_image: image_in_base64_encoding, sport_description, endpoint, sport_image_host: object_files_hosted_at }
+								type_of_post = 'created_sport'
+								try {
+									post_details = await get_post_details(type_of_post, sport_created, post_details)
+								} catch (error5){
+									console.log('ERROR CAUGHT WHILE GETTING IMAGE')
+									console.log(error5)
+								}
 								// activities_to_send.push(post_details)
 
 								if ( !activities_to_send.includes(post_details) ){
@@ -771,7 +807,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								let { sport_liked } = activity
 								sport_liked = await Sport.findOne({_id: sport_liked})
-								var { sport_name, sport_image, sport_description, endpoint, object_files_hosted_at } = sport_created
+								var { sport_name, sport_image, sport_description, endpoint, object_files_hosted_at, type_of_post } = sport_created
 								// incorporating notification_type
 
 								// OLD VERSION
@@ -780,6 +816,13 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = sport_image
 
 								post_details = { ...post_details, notification_type:'got_interested_in_sport', activity_type, sport_name, sport_image: image_in_base64_encoding, sport_description, endpoint, sport_image_host: object_files_hosted_at }
+								type_of_post = 'got_interested_in_sport'
+								try {
+									post_details = await get_post_details(type_of_post, sport_liked, post_details)
+								} catch (error5){
+									console.log('ERROR CAUGHT WHILE GETTING IMAGE')
+									console.log(error5)
+								}
 								// activities_to_send.push(post_details)
 
 								if ( !activities_to_send.includes(post_details) ){
@@ -794,7 +837,7 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 								let { ad_created } = activity
 								ad_created = await Advertisement.findOne({_id: ad_created})
-								var { ad_name, ad_image, ad_description, endpoint, object_files_hosted_at } = ad_created
+								var { ad_name, ad_image, ad_description, endpoint, object_files_hosted_at, type_of_post } = ad_created
 								// incorporating notification_type
 
 								// OLD VERSION
@@ -803,6 +846,13 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = ad_image
 
 								post_details = { ...post_details, notification_type:'created_advertisement', activity_type, ad_name, ad_image: image_in_base64_encoding, ad_description, endpoint, ad_image_host: object_files_hosted_at }
+								type_of_post = 'created_advertisement'
+								try {
+									post_details = await get_post_details(type_of_post, ad_created, post_details)
+								} catch (error5){
+									console.log('ERROR CAUGHT WHILE GETTING IMAGE')
+									console.log(error5)
+								}
 								// activities_to_send.push(post_details)
 
 								if ( !activities_to_send.includes(post_details) ){
@@ -815,9 +865,10 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 
 							case "got_interested_in_advertisement":
 
+
 								let { ad_liked } = activity
 								ad_liked = await Advertisement.findOne({_id: ad_liked})
-								var { ad_name, ad_image, ad_description, endpoint, object_files_hosted_at } = ad_liked
+								var { ad_name, ad_image, ad_description, endpoint, object_files_hosted_at, type_of_post } = ad_liked
 								// incorporating notification_type
 
 								// OLD VERSION
@@ -826,6 +877,13 @@ router.get('/get-socialposts-from-friends', passport.authenticate('jwt', { sessi
 								image_in_base64_encoding = ad_image
 
 								post_details = { ...post_details, notification_type:'got_interested_in_advertisement', activity_type, ad_name, ad_image: image_in_base64_encoding, ad_description, endpoint, ad_image_host: object_files_hosted_at }
+								type_of_post = 'got_interested_in_advertisement'
+								try {
+									post_details = await get_post_details(type_of_post, ad_liked, post_details)
+								} catch (error5){
+									console.log('ERROR CAUGHT WHILE GETTING IMAGE')
+									console.log(error5)
+								}
 								// activities_to_send.push(post_details)
 
 								if ( !activities_to_send.includes(post_details) ){

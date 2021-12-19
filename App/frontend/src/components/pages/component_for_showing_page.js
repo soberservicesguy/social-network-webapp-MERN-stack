@@ -101,11 +101,6 @@ class ComponentForShowingPage extends Component {
 		var data = this.props.dataPayloadFromParent // data being plugged from parent flatlist
 		var base64Image = "data:image/jpeg;base64," + data.page_image
 
-		if (data.page_image_host === "aws_s3"){
-
-			data = {...data, page_image:`https://s3.amazonaws.com/portfolio-apps-mern-native/${data.page_image}`}
-			base64Image = data.page_image
-		}
 
 		return (
 			<div>

@@ -52,7 +52,8 @@ router.get('/ads-list', async function(req, res, next){
 				// OLD VERSION
 				// newAdvertisement.ad_image = await get_image_to_display(advertisement.ad_image, advertisement.object_files_hosted_at)
 				// NEW VERSION				
-				newAdvertisement.ad_image = advertisement.ad_image
+				let ad_image = await get_image_to_display(advertisement.ad_image, advertisement.object_files_hosted_at)
+				newAdvertisement.ad_image = ad_image
 				newAdvertisement.ad_image_host = advertisement.object_files_hosted_at
 				newAdvertisement.ad_description = advertisement[ 'ad_description' ]
 				newAdvertisement.endpoint = advertisement[ 'endpoint' ]
