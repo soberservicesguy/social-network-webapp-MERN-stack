@@ -10,8 +10,8 @@ dockerLocation='Local'
 # change for each project
 baseURL_for_Heroku='https://social-mern-stack.herokuapp.com'
 mongodb_prod_string="mongodb+srv://DBuser:AnimatioN1010@simpleclusterforandroid.enzb4.mongodb.net/Appointment_Web_App_DB?retryWrites=true&w=majority"
-aws_s3_accessKeyId='AKIAW2YVB4HUWASTJCER'
-aws_s3_secretAccessKey='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'
+aws_s3_accessKeyId='AKIAW2YVB4HUQ6HZSVOX'
+aws_s3_secretAccessKey='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'
 aws_s3_bucket='portfolio-apps-mern-native'
 
 # almost same in all
