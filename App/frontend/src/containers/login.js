@@ -406,7 +406,7 @@ class LoginContainer extends Component {
 					</div>
 
 					<div style={{
-						width:'90%',
+						width:'40%',
 						margin:'auto',
 						display:'flex',
 						flexDirection:'row',
@@ -415,7 +415,7 @@ class LoginContainer extends Component {
 						height:60,
 						marginBottom:20,
 					}}>
-						<div style={{...styles.formAndRounButtonContainer, marginRight:50, backgroundColor: '#3B5998'}}>
+						<div style={{...styles.formAndRounButtonContainer, marginRight:50, backgroundColor: utils.maroonColor}}>
 							<button 
 								style={styles.roundButton}
 								onClick={ () => this.login_and_get_jwt_token_and_privileges()}
@@ -424,7 +424,7 @@ class LoginContainer extends Component {
 							</button>
 						</div>
 
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: utils.maroonColor}}>
 							<button 
 								style={styles.roundButton}
 								onClick={ () => this.setState(prev => ({...prev, redirectToRoute: true })) }

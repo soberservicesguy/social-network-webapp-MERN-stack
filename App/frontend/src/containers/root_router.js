@@ -29,11 +29,8 @@ import {
 	ConnectedTimelineContainer,
 	ConnectedSettingsContainer,
 	ConnectedIndividualFriend,
+	ConnectedResponsiveNavigation,
 } from "../redux_stuff/connected_components";
-
-import {
-	MyResponsiveNavigation,
-} from "./"
 
 // IMPORT material-ui stuff
 // import { withStyles } from '@material-ui/styles';
@@ -63,7 +60,7 @@ class RootRouterContainer extends Component {
 			<Router>
 				<div>
 
-					{/*<MyResponsiveNavigation/>*/}
+					{/*<ConnectedResponsiveNavigation/>*/}
 
 					<Switch>
 
@@ -89,7 +86,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedSettingsContainer/>
 								</React.Fragment>
 							) : (
@@ -101,7 +98,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedSocialPostContainer/>
 								</React.Fragment>
 							) : (
@@ -113,7 +110,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedIndividualSocialPost/>
 								</React.Fragment>
 							) : (
@@ -125,7 +122,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedAboutMeContainer/>
 								</React.Fragment>
 							) : (
@@ -137,7 +134,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedCompleteFriendsContainer/>
 								</React.Fragment>
 							) : (
@@ -149,7 +146,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedIndividualFriend/>
 								</React.Fragment>
 							) : (
@@ -162,7 +159,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedTimelineContainer/>
 								</React.Fragment>
 							) : (
@@ -174,7 +171,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedAdvertisementContainer/>
 								</React.Fragment>
 							) : (
@@ -186,7 +183,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedIndividualAdvertisement/>
 								</React.Fragment>
 							) : (
@@ -198,7 +195,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedPageContainer/>
 								</React.Fragment>
 							) : (
@@ -210,7 +207,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedIndividualPage/>
 								</React.Fragment>
 							) : (
@@ -222,7 +219,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedBookContainer/>
 								</React.Fragment>
 							) : (
@@ -234,7 +231,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedIndividualBook/>
 								</React.Fragment>
 							) : (
@@ -246,7 +243,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedSportContainer/>
 								</React.Fragment>
 							) : (
@@ -258,7 +255,7 @@ class RootRouterContainer extends Component {
 
 							(this.props.isSignedIn) ? (
 								<React.Fragment>
-									<MyResponsiveNavigation/>
+									<ConnectedResponsiveNavigation/>
 									<ConnectedIndividualSport/>
 								</React.Fragment>
 							) : (

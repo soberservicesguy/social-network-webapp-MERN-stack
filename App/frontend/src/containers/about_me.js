@@ -375,7 +375,7 @@ class AboutMeContainer extends Component {
 								</div>
 							</Grid>
 
-							<Grid item xs={12} sm={12} md={6} lg={9} xl={9}>
+							<Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
 								<div style={{
 									backgroundColor: 'white',
 									marginLeft:10,

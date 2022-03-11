@@ -141,7 +141,7 @@ class SignUpContainer extends Component {
 			formAndRounButtonContainer:{
 				marginTop:20,
 				// flex:1,
-				flexBasis:'50%',
+				flexBasis:'35%',
 				// width: '20%',
 				// width: 100,
 				height: 40,
@@ -199,7 +199,7 @@ class SignUpContainer extends Component {
 				<div style={styles.outerContainer}>
 
 
-					<div style={{...styles.formAndRounButtonContainer, width:'30%', margin:'auto', backgroundColor: '#3B5998'}}>
+					<div style={{...styles.formAndRounButtonContainer, width:'27%', margin:'auto', backgroundColor: '#3B5998'}}>
 						<button 
 							style={styles.roundButton}
 							onClick={ () => {}}
@@ -366,7 +366,7 @@ class SignUpContainer extends Component {
 								style={styles.roundButton}
 								onClick={ () => this.setState(prev => ({...prev, redirectToRoute: true}))}
 							>
-								Already have an account ?
+								Already have an account
 							</button>
 						</div>
 

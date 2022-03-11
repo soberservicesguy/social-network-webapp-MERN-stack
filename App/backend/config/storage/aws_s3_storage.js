@@ -101,6 +101,7 @@ function save_file_to_aws_s3(file_payload, timestamp){
 				Bucket:s3_bucket, 
 				Key:`${file_payload.fieldname}s/${filename_to_use}`, 
 				// Body: file_payload,
+				ACL:'public-read',
 				Body: file_payload.buffer,
 			}
 
