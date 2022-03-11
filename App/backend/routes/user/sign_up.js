@@ -80,7 +80,7 @@ function checkFileTypeForUserAvatar(file, cb){
 router.post('/signup-and-get-privileges', (req, res, next) => {
 
 //	here there will be no req.body due to multer 
-	// console.log('OUTER LOG')
+	console.log('OUTER LOG')
 	// console.log(req.body)
 
 	timestamp = Date.now()
@@ -272,18 +272,21 @@ router.post('/signup-and-get-privileges', (req, res, next) => {
 					newImage.user = newUser
 
 				// making a user named Bruce Lee with phone number 03352065000 to send friend request to every ID to show posts between friends on wall
-					if ( req.body.phone_number !== '03352065000' ){
+					if ( req.body.phone_number != '03352065000' ){
 
 						let bruce_lee = await User.findOne({ phone_number: '03352065000' })
-						bruce_lee.friend_requests_sent.push(newUser)
-						newUser.friend_requests.push(bruce_lee)
-						await bruce_lee.save()
+						if (bruce_lee){
+							bruce_lee.friend_requests_sent.push(newUser)
+							newUser.friend_requests.push(bruce_lee)
+							await bruce_lee.save()							
+						}
 
 					}
 
 					await newImage.save()
 					await newUser.save()
-
+					console.log({newUser})
+					console.log('USER SAVED')
 					res.status(200).json({ success: true, msg: 'new user saved' });
 
 				}

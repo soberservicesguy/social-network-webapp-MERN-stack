@@ -3,9 +3,7 @@ import { connect } from "react-redux";
 import {mapStateToProps, mapDispatchToProps} from "./store_configuration";
 
 import {
-
 	RootRouterContainer,
-
 	SocialPostContainer,
 	IndividualSocialPost,
 	AdvertisementContainer,
@@ -18,17 +16,14 @@ import {
 	IndividualSport,	
 	LoginContainer,
 	SignUpContainer,
-
 	NotificationsContainer,
 	FriendsContainer,
 	AboutMeContainer,
-
 	CompleteFriendsContainer,
-
 	TimelineContainer,
-
 	SettingsContainer,
 	IndividualFriend,
+	MyResponsiveNavigation
 } from "../containers";
 
 
@@ -82,6 +77,12 @@ import {
 import {
 	CreateShareForSocialpost,
 } from "../components/shares"
+
+
+export const ConnectedResponsiveNavigation = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(MyResponsiveNavigation);
 
 export const ConnectedIndividualFriend = connect(
 	mapStateToProps,

@@ -2,7 +2,6 @@ node_modules
 App/backend/node_modules
 App/frontend/node_modules
 
-App/backend/.env
 Containers_Version/image_sources/*/.env
 Kubernetes_Version/container_sources/*/.env
 
@@ -14,3 +13,5 @@ App/backend/build/*
 App/frontend/build/*
 Containers_Version/image_sources/*/build/*
 Kubernetes_Version/container_sources/*/build/*
+
+App/backend/assets/uploads/*

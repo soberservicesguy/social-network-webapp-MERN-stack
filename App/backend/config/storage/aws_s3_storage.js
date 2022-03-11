@@ -42,8 +42,9 @@ function get_multers3_storage(timestamp){
 
 function get_file_from_aws(complete_file_name){
 
-	// console.log('complete_file_name')
-	// console.log(complete_file_name)
+	console.log({complete_file_name})
+	complete_file_name = complete_file_name.replace('/app/', '')
+	console.log({complete_file_name})
 
 	let params = { Bucket:s3_bucket, Key: complete_file_name }
 	let fileContents = new Buffer('');
@@ -100,6 +101,7 @@ function save_file_to_aws_s3(file_payload, timestamp){
 				Bucket:s3_bucket, 
 				Key:`${file_payload.fieldname}s/${filename_to_use}`, 
 				// Body: file_payload,
+				ACL:'public-read',
 				Body: file_payload.buffer,
 			}
 

@@ -224,7 +224,7 @@ class IndividualSocialPost extends Component {
 
 		let data = this.props.current_socialpost
 
-		// console.log({data})
+		console.log({data})
 
 		let all_likes = (
 			<Grid container direction="column" style={{backgroundColor: '#eee', paddingTop:20, width:'70%', margin:'auto'}}>

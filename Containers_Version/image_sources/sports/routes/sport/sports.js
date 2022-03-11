@@ -270,7 +270,9 @@ router.get('/sports-list', async function(req, res, next){
 				// OLD VERSION
 				// newSport.sport_image = await get_image_to_display(sport.sport_image, sport.object_files_hosted_at)
 				// NEW VERSION				
-				newSport.sport_image = sport.sport_image
+				let sport_image = await get_image_to_display(sport.sport_image, sport.object_files_hosted_at)
+
+				newSport.sport_image = sport_image
 				newSport.sport_image_host = sport.object_files_hosted_at
 				
 				// newSport.sport_image = base64_encode( sport[ 'sport_image' ] )

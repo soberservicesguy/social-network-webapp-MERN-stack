@@ -149,9 +149,10 @@ class ComponentForShowingSocialPost extends Component {
 		// }
 		// var base64Image = "data:image/jpeg;base64," + data.image_for_post
 
-
-
-
+		if (data.useOwnAvatar){
+			data = {...data, friends_user_avatar_image: this.props.user_avatar_image}
+		}
+		console.log({data})
 	/* activity headers start here */
 		let user_activity_header_for_post_create = (
 	  		<Link 

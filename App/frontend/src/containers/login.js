@@ -35,7 +35,7 @@ class LoginContainer extends Component {
 
 			redirectToHome:false,
 
-			showAdminControls: false,
+			showAdminControls: true,
 
 		}
 	}
@@ -95,7 +95,7 @@ class LoginContainer extends Component {
 				verify_privilege_callack(response)
 				set_signed_in_callback()
 				set_phone_number_callback()
-
+				console.log({user_avatar_image: response.data.user_details.user_avatar_image})
 				set_user_name_in_profile_callback(response)
 				set_user_avatar_image_callback(response)
 				set_user_cover_image_callback(response)
@@ -123,7 +123,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				// console.log(response.data.message)
+				console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all users')
@@ -141,7 +141,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				// console.log(response.data.message)
+				console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all sports')
@@ -159,7 +159,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				// console.log(response.data.message)
+				console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all socialposts')
@@ -177,7 +177,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				// console.log(response.data.message)
+				console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all books')
@@ -195,7 +195,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				// console.log(response.data.message)
+				console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all pages')
@@ -213,7 +213,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				// console.log(response.data.message)
+				console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all ads')
@@ -231,7 +231,7 @@ class LoginContainer extends Component {
 		.then(function (response) {
 			if (response.data.success === true){
 
-				// console.log(response.data.message)
+				console.log(response.data.message)
 				
 			} else {
 				console.log('couldnt delete all ads')
@@ -406,7 +406,7 @@ class LoginContainer extends Component {
 					</div>
 
 					<div style={{
-						width:'90%',
+						width:'40%',
 						margin:'auto',
 						display:'flex',
 						flexDirection:'row',
@@ -415,7 +415,7 @@ class LoginContainer extends Component {
 						height:60,
 						marginBottom:20,
 					}}>
-						<div style={{...styles.formAndRounButtonContainer, marginRight:50, backgroundColor: '#3B5998'}}>
+						<div style={{...styles.formAndRounButtonContainer, marginRight:50, backgroundColor: utils.maroonColor}}>
 							<button 
 								style={styles.roundButton}
 								onClick={ () => this.login_and_get_jwt_token_and_privileges()}
@@ -424,7 +424,7 @@ class LoginContainer extends Component {
 							</button>
 						</div>
 
-						<div style={{...styles.formAndRounButtonContainer, marginLeft:50,}}>
+						<div style={{...styles.formAndRounButtonContainer, marginLeft:50, backgroundColor: utils.maroonColor}}>
 							<button 
 								style={styles.roundButton}
 								onClick={ () => this.setState(prev => ({...prev, redirectToRoute: true })) }

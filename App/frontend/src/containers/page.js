@@ -83,16 +83,16 @@ class PageContainer extends Component {
 					</div>
 
 
-					{total_pages.map((item, index)=>(
-
-						<Grid key={String(index)} item>
-							<ConnectedPageCard
-								dataPayloadFromParent = { item }
-								likes = { item.likes || [] }
-							/>
-						</Grid>
-
-					))}
+					{total_pages.map((item, index) => {
+						return (
+							<Grid key={String(index)} item>
+								<ConnectedPageCard
+									dataPayloadFromParent = { item }
+									likes = { item.likes || [] }
+								/>
+							</Grid>
+						)
+					})}
 
 					<Grid item>
 			  			<ConnectedCreatePage/>

@@ -42,16 +42,11 @@ class MyResponsiveNavigation extends Component {
 	  	const navigation_options = [
 	  		{option_name:'Wall', endpoint:'socialposts'},
 	  		{option_name:'About Me', endpoint:'about-me'},
-	  		// {option_name:'Friends', endpoint:'friends'},
-	  		// {option_name:'Timeline', endpoint:'timeline'},
-	  		// {option_name:'Pages', endpoint:'pages'},
 	  		{option_name:'Books', endpoint:'books'},
 	  		{option_name:'Sports', endpoint:'sports'},
-	  		// {option_name:'Logout', endpoint:'logout'},
-	  		// {option_name:'Signup', endpoint:'signup'},
+	  		{option_name:'Log out',},
 	  		{option_name:'Notifications', endpoint:'notifications'},
 	  		{option_name:'Settings', endpoint:'settings'},
-
 	  	]
 
 	  	const { pathname } = this.props.location;
@@ -110,7 +105,24 @@ class MyResponsiveNavigation extends Component {
 												<ConnectedNotificationsContainer/>
 											</div>
 										)
-										
+									} else if (item.option_name === 'Log out'){
+										return(
+											<button style={{
+												marginLeft:(_xs || _sm || _md) ? -20 : 70, 
+												color: 'red', 
+												textDecoration: 'inherit',
+												background: 'none',
+												backgroundColor: 'none',
+												border: 'none',
+												fontSize: 17,
+												fontWeight: 'bold',
+												paddingBottom: 15,
+												margin: 'auto',
+												width: '100%',
+											}} onClick={() => this.props.set_is_signed_in(false)}>
+												Log out
+											</button>
+										)										
 									} else {
 										
 										return(

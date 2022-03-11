@@ -128,7 +128,6 @@ paypal.configure({
 
 // --------------------------STRIPE starts here-------------------------------
 
-const env = require("dotenv").config({ path: "./.env" });
 
 // GIVING SRIPE SECRET KEY
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
